@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>临时的旅游计划</title>
+    <link rel="stylesheet" href="../../libs/init.css">
+    <link rel="stylesheet" href="../../components/SwitchButton/SwitchButton.css">
+    <link rel="stylesheet" href="./plan.css">
+    <script src="../../libs/dragscroll2.js"></script>
+    <script src="../../libs/vue.js"></script>
+  </head>
+  <body>
+    <div id="app" @click="appClickEvent">
+        <div class="header" :style="{ borderBottom: mode===1 ? '1px solid lightgray' : '' }">
+            <div class="header-trafficlight">
+                <template v-if="platform === 'win'">
+                        <div class=""></div>
+                        <div class=""></div>
+                        <div class=""></div>
+                </template>
+            </div>
+            <div class="header-autosave">
+                <switch-button class="header-autosave-switch" :is-switch="autoSave" @click.native="autoSaveSwitchButtonClickEvent"></switch-button>
+                <div class="header-autosave-text">{{autoSave ? '已打开自动保存' : '已关闭自动保存'}}</div>
+            </div>
+            <div class="header-actions">
+                <div class="header-actions-save" title="保存"></div>
+                <div class="header-actions-mode" title="切换工具栏模式" @click="headerActionItemChangeModeButtonClickEvent"></div>
+            </div>
+        </div>
+        <transition name="tools">
+            <div class="tools" v-if="mode===0">
+        
+            </div>
+        </transition>
+        <div class="dragscroll section" :style="{ height: mode===1 ? 'calc(100% - 40px - 1px - 1px - 30px)' : 'calc(100% - 40px - 100px - 1px - 1px - 30px)' }">
+            <div class="section-canvas" :style="{ paddingLeft: mode===1 ? 'calc(30px + 50px)' : ''}">
+                <div class="section-canvas-day" 
+                    v-for="(dayItem, dayIndex) in dayList" 
+                    :key="dayItem.timestamp" 
+                    :class="{ 'section-canvas-day-selected': dayItem.isSelected }" 
+                    @click.stop="dayItemSelectedEvent(dayIndex)" 
+                    @focus="dayItemSelectedEvent(dayIndex)">
+                    <div class="section-canvas-day-header">
+                        <div class="section-canvas-day-header-title">
+                            <div class="section-canvas-day-header-title-placeholder" v-if="!dayItem.inputTitle && (!dayItem.title || dayItem.title.length <= 0)">请输入主题</div>
+                            <div class="section-canvas-day-header-title-text" 
+                                contenteditable="plaintext-only" 
+                                :class="{ 'section-canvas-day-header-title-text-focus': dayItem.inputTitle }" 
+                                :ref="'day-item-title-input-' + dayIndex"
+                                @mousedown.stop 
+                                @focus="dayItemTitleFocusEvent(dayIndex)" 
+                                @blur="dayItemTitleBlurEvent($event, dayIndex)"></div>
+                        </div>
+                        <div class="section-canvas-day-header-subtitle">
+                            <div class="section-canvas-day-header-subtitle-placeholder" v-if="!dayItem.inputSubtitle && (!dayItem.subtitle || dayItem.subtitle.length <= 0)">请输入副主题</div>
+                            <div class="section-canvas-day-header-subtitle-text" 
+                                contenteditable="plaintext-only" 
+                                :class="{ 'section-canvas-day-header-subtitle-text-focus': dayItem.inputSubtitle }" 
+                                :ref="'day-item-subtitle-input-' + dayIndex"
+                                @mousedown.stop 
+                                @focus="dayItemSubtitleFocusEvent(dayIndex)" 
+                                @blur="dayItemSubtitleBlurEvent($event, dayIndex)"></div>
+                        </div>
+                        
+                        <div class="section-canvas-day-header-desc" v-for="dayDescItem in dayItem.descList" :key="'desc_' + dayDescItem.timestamp">
+                            <div class="">
+                                <textarea name="" id="" v-model="dayDescItem.content" placeholder="请输入简介"></textarea>
+                            </div>
+                            <div class=""></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-canvas-day">
+                    <div class=""></div>
+                </div>
+            </div>
+            <transition name="section-tools">
+                <div class="section-tools" v-if="mode===1">
+
+                </div>
+            </transition>
+        </div>
+        <div class="footer">
+
+        </div>
+    </div>
+
+    <!-- SwitchButton -->
+    <template id="switch-button">
+        <div class="switch-button" :class="{ 'switch-button-selected': isSwitch }">
+            <div class="switch-button-ball" :class="{ 'switch-button-ball-selected ': isSwitch }"></div>
+        </div>
+    </template>
+    <script src="../../components/SwitchButton/SwitchButton.js"></script>
+    <script>
+      require('./plan.js');
+    </script>
+  </body>
+</html>

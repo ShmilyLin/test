@@ -1,0 +1,29 @@
+.switch-button {
+    border: 1px solid lightgray;
+    border-radius: 9px;
+    height: 16px;
+    width: 30px;
+    transition: all 0.5s;
+    background-color: #f2f2f2;
+    cursor: pointer;
+}
+
+.switch-button-selected {
+    border: 1px solid lightskyblue;
+    background-color: lightskyblue;
+}
+
+.switch-button-ball {
+    width: 12px;
+    height: 12px;
+    border-radius: 6px;
+    margin-left: 2px;
+    transition: all 0.5s;
+    margin-top: 2px;
+    /* background-color: lightskyblue; */
+    background-color: white;
+}
+
+.switch-button-ball-selected {
+    margin-left: calc(30px - 2px - 12px);
+}

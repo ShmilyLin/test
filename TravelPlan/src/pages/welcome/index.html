@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎使用“旅游计划”</title>
+    <link rel="stylesheet" href="../../libs/init.css">
+    <link rel="stylesheet" href="./welcome.css">
+    <script src="../../libs/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="header">
+        <div class="header-title">旅行计划</div>
+        <div class="header-info">
+          <div class="header-info-author">By Lin</div>
+          <div class="header-info-version">v 1.0.0</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-left">
+          <div class="section-left-title">最近使用</div>
+          <ul class="section-left-list">
+            <template v-if="fileList && fileList.length > 0">
+              <li class="section-left-list-item" v-for="fileItem in fileList" :key="fileItem.fileId">
+                <div class="section-left-list-item-name">{{fileItem.name}}</div>
+                <div class="section-left-list-item-path" v-if="fileItem.type===1">{{fileItem.path}}</div>
+              </li>
+            </template>
+            <template v-else>
+              <li class="section-left-list-none" @click="createAPlanButtonClickEvent">创建旅行计划</li>
+            </template>
+          </ul>
+        </div>
+        <div class="section-right">
+
+        </div>
+      </div>
+      <div class="footer">
+        <div class="footer-left" @click="createAPlanButtonClickEvent">新建旅行计划</div>
+        <div class="footer-right">打开旅行计划</div>
+      </div>
+    </div>
+    <script>
+      require('./welcome.js');
+    </script>
+  </body>
+</html>

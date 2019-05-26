@@ -1,39 +1,61 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {
+  app, 
+  Menu, 
+  BrowserWindow, 
+  ipcMain
+} = require('electron');
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+// 主窗口
+let mainWindow;
 
-function createWindow () {
-  // Create the browser window.
+// 设置应用名字
+app.setName("旅行计划");
+
+
+// 当 Electron 完成初始化时被触发。 
+// 在 macOS 中, 如果从通知中心中启动，那么 launchInfo 中的 userInfo 包含用来打开应用程序的 NSUserNotification 信息。 你可以通过调用 app.isReady() 方法来检查此事件是否已触发。
+function appOnReady () {
+  console.log(process, process.argv);
+
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    webPreferences: {
-      nodeIntegration: true
-    }
+    minWidth: 800,
+    minHeight: 600,
+    center: true, // 窗口居中
+    webPreferences: { // 网页功能的设置 
+      devTools: true, //  是否开启 DevTools
+      nodeIntegration: true,
+      textAreasAreResizable: false, // 禁止TextArea元素调整大小
+    },
+    frame: false, // 无边框
+    titleBarStyle: 'hiddenInset', // macOS, 左上角仍然有标准的窗口控制按钮，其中控制按钮到窗口边框的距离更大。
+    show: false,
   })
 
-  // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
-
-  // Emitted when the window is closed.
+  // 关闭主窗口
   mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
+  })
+
+  if (global.needOpenFile) {
+    // TODO: 需要打开文件
+  }else {
+    mainWindow.loadFile('./src/pages/welcome/index.html');
+  }
+
+  const menu = Menu.buildFromTemplate(getMenuOption());
+  Menu.setApplicationMenu(menu);
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+// 当 Electron 完成初始化时被触发。 
+// 在 macOS 中, 如果从通知中心中启动，那么 launchInfo 中的 userInfo 包含用来打开应用程序的 NSUserNotification 信息。 你可以通过调用 app.isReady() 方法来检查此事件是否已触发。
+app.on('ready', appOnReady);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -42,11 +64,75 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
+// 当应用被激活时发出。 
+// 各种操作都可以触发此事件, 例如首次启动应用程序、尝试在应用程序已运行时或单击应用程序的坞站或任务栏图标时重新激活它。
 app.on('activate', function () {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow()
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+app.on('open-file', function (event, path) {
+  console.log('【App】[open-file] ', event, path);
+
+  // process.argv
+  // event.preventDefault()
+})
+
+ipcMain.on('create-a-new-plan', (event, arg) => {
+  console.log("【Main】 create-a-new-plan", arg);
+  mainWindow.loadFile('./src/pages/plan/index.html');
+})
+
+
+function getMenuOption () {
+  return [{
+    label: app.getName(),
+    submenu: [{
+      label: "关于 " + app.getName(),
+      role: "about"
+    }, {
+      label: "偏好设置",
+    }]
+  }, {
+    label: "文件",
+    submenu: [{
+      label: "新建计划",
+      accelerator: "CommandOrControl+N"
+    }, {
+      type: "separator"
+    }, {
+      label: "打开",
+      accelerator: "CommandOrControl+O"
+    }]
+  }, {
+    label: "编辑",
+    submenu: [{
+      label: "撤销",
+      role: "undo"
+    }, {
+      label: "恢复",
+      role: "redo"
+    }, {
+      type: "separator"
+    }, {
+      label: "剪切",
+      role: "cut"
+    }, {
+      label: "复制",
+      role: "copy"
+    }, {
+      label: "粘贴",
+      role: "paste"
+    }]
+  }, {
+    label: "调试",
+    submenu: [{
+      label: "打开调试",
+      role: "toggledevtools"
+    }, {
+      type: "separator"
+    }, {
+      label: "重载页面",
+      role: "reload"
+    }]
+  }]
+}

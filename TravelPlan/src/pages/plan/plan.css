@@ -1,0 +1,219 @@
+html, body {
+    overflow: hidden;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+}
+
+
+/* 顶部 */
+.header {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    -webkit-app-region: drag;
+    transition: all 0.5 linear;
+}
+
+.header-trafficlight {
+    width: 80px;
+    height: 100%;
+}
+
+.header-autosave {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+    margin-left: 20px;
+}
+
+.header-autosave-text {
+    margin-left: 5px;
+    font-size: 12px;
+    line-height: 1;
+    color: #666666;
+}
+
+.header-actions {
+    margin-left: 10px;
+    border-left: 1px solid lightgray;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 24px;
+}
+
+.header-actions-save {
+    width: 24px;
+    height: 24px;
+    background-image: url(../../assets/plan_save.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+}
+
+.header-actions-mode {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    background-image: url(../../assets/plan_mode.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+    margin-left: 10px;
+    background-origin: content-box;
+}
+
+
+/* 工具栏 */
+.tools {
+    height: 100px;
+    width: 100%;
+    border-bottom: 1px solid lightgray;
+}
+
+.tools-enter-active, .tools-leave-active {
+    transition: height 0.5s linear;
+}
+.tools-enter, .tools-leave-to {
+    height: 0;
+}
+
+
+/* 内容 */
+.section {
+    width: 100%;
+    overflow: scroll;
+    transition: all 0.5s linear;
+}
+
+.section-canvas {
+    display: flex;
+    flex-direction: row;
+    transition: all 0.5s linear;
+}
+
+.section-canvas-day {
+    width: calc(500px - 40px);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px dashed lightgray;
+    flex-shrink: 0;
+}
+
+.section-canvas-day-selected {
+    border-right: 1px dashed lightskyblue;
+}
+
+.section-canvas-day-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.section-canvas-day-header-title {
+    width: 100%;
+}
+
+.section-canvas-day-header-title-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    line-height: 1.5;
+    font-size: 30px;
+    font-weight: 500;
+    text-align: center;
+    color: lightgray;
+}
+
+.section-canvas-day-header-title-text {
+    width: 100%;
+    min-height: 45px;
+    line-height: 1.5;
+    font-size: 30px;
+    font-weight: 500;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.section-canvas-day-header-title-text-focus {
+    border: 1px solid lightgray;
+}
+
+.section-canvas-day-header-subtitle {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.section-canvas-day-header-subtitle-placeholder {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    line-height: 1.5;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+    color: lightgray;
+}
+
+.section-canvas-day-header-subtitle-text {
+    width: 100%;
+    min-height: 30px;
+    line-height: 1.5;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+    color: #555555;
+    border: 1px solid transparent;
+}
+
+.section-canvas-day-header-subtitle-text-focus {
+    border: 1px solid lightgray;
+}
+
+.section-canvas-day-header-desc {
+
+}
+
+
+
+.section-tools {
+    position: fixed;
+    left: 30px;
+    width: 50px;
+    border-radius: 25px;
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
+    top: 100px;
+    background-color: lightskyblue;
+    height: calc(100% - 100px - 75px);
+}
+
+.section-tools-enter-active, .section-tools-leave-active {
+    transition: left 0.5s linear;
+}
+.section-tools-enter, .section-tools-leave-to {
+    left: -60px;
+}
+
+
+
+
+/* 底部 */
+.footer {
+    width: 100%;
+    height: 30px;
+    border-top: 1px solid lightgray;
+}
