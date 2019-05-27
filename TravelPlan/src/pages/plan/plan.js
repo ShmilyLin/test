@@ -2,6 +2,7 @@ const {
     ipcRenderer,
     remote
 } = require('electron');
+const DayModel = require('../../models/DayModel.js');
 
 var vm = new Vue({
     el: '#app',
@@ -50,41 +51,12 @@ var vm = new Vue({
         if (remote.getGlobal('needOpenFile')) {
 
         }else {
-            this.dayList.push({
-                title: "第一天",
-                subtitle: "",
-                descContent: "",
-                descList: [],
+            var tempModel = new DayModel();
+            var tempPlan = tempModel.createAPlan("计划1");
+            tempPlan.createAListItem(0)
+            console.log(tempModel);
 
-                timestamp: (new Date()).getTime(),
-                
-                isSelected: false,
-                inputTitle: false,
-                inputSubtitle: false,
-                inputDesc: false,
-
-                plans: [{
-                    name: "计划1",
-                    timestamp: (new Date()).getTime(),
-                    inputName: false,
-                    list: [{
-                        /**
-                         * 计划类型
-                         * 
-                         * 0 - 起点（包括起点名称，当天历经地点）
-                         * 1 - 交通（交通方式、班次（可选交通卡）、花费、历时、起始时间、到达时间、备选）
-                         * 2 - 住宿（住宿类型、住宿（酒店卡）、备选（酒店卡））
-                         * 3 - 餐饮（餐饮类型、餐厅（餐厅卡）、备选）
-                         * 4 - 景点（景点（景点卡）、花费、历时、开始时间、结束时间）
-                         * 5 - 说明
-                         * 6 - 图片
-                         * 7 - 清单
-                         */
-                        type: 0, //
-                        timestamp: (new Date()).getTime(),
-                    }]
-                }]
-            });
+            this.dayList.push(tempModel);
         }
     },
     mounted: function() {
@@ -322,5 +294,30 @@ var vm = new Vue({
             tempDayItem.plans[planIndex].inputName = false;
             this.$set(this.dayList, dayIndex, tempDayItem);
         },
+
+        /**
+         * 获取当天的旅游路线
+         */
+        getDayPlanPath: function (dayIndex, planIndex) {
+            var tempContentList = [];
+            var tempDayItem = this.dayList[dayIndex];
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            for (var i = 0; i < tempPlanItem.list.length; i++) {
+                if (tempPlanItem.list[i].type === 0) {
+                    tempContentList.push(tempPlanItem.list[i].pointName);
+                }
+            }
+
+            return tempContentList;
+        },
+
+        /**
+         * 创建一个新的计划项
+         */ 
+        createAPlanListItem: function (dayIndex, planIndex, type) {
+            var tempDayItem = this.dayList[dayIndex];
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            tempPlanItem.createAListItem(type);
+        }
     },
 })

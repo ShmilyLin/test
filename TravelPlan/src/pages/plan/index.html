@@ -112,12 +112,31 @@
                                 @blur="planItem.inputName=false">
                         </div>
                         <div class="section-canvas-day-plan-content">
-                            <div class="section-canvas-day-plan-content-item" v-for="planListItem in planItem.list" :key="dayItem.timestamp + '_' + planItem.timestamp + '_' + planListItem.timestamp">
+                            <div class="section-canvas-day-plan-content-item" 
+                                v-for="planListItem in planItem.list" 
+                                :key="dayItem.timestamp + '_' + planItem.timestamp + '_' + planListItem.timestamp">
                                 <div class="section-canvas-day-plan-content-item-left">
                                     <!-- 起点 -->
                                     <template v-if="planListItem.type === 0">
                                         <div class="day-plan-list-item-start">
-                                            
+                                            <div class="day-plan-list-item-start-name" :class="{ 'day-plan-list-item-start-name-focus': planListItem.inputPointName }">
+                                                <input type="text" 
+                                                    v-model="planListItem.pointName" 
+                                                    placeholder="集合地点" 
+                                                    @focus="planListItem.inputPointName=true" 
+                                                    @blur="planListItem.inputPointName=false">
+                                            </div>
+                                            <div class="day-plan-list-item-start-path">
+                                                <div class="day-plan-list-item-start-path-icon"></div>
+                                                <ul class="day-plan-list-item-start-path-list">
+                                                    <li class="day-plan-list-item-start-path-list-item" 
+                                                        v-for="(pathItem, pathIndex) in getDayPlanPath(dayIndex, planIndex)" 
+                                                        :key="dayItem.timestamp + '_' + planItem.timestamp + '_' + planListItem.timestamp + '_' + pathItem">
+                                                        <div class="day-plan-list-item-start-path-list-item-front" v-if="pathIndex > 0"></div>
+                                                        <div class="day-plan-list-item-start-path-list-item-point">{{pathItem}}</div>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </template>
                                     <!-- 交通 -->
@@ -170,14 +189,14 @@
                                 </div>
                             </div>
                             <div class="section-canvas-day-plan-content-new">
-                                <div class="section-canvas-day-plan-content-new-start"></div>
-                                <div class="section-canvas-day-plan-content-new-traffic"></div>
-                                <div class="section-canvas-day-plan-content-new-hotel"></div>
-                                <div class="section-canvas-day-plan-content-new-food"></div>
-                                <div class="section-canvas-day-plan-content-new-attraction"></div>
-                                <div class="section-canvas-day-plan-content-new-text"></div>
-                                <div class="section-canvas-day-plan-content-new-image"></div>
-                                <div class="section-canvas-day-plan-content-new-list"></div>
+                                <div class="section-canvas-day-plan-content-new-start" @click="createAPlanListItem(dayIndex, planIndex, 0)"></div>
+                                <div class="section-canvas-day-plan-content-new-traffic" @click="createAPlanListItem(dayIndex, planIndex, 1)"></div>
+                                <div class="section-canvas-day-plan-content-new-hotel" @click="createAPlanListItem(dayIndex, planIndex, 2)"></div>
+                                <div class="section-canvas-day-plan-content-new-food" @click="createAPlanListItem(dayIndex, planIndex, 3)"></div>
+                                <div class="section-canvas-day-plan-content-new-attraction" @click="createAPlanListItem(dayIndex, planIndex, 4)"></div>
+                                <div class="section-canvas-day-plan-content-new-text" @click="createAPlanListItem(dayIndex, planIndex, 5)"></div>
+                                <div class="section-canvas-day-plan-content-new-image" @click="createAPlanListItem(dayIndex, planIndex, 6)"></div>
+                                <div class="section-canvas-day-plan-content-new-list" @click="createAPlanListItem(dayIndex, planIndex, 7)"></div>
                             </div>
                         </div>
                     </div>

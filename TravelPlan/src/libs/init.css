@@ -20,5 +20,7 @@ ul, li {
 }
 
 input, textarea, div {
-    outline:none;
+    outline: none;
+    border: none;
+    background-color: transparent;
 }

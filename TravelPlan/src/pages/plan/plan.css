@@ -182,8 +182,9 @@ html, body {
 }
 
 .section-canvas-day-plan-content-item {
-    width: 100%;
+    width: calc(100% - 5px);
     padding: 5px 0;
+    padding-left: 5px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -202,10 +203,72 @@ html, body {
     width: calc(100% - 22px - 5px - 24px - 24px - 1px);
 }
 
-.day-plan-list-item-start {
 
+/* 天 > 计划 > 项 - 起点 */
+.day-plan-list-item-start {
+    width: 100%;
 }
 
+.day-plan-list-item-start .day-plan-list-item-start-name {
+    width: calc(100% - 2px);
+    border: 1px solid transparent;
+}
+
+.day-plan-list-item-start .day-plan-list-item-start-name-focus {
+    border: 1px solid lightgray;
+}
+
+.day-plan-list-item-start .day-plan-list-item-start-name > input {
+    width: 100%;
+    line-height: 30px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.day-plan-list-item-start .day-plan-list-item-start-path {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+}
+
+.day-plan-list-item-start .day-plan-list-item-start-path-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    background-image: url(../../assets/plan_path_icon.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.day-plan-list-item-start .day-plan-list-item-start-path-list {
+    width: calc(100% - 20px - 5px);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.day-plan-list-item-start .day-plan-list-item-start-path-list-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.day-plan-list-item-start .day-plan-list-item-start-path-list-item-front {
+    width: 15px;
+    height: 2px;
+    background-color: lightskyblue;
+}
+
+.day-plan-list-item-start .day-plan-list-item-start-path-list-item-point {
+    font-size: 14px;
+    color: #888888;
+    line-height: 1.5;
+    font-weight: 300;
+}
+
+
+/* 天 > 计划 > 项 - 交通 */
 .day-plan-list-item-traffic {
 
 }
@@ -275,40 +338,140 @@ html, body {
     cursor: pointer;
 }
 
-.section-canvas-day-plan-content-new {
 
+/* 创建一条新的计划项 */
+.section-canvas-day-plan-content-new {
+    margin-top: 10px;
+    width: calc(100% - 10px);
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    border-bottom: 1px solid lightgray;
+}
+
+.section-canvas-day-plan-content-new:hover {
+    background-color: #F5F5F5;
+    border-radius: 4px;
+    border: none;
 }
 
 .section-canvas-day-plan-content-new-start {
+    width: 24px;
+    height: 24px;
+    padding: 1px;
+    background-image: url(../../assets/plan_list_item_new_start.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-origin: content-box;
+    cursor: pointer;
+}
 
+.section-canvas-day-plan-content-new-start:hover {
+    background-image: url(../../assets/plan_list_item_new_start_hover.png);
 }
 
 .section-canvas-day-plan-content-new-traffic {
+    width: 24px;
+    height: 24px;
+    padding: 1px;
+    background-image: url(../../assets/plan_list_item_new_traffic.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-origin: content-box;
+    cursor: pointer;
+}
 
+.section-canvas-day-plan-content-new-traffic:hover {
+    background-image: url(../../assets/plan_list_item_new_traffic_hover.png);
 }
 
 .section-canvas-day-plan-content-new-hotel {
+    width: 22px;
+    height: 22px;
+    padding: 2px;
+    background-image: url(../../assets/plan_list_item_new_hotel.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-origin: content-box;
+    cursor: pointer;
+}
 
+.section-canvas-day-plan-content-new-hotel:hover {
+    background-image: url(../../assets/plan_list_item_new_hotel_hover.png);
 }
 
 .section-canvas-day-plan-content-new-food {
+    width: 26px;
+    height: 26px;
+    background-image: url(../../assets/plan_list_item_new_food.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-origin: content-box;
+    cursor: pointer;
+}
 
+.section-canvas-day-plan-content-new-food:hover {
+    background-image: url(../../assets/plan_list_item_new_food_hover.png);
 }
 
 .section-canvas-day-plan-content-new-attraction {
+    width: 26px;
+    height: 26px;
+    background-image: url(../../assets/plan_list_item_new_attraction.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-origin: content-box;
+    cursor: pointer;
+}
 
+.section-canvas-day-plan-content-new-attraction:hover {
+    background-image: url(../../assets/plan_list_item_new_attraction_hover.png);
 }
 
 .section-canvas-day-plan-content-new-text {
+    width: 26px;
+    height: 26px;
+    background-image: url(../../assets/plan_list_item_new_text.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-origin: content-box;
+    cursor: pointer;
+}
 
+.section-canvas-day-plan-content-new-text:hover {
+    background-image: url(../../assets/plan_list_item_new_text_hover.png);
 }
 
 .section-canvas-day-plan-content-new-image {
+    width: 20px;
+    height: 20px;
+    padding: 3px;
+    background-image: url(../../assets/plan_list_item_new_image.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-origin: content-box;
+    cursor: pointer;
+}
 
+.section-canvas-day-plan-content-new-image:hover {
+    background-image: url(../../assets/plan_list_item_new_image_hover.png);
 }
 
 .section-canvas-day-plan-content-new-list {
+    width: 20px;
+    height: 20px;
+    padding: 3px;
+    background-image: url(../../assets/plan_list_item_new_list.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-origin: content-box;
+    cursor: pointer;
+}
 
+.section-canvas-day-plan-content-new-list:hover {
+    background-image: url(../../assets/plan_list_item_new_list_hover.png);
 }
 
 .section-canvas-day-plan-new {
