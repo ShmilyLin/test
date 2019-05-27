@@ -9,8 +9,8 @@
 }
 
 .switch-button-selected {
-    border: 1px solid lightskyblue;
-    background-color: lightskyblue;
+    border: 1px solid #FF6F61;
+    background-color: #FF6F61;
 }
 
 .switch-button-ball {
@@ -20,7 +20,6 @@
     margin-left: 2px;
     transition: all 0.5s;
     margin-top: 2px;
-    /* background-color: lightskyblue; */
     background-color: white;
 }
 

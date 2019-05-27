@@ -8,84 +8,6 @@ html, body {
 }
 
 
-/* 顶部 */
-.header {
-    width: 100%;
-    height: 40px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    -webkit-app-region: drag;
-    transition: all 0.5 linear;
-}
-
-.header-trafficlight {
-    width: 80px;
-    height: 100%;
-}
-
-.header-autosave {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 100%;
-    margin-left: 20px;
-}
-
-.header-autosave-text {
-    margin-left: 5px;
-    font-size: 12px;
-    line-height: 1;
-    color: #666666;
-}
-
-.header-actions {
-    margin-left: 10px;
-    border-left: 1px solid lightgray;
-    padding-left: 10px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 24px;
-}
-
-.header-actions-save {
-    width: 24px;
-    height: 24px;
-    background-image: url(../../assets/plan_save.png);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    cursor: pointer;
-}
-
-.header-actions-mode {
-    width: 20px;
-    height: 20px;
-    padding: 2px;
-    background-image: url(../../assets/plan_mode.png);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    cursor: pointer;
-    margin-left: 10px;
-    background-origin: content-box;
-}
-
-
-/* 工具栏 */
-.tools {
-    height: 100px;
-    width: 100%;
-    border-bottom: 1px solid lightgray;
-}
-
-.tools-enter-active, .tools-leave-active {
-    transition: height 0.5s linear;
-}
-.tools-enter, .tools-leave-to {
-    height: 0;
-}
-
-
 /* 内容 */
 .section {
     width: 100%;
@@ -99,6 +21,8 @@ html, body {
     transition: all 0.5s linear;
 }
 
+
+/* 天 */
 .section-canvas-day {
     width: calc(500px - 40px);
     padding: 20px;
@@ -113,6 +37,7 @@ html, body {
     border-right: 1px dashed lightskyblue;
 }
 
+/* 天 > 头部 */
 .section-canvas-day-header {
     display: flex;
     flex-direction: column;
@@ -120,6 +45,7 @@ html, body {
     width: 100%;
 }
 
+/* 天 > 头部 > 标题 */
 .section-canvas-day-header-title {
     width: 100%;
 }
@@ -151,6 +77,7 @@ html, body {
     border: 1px solid lightgray;
 }
 
+/* 天 > 头部 > 副标题 */
 .section-canvas-day-header-subtitle {
     width: 100%;
     margin-top: 10px;
@@ -174,7 +101,7 @@ html, body {
     min-height: 30px;
     line-height: 1.5;
     font-size: 20px;
-    font-weight: 500;
+    font-weight: 400;
     text-align: center;
     color: #555555;
     border: 1px solid transparent;
@@ -184,29 +111,212 @@ html, body {
     border: 1px solid lightgray;
 }
 
+/* 天 > 头部 > 说明 */
 .section-canvas-day-header-desc {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.section-canvas-day-header-desc-placeholder {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    line-height: 1.5;
+    font-size: 14px;
+    font-weight: 300;
+    text-indent: 2;
+    color: lightgray;
+}
+
+.section-canvas-day-header-desc-text {
+    width: 100%;
+    min-height: 21x;
+    line-height: 1.5;
+    font-size: 14px;
+    font-weight: 300;
+    text-indent: 2;
+    color: #888888;
+    border: 1px solid transparent;
+}
+
+.section-canvas-day-header-desc-text-focus {
+    border: 1px solid lightgray;
+}
+
+
+
+
+/* 天 > 计划 */
+.section-canvas-day-plan {
+    width: calc(100% - 2px - 20px);
+    border: 1px solid transparent;
+    padding: 10px;
+}
+
+.section-canvas-day-plan-some {
+    border-radius: 4px;
+    border: 1px solid lightskyblue;
+}
+
+.section-canvas-day-plan-name {
+    width: calc(100% - 2px);
+    border: 1px solid transparent;
+    margin-bottom: 10px;
+}
+
+.section-canvas-day-plan-name-input {
+    border: 1px solid lightgray;
+}
+
+.section-canvas-day-plan-name-input input {
+    width: 100%;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.section-canvas-day-plan-content {
+    width: 100%;
+}
+
+.section-canvas-day-plan-content-item {
+    width: 100%;
+    padding: 5px 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.section-canvas-day-plan-content-item:hover {
+    background-color: #F5F5F5;
+    border-radius: 4px;
+}
+
+.section-canvas-day-plan-content-item:hover .section-canvas-day-plan-content-item-right {
+    display: flex;
+}
+
+.section-canvas-day-plan-content-item-left {
+    width: calc(100% - 22px - 5px - 24px - 24px - 1px);
+}
+
+.day-plan-list-item-start {
+
+}
+
+.day-plan-list-item-traffic {
+
+}
+
+.day-plan-list-item-hotel {
+
+}
+
+.day-plan-list-item-food {
+
+}
+
+.day-plan-list-item-attraction {
+
+}
+
+.day-plan-list-item-text {
+
+}
+
+.day-plan-list-item-image {
+
+}
+
+.day-plan-list-item-list {
+
+}
+
+.section-canvas-day-plan-content-item-right {
+    display: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.section-canvas-day-plan-content-item-right-add {
+    width: 18px;
+    height: 18px;
+    padding: 2px;
+    background-origin: content-box;
+    background-image: url(../../assets/plan_list_item_add.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.section-canvas-day-plan-content-item-right-more {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    background-origin: content-box;
+    background-image: url(../../assets/plan_list_item_more.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+}
+
+.section-canvas-day-plan-content-item-right-move {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    background-origin: content-box;
+    background-image: url(../../assets/plan_list_item_move.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+}
+
+.section-canvas-day-plan-content-new {
+
+}
+
+.section-canvas-day-plan-content-new-start {
+
+}
+
+.section-canvas-day-plan-content-new-traffic {
+
+}
+
+.section-canvas-day-plan-content-new-hotel {
+
+}
+
+.section-canvas-day-plan-content-new-food {
+
+}
+
+.section-canvas-day-plan-content-new-attraction {
+
+}
+
+.section-canvas-day-plan-content-new-text {
+
+}
+
+.section-canvas-day-plan-content-new-image {
+
+}
+
+.section-canvas-day-plan-content-new-list {
+
+}
+
+.section-canvas-day-plan-new {
 
 }
 
 
 
-.section-tools {
-    position: fixed;
-    left: 30px;
-    width: 50px;
-    border-radius: 25px;
-    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
-    top: 100px;
-    background-color: lightskyblue;
-    height: calc(100% - 100px - 75px);
-}
-
-.section-tools-enter-active, .section-tools-leave-active {
-    transition: left 0.5s linear;
-}
-.section-tools-enter, .section-tools-leave-to {
-    left: -60px;
-}
 
 
 

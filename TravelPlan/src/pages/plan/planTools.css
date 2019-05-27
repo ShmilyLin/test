@@ -1,0 +1,13 @@
+/* 工具栏 */
+.tools {
+    height: 100px;
+    width: 100%;
+    border-bottom: 1px solid lightgray;
+}
+
+.tools-enter-active, .tools-leave-active {
+    transition: height 0.5s linear;
+}
+.tools-enter, .tools-leave-to {
+    height: 0;
+}

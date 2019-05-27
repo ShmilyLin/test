@@ -5,18 +5,27 @@
     <title>临时的旅游计划</title>
     <link rel="stylesheet" href="../../libs/init.css">
     <link rel="stylesheet" href="../../components/SwitchButton/SwitchButton.css">
+    <link rel="stylesheet" href="./planHeader.css">
+    <link rel="stylesheet" href="./planTools.css">
     <link rel="stylesheet" href="./plan.css">
+    <link rel="stylesheet" href="./planSectionTools.css">
     <script src="../../libs/dragscroll2.js"></script>
     <script src="../../libs/vue.js"></script>
   </head>
   <body>
     <div id="app" @click="appClickEvent">
-        <div class="header" :style="{ borderBottom: mode===1 ? '1px solid lightgray' : '' }">
-            <div class="header-trafficlight">
+        <div class="header" :style="headerStyle">
+            <div class="header-trafficlight" :style="{ width: platform === 'win' ? '102px' : '80px'}">
                 <template v-if="platform === 'win'">
-                        <div class=""></div>
-                        <div class=""></div>
-                        <div class=""></div>
+                    <div class="header-trafficlight-close" @click="headerTrafficlightCloseButtonClickEvent">
+                        <div class="header-trafficlight-close-box"></div>
+                    </div>
+                    <div class="header-trafficlight-minimize" @click="headerTrafficlightMinimizeButtonClickEvent">
+                        <div class="header-trafficlight-minimize-box"></div>
+                    </div>
+                    <div class="header-trafficlight-maximize" @click="headerTrafficlightMaximizeButtonClickEvent">
+                        <div :class="isMaximize ? 'header-trafficlight-unmaximize-box' : 'header-trafficlight-maximize-box'"></div>
+                    </div>
                 </template>
             </div>
             <div class="header-autosave">
@@ -27,6 +36,7 @@
                 <div class="header-actions-save" title="保存"></div>
                 <div class="header-actions-mode" title="切换工具栏模式" @click="headerActionItemChangeModeButtonClickEvent"></div>
             </div>
+            <div class="header-space" v-if="platform === 'win'"></div>
         </div>
         <transition name="tools">
             <div class="tools" v-if="mode===0">
@@ -63,12 +73,116 @@
                                 @blur="dayItemSubtitleBlurEvent($event, dayIndex)"></div>
                         </div>
                         
-                        <div class="section-canvas-day-header-desc" v-for="dayDescItem in dayItem.descList" :key="'desc_' + dayDescItem.timestamp">
-                            <div class="">
-                                <textarea name="" id="" v-model="dayDescItem.content" placeholder="请输入简介"></textarea>
-                            </div>
-                            <div class=""></div>
+                        <div class="section-canvas-day-header-desc" 
+                            v-for="(dayDescItem, dayDescIndex) in dayItem.descList" 
+                            :key="'dayItem.timestamp' + '_desc_' + dayDescItem.timestamp">
+                            <div class="section-canvas-day-header-desc-placeholder" v-if="!dayDescItem.inputDesc && (!dayDescItem.content || dayDescItem.content.length <= 0)">请输入说明</div>
+                            <div class="section-canvas-day-header-desc-text" 
+                                contenteditable="plaintext-only" 
+                                :class="{ 'section-canvas-day-header-desc-text-focus': dayDescItem.inputDesc }" 
+                                :ref="'day-item-desc-input-' + dayDescIndex"
+                                @mousedown.stop 
+                                @focus="dayItemDescItemFocusEvent(dayIndex, dayDescIndex)" 
+                                @blur="dayItemDescItemBlurEvent($event, dayIndex, dayDescIndex)"
+                                @keydown.enter.prevent="dayItemDescItemBlurEvent($event, dayIndex, dayDescIndex)"></div>
                         </div>
+                        <div class="section-canvas-day-header-desc">
+                            <div class="section-canvas-day-header-desc-placeholder" v-if="!dayItem.inputDesc && (!dayItem.descContent || dayItem.descContent.length <= 0)">请输入说明</div>
+                            <div class="section-canvas-day-header-desc-text" 
+                                contenteditable="plaintext-only" 
+                                :class="{ 'section-canvas-day-header-desc-text-focus': dayItem.inputDesc }" 
+                                ref="day-item-desc-input"
+                                @mousedown.stop 
+                                @focus="dayItemDescContentFocusEvent(dayIndex)" 
+                                @blur="dayItemDescContentBlurEvent($event, dayIndex)" 
+                                @keydown.enter.prevent="dayItemDescContentEnterEvent($event, dayIndex)"></div>
+                        </div>
+                    </div>
+                    <div class="section-canvas-day-plan" 
+                        v-for="(planItem, planIndex) in dayItem.plans" 
+                        :key="dayItem.timestamp + '_' + planItem.timestamp" 
+                        :class="{ 'section-canvas-day-plan-some': dayItem.plans.length > 1 }">
+                        <div class="section-canvas-day-plan-name" 
+                            :class="{ 'section-canvas-day-plan-name-input': planItem.inputName }" 
+                            v-if="dayItem.plans.length > 1">
+                            <input type="text" 
+                                placeholder="输入计划名称" 
+                                v-model="planItem.name" 
+                                @focus="planItem.inputName=true" 
+                                @blur="planItem.inputName=false">
+                        </div>
+                        <div class="section-canvas-day-plan-content">
+                            <div class="section-canvas-day-plan-content-item" v-for="planListItem in planItem.list" :key="dayItem.timestamp + '_' + planItem.timestamp + '_' + planListItem.timestamp">
+                                <div class="section-canvas-day-plan-content-item-left">
+                                    <!-- 起点 -->
+                                    <template v-if="planListItem.type === 0">
+                                        <div class="day-plan-list-item-start">
+                                            
+                                        </div>
+                                    </template>
+                                    <!-- 交通 -->
+                                    <template v-if="planListItem.type === 1">
+                                        <div class="day-plan-list-item-traffic">
+                                            
+                                        </div>
+                                    </template>
+                                    <!-- 住宿 -->
+                                    <template v-if="planListItem.type === 2">
+                                        <div class="day-plan-list-item-hotel">
+                                            
+                                        </div>
+                                    </template>
+                                    <!-- 餐饮 -->
+                                    <template v-if="planListItem.type === 3">
+                                        <div class="day-plan-list-item-food">
+                                            
+                                        </div>
+                                    </template>
+                                    <!-- 景点 -->
+                                    <template v-if="planListItem.type === 4">
+                                        <div class="day-plan-list-item-attraction">
+                                            
+                                        </div>
+                                    </template>
+                                    <!-- 说明 -->
+                                    <template v-if="planListItem.type === 5">
+                                        <div class="day-plan-list-item-text">
+                                            
+                                        </div>
+                                    </template>
+                                    <!-- 图片 -->
+                                    <template v-if="planListItem.type === 6">
+                                        <div class="day-plan-list-item-image">
+                                            
+                                        </div>
+                                    </template>
+                                    <!-- 清单 -->
+                                    <template v-if="planListItem.type === 7">
+                                        <div class="day-plan-list-item-list">
+                                            
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="section-canvas-day-plan-content-item-right">
+                                    <div class="section-canvas-day-plan-content-item-right-add"></div>
+                                    <div class="section-canvas-day-plan-content-item-right-more"></div>
+                                    <div class="section-canvas-day-plan-content-item-right-move"></div>
+                                </div>
+                            </div>
+                            <div class="section-canvas-day-plan-content-new">
+                                <div class="section-canvas-day-plan-content-new-start"></div>
+                                <div class="section-canvas-day-plan-content-new-traffic"></div>
+                                <div class="section-canvas-day-plan-content-new-hotel"></div>
+                                <div class="section-canvas-day-plan-content-new-food"></div>
+                                <div class="section-canvas-day-plan-content-new-attraction"></div>
+                                <div class="section-canvas-day-plan-content-new-text"></div>
+                                <div class="section-canvas-day-plan-content-new-image"></div>
+                                <div class="section-canvas-day-plan-content-new-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-canvas-day-plan-new">
+
                     </div>
                 </div>
                 <div class="section-canvas-day">

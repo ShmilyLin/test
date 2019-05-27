@@ -8,6 +8,7 @@ var vm = new Vue({
     data() {
         return {
             platform: "", // 平台
+            isMaximize: false, // 是否最大化
             mode: 0, // 编辑模式，0为工具栏置顶，1为工具栏悬浮
 
             autoSave: false, // 是否自动保存
@@ -15,11 +16,36 @@ var vm = new Vue({
             dayList: [],
         }
     },
+    computed: {
+        headerStyle: function () {
+            var tempStyle = "";
+            if (this.mode === 1) {
+                tempStyle += "border-bottom: 1px solid lightgray;";
+            }
+
+            if (this.platform === 'mac') {
+                tempStyle += "-webkit-app-region: drag;";
+            }
+
+            return tempStyle;
+        }
+    },
     created: function() {
         console.log("【Plan】 created", process);
         if (process.platform === "darwin") {
             this.platform = "mac";
+        }else if (process.platform.indexOf('win') >= 0) {
+            this.platform = "win";
         }
+
+        var currentWindow = remote.getCurrentWindow();
+        currentWindow.on("maximize", () => {
+            this.isMaximize = true;
+        })
+
+        currentWindow.on("unmaximize", () => {
+            this.isMaximize = false;
+        })
 
         if (remote.getGlobal('needOpenFile')) {
 
@@ -27,12 +53,37 @@ var vm = new Vue({
             this.dayList.push({
                 title: "第一天",
                 subtitle: "",
+                descContent: "",
+                descList: [],
 
                 timestamp: (new Date()).getTime(),
                 
                 isSelected: false,
                 inputTitle: false,
                 inputSubtitle: false,
+                inputDesc: false,
+
+                plans: [{
+                    name: "计划1",
+                    timestamp: (new Date()).getTime(),
+                    inputName: false,
+                    list: [{
+                        /**
+                         * 计划类型
+                         * 
+                         * 0 - 起点（包括起点名称，当天历经地点）
+                         * 1 - 交通（交通方式、班次（可选交通卡）、花费、历时、起始时间、到达时间、备选）
+                         * 2 - 住宿（住宿类型、住宿（酒店卡）、备选（酒店卡））
+                         * 3 - 餐饮（餐饮类型、餐厅（餐厅卡）、备选）
+                         * 4 - 景点（景点（景点卡）、花费、历时、开始时间、结束时间）
+                         * 5 - 说明
+                         * 6 - 图片
+                         * 7 - 清单
+                         */
+                        type: 0, //
+                        timestamp: (new Date()).getTime(),
+                    }]
+                }]
             });
         }
     },
@@ -53,6 +104,33 @@ var vm = new Vue({
                 }
             }
         },
+
+        // Windows专属，红路灯操作事件
+        headerTrafficlightCloseButtonClickEvent: function () {
+            var currentWindow = remote.getCurrentWindow();
+            if (currentWindow.isClosable()) {
+                currentWindow.close();
+            }
+        },
+
+        headerTrafficlightMinimizeButtonClickEvent: function () {
+            var currentWindow = remote.getCurrentWindow();
+            if (currentWindow.isMinimizable()) {
+                currentWindow.minimize();
+            }
+        },
+
+        headerTrafficlightMaximizeButtonClickEvent: function () {
+            var currentWindow = remote.getCurrentWindow();
+            if (currentWindow.isMaximized()) {
+                currentWindow.unmaximize();
+            }else {
+                if (currentWindow.isMaximizable()) {
+                    currentWindow.maximize();
+                }
+            }
+        },
+
         /*
          * 点击自动保存按钮
          */
@@ -111,6 +189,9 @@ var vm = new Vue({
             this.$set(this.dayList, dayIndex, tempDayItem);
         },
 
+        /**
+         * 副标题的聚焦事件
+         */
         dayItemSubtitleFocusEvent: function (dayIndex) {
             var tempDayItem = this.dayList[dayIndex];
             tempDayItem.inputSubtitle = true;
@@ -139,6 +220,107 @@ var vm = new Vue({
             tempDayItem.subtitle = event.target.innerText;
             this.$set(this.dayList, dayIndex, tempDayItem);
             
-        }
+        },
+
+        /**
+         * 说明的聚焦事件
+         */
+        dayItemDescItemFocusEvent: function (dayIndex, dayDescIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            tempDayItem.descList[dayDescIndex].inputDesc = true;
+            this.$set(this.dayList, dayIndex, tempDayItem);
+        },
+
+        /**
+         * 说明的失焦事件
+         */
+        dayItemDescItemBlurEvent: function ($event, dayIndex, dayDescIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            var tempContent = event.target.innerText;
+            if (!tempContent || tempContent.length <= 0) {
+                tempDayItem.descList.splice(dayDescIndex, 1);
+                this.$set(this.dayList, dayIndex, tempDayItem);
+            }else {
+                tempDayItem.descList[dayDescIndex].content = tempContent;
+                tempDayItem.descList[dayDescIndex].inputDesc = false;
+                this.$set(this.dayList, dayIndex, tempDayItem);
+
+                event.target.blur();
+            }
+        },
+
+        /**
+         * 新建说明的聚焦事件
+         */
+        dayItemDescContentFocusEvent: function (dayIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            tempDayItem.inputDesc = true;
+            this.$set(this.dayList, dayIndex, tempDayItem);
+        },
+
+        /**
+         * 新建说明的失焦事件
+         */
+        dayItemDescContentBlurEvent: function ($event, dayIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            tempDayItem.inputDesc = false;
+            this.$set(this.dayList, dayIndex, tempDayItem);
+            var tempContent = event.target.innerText;
+            if (tempContent && tempContent.length > 0) {
+                var tempIndex = tempDayItem.descList.length;
+                tempDayItem.descList.push({
+                    content: tempContent,
+                    inputDesc: false,
+                    timestamp: (new Date()).getTime(),
+                })
+
+                this.$set(this.dayList, dayIndex, tempDayItem);
+
+                event.target.innerText = "";
+
+                setTimeout(() => {
+                    this.$refs['day-item-desc-input-' + tempIndex][0].innerText = tempContent;
+                });
+            }
+        },
+
+        dayItemDescContentEnterEvent: function ($event, dayIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            var tempContent = event.target.innerText;
+            if (tempContent && tempContent.length > 0) {
+                var tempIndex = tempDayItem.descList.length;
+                tempDayItem.descList.push({
+                    content: tempContent,
+                    inputDesc: false,
+                    timestamp: (new Date()).getTime(),
+                })
+
+                this.$set(this.dayList, dayIndex, tempDayItem);
+
+                event.target.innerText = "";
+
+                setTimeout(() => {
+                    this.$refs['day-item-desc-input-' + tempIndex][0].innerText = tempContent;
+                });
+            }
+        },
+
+        /**
+         * 计划的名称的聚焦事件
+         */
+        planItemNameFocusEvent: function (dayIndex, planIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            tempDayItem.plans[planIndex].inputName = true;
+            this.$set(this.dayList, dayIndex, tempDayItem);
+        },
+
+        /**
+         * 计划的名称的失焦事件
+         */
+        planItemNameBlurEvent: function ($event, dayIndex, planIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            tempDayItem.plans[planIndex].inputName = false;
+            this.$set(this.dayList, dayIndex, tempDayItem);
+        },
     },
 })

@@ -1,0 +1,143 @@
+/* 顶部 */
+.header {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    transition: all 0.5 linear;
+}
+
+
+/* Windows */
+.header-trafficlight {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.header-trafficlight-close {
+    width: 14px;
+    height: 14px;
+    padding: 5px 10px;
+}
+
+.header-trafficlight-close:hover {
+    background-color: #FC615D;
+}
+
+.header-trafficlight-close-box {
+    width: 14px;
+    height: 14px;
+    background-image: url(../../assets/win_close.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.header-trafficlight-minimize {
+    width: 16px;
+    height: 18px;
+    padding: 3px 9px;
+}
+
+.header-trafficlight-minimize:hover {
+    background-color: #FDBC40;
+}
+
+.header-trafficlight-minimize-box {
+    width: 16px;
+    height: 18px;
+    background-image: url(../../assets/win_minimize.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+
+.header-trafficlight-maximize {
+    width: 18px;
+    height: 18px;
+    padding: 3px 8px;
+}
+
+.header-trafficlight-maximize:hover {
+    background-color: #34C749;
+}
+
+.header-trafficlight-maximize-box {
+    width: 18px;
+    height: 18px;
+    background-image: url(../../assets/win_maximize.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.header-trafficlight-unmaximize-box {
+    width: 18px;
+    height: 18px;
+    background-image: url(../../assets/win_unmaximize.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+
+.header-autosave {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+    margin-left: 20px;
+}
+
+.header-autosave-text {
+    margin-left: 5px;
+    font-size: 12px;
+    line-height: 1;
+    color: #666666;
+}
+
+.header-actions {
+    margin-left: 10px;
+    border-left: 1px solid lightgray;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 24px;
+}
+
+.header-actions-save {
+    width: 24px;
+    height: 24px;
+    background-image: url(../../assets/plan_save.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+}
+
+.header-actions-save:hover {
+    background-image: url(../../assets/plan_save_hover.png);
+}
+
+.header-actions-mode {
+    width: 18px;
+    height: 18px;
+    padding: 3px;
+    background-image: url(../../assets/plan_mode.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+    margin-left: 10px;
+    background-origin: content-box;
+}
+
+.header-actions-mode:hover {
+    background-image: url(../../assets/plan_mode_hover.png);
+}
+
+
+.header-space {
+    width: calc(100% - (34px * 3) - 20px - 32px - 5px - 90px - 10px - 1px - 10px - 24px - 10px - 24px - 10px);
+    height: 100%;
+    -webkit-app-region: drag;
+}

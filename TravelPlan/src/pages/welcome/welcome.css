@@ -3,41 +3,7 @@
     height: 100%;
 }
 
-/* 头部 */
-.header {
-    width: calc(100% - 60px);
-    height: 50px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    padding: 20px 30px;
-    padding-top: 40px;
-    background-color: lightskyblue;
-    -webkit-app-region: drag;
-}
 
-.header-title {
-    font-size: 40px;
-    line-height: 1;
-}
-
-.header-info {
-    margin-left: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-}
-
-.header-info-author {
-    font-size: 18px;
-    line-height: 1;
-}
-
-.header-info-version {
-    font-size: 12px;
-    line-height: 1;
-    margin-top: 4px;
-}
 
 /* 内容 */
 .section {
@@ -92,6 +58,7 @@
     font-size: 16px;
     line-height: 1;
     cursor: pointer;
+    color: #FF6F61;
 }
 
 .section-right {
@@ -116,13 +83,13 @@
     font-size: 14px;
     line-height: 30px;
     border-radius: 4px;
-    background-color: lightskyblue;
+    background-color: #FF6F61;
     cursor: pointer;
+    color: white;
 }
 
 .footer-left:hover {
-    background-color: cornflowerblue;
-    color: white;
+    background-color: #E94B3C;
 }
 
 .footer-right {
@@ -132,12 +99,12 @@
     font-size: 14px;
     line-height: 28px;
     border-radius: 4px;
-    border: 1px solid lightskyblue;
+    border: 1px solid #FF6F61;
     cursor: pointer;
 }
 
 .footer-right:hover {
-    background-color: cornflowerblue;
-    border: 1px solid cornflowerblue;
+    background-color: #E94B3C;
+    border: 1px solid #E94B3C;
     color: white;
 }

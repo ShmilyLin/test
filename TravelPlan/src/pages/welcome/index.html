@@ -4,16 +4,31 @@
     <meta charset="UTF-8">
     <title>欢迎使用“旅游计划”</title>
     <link rel="stylesheet" href="../../libs/init.css">
+    <link rel="stylesheet" href="./welcomeHeader.css">
     <link rel="stylesheet" href="./welcome.css">
     <script src="../../libs/vue.js"></script>
   </head>
   <body>
     <div id="app">
-      <div class="header">
+      <div class="header" :style="platform==='win' ? '' : '-webkit-app-region: drag;'">
         <div class="header-title">旅行计划</div>
         <div class="header-info">
           <div class="header-info-author">By Lin</div>
           <div class="header-info-version">v 1.0.0</div>
+        </div>
+        <div class="header-top" v-if="platform==='win'">
+          <div class="header-trafficlight">
+            <div class="header-trafficlight-close" @click="headerTrafficlightCloseButtonClickEvent">
+              <div class="header-trafficlight-close-box"></div>
+            </div>
+            <div class="header-trafficlight-minimize" @click="headerTrafficlightMinimizeButtonClickEvent">
+              <div class="header-trafficlight-minimize-box"></div>
+            </div>
+            <div class="header-trafficlight-maximize" @click="headerTrafficlightMaximizeButtonClickEvent">
+              <div :class="isMaximize ? 'header-trafficlight-unmaximize-box' : 'header-trafficlight-maximize-box'"></div>
+            </div>
+          </div>
+          <div class="header-top-space"></div>
         </div>
       </div>
       <div class="section">
