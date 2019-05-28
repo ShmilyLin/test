@@ -11,10 +11,35 @@ var vm = new Vue({
             platform: "", // 平台
             isMaximize: false, // 是否最大化
             mode: 0, // 编辑模式，0为工具栏置顶，1为工具栏悬浮
+            isShowRight: false, // 是否显示右边栏
+            isAutoShowRight: false, // 是否是自动显示隐藏右边栏
+            rightInfo: null, // 右边栏样式
 
             autoSave: false, // 是否自动保存
 
+            planInfo: {
+                name: "",
+                inputName: false,
+                desc: "",
+                inputDesc: false,
+                numberOfPeople: 1, // 参与人数
+                participants: [], // 参与人员
+                participantsShowList: {}, // 显示的参与人员（成年人、儿童、老人、特殊照顾）
+                expectedParticipants: [], // 预计参与人员
+                expectedParticipantsShowList: {}, // 显示的预计参与人员（成年人、儿童、老人、特殊照顾）
+                startDate: 0, // 出发日期
+                startDateShow: "", // 
+                numberOfDays: 1, // 历时天数
+                endDate: 0, // 结束日期
+                endDateShow: "" // 
+                
+            },
             dayList: [],
+            currentSelected: {
+                dayIndex: -1,
+                planIndex: -1,
+                planListItemIndex: -1,
+            }
         }
     },
     computed: {
@@ -304,7 +329,10 @@ var vm = new Vue({
             var tempPlanItem = tempDayItem.plans[planIndex];
             for (var i = 0; i < tempPlanItem.list.length; i++) {
                 if (tempPlanItem.list[i].type === 0) {
-                    tempContentList.push(tempPlanItem.list[i].pointName);
+                    tempContentList.push({
+                        content: tempPlanItem.list[i].pointName,
+                        id: tempPlanItem.list[i].timestamp
+                    });
                 }
             }
 
@@ -317,7 +345,123 @@ var vm = new Vue({
         createAPlanListItem: function (dayIndex, planIndex, type) {
             var tempDayItem = this.dayList[dayIndex];
             var tempPlanItem = tempDayItem.plans[planIndex];
-            tempPlanItem.createAListItem(type);
+            var tempPlanListIndex = tempPlanItem.list.length;
+            var tempPlanListItem = tempPlanItem.createAListItem(type);
+            tempPlanListItem.isEditor = true;
+            this.$set(this.dayList, dayIndex, tempDayItem);
+
+            this.currentSelected.dayIndex = dayIndex;
+            this.currentSelected.planIndex = planIndex;
+            this.currentSelected.planListItemIndex = tempPlanListIndex;
+
+            switch (type) {
+                case 0:
+                    break;
+                case 1:
+                    this.rightInfo = {
+                        type: 1,
+
+                    }
+                    break;
+            }
+        },
+
+        /**
+         * 天 > 计划 > 项-文字 > 输入框聚焦事件
+         */
+        dayPlanListItemTextFocusEvent: function (dayIndex, planIndex, planListIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            var tempPlanListItem = tempPlanItem.list[planListIndex];
+            tempPlanListItem.inputContent = true;
+            this.$set(this.dayList, dayIndex, tempDayItem);
+        },
+        
+        /**
+         * 天 > 计划 > 项-文字 > 输入框失焦事件
+         */
+        dayPlanListItemTextBlurEvent: function (event, dayIndex, planIndex, planListIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            var tempPlanListItem = tempPlanItem.list[planListIndex];
+            tempPlanListItem.inputContent = false;
+            tempPlanListItem.content = event.target.innerText;
+            this.$set(this.dayList, dayIndex, tempDayItem);
+        },
+
+        /**
+         * 右边栏 > 顶部 > 固定按钮点击事件
+         */
+        sectionRightHeaderActionAutoShowButtonClick: function () {
+            this.isAutoShowRight = !this.isAutoShowRight;
+        },
+
+        /**
+         * 旅行计划名字的聚焦事件
+         */
+        planInfoNameFocusEvent: function () {
+            this.planInfo.inputName = true;
+        },
+
+        /**
+         * 旅行计划名字的失焦事件
+         */
+        planInfoNameBlurEvent: function (event) {
+            this.planInfo.inputName = false;
+            this.planInfo.name = event.target.innerText;
+        },
+
+        /**
+         * 旅行计划名字的换行事件
+         */
+        planInfoNameEnterEvent: function (event) {
+            this.planInfo.inputName = false;
+            this.planInfo.name = event.target.innerText;
+            event.target.blur();
+        },
+
+        /**
+         * 旅行计划简介的聚焦事件
+         */
+        planInfoDescFocusEvent: function () {
+            this.planInfo.inputDesc= true;
+        },
+        
+        planInfoDescBlurEvent: function (event) {
+            this.planInfo.inputDesc = false;
+            this.planInfo.desc = event.target.innerText;
+        },
+
+        /**
+         * 取消选中状态
+         */
+        cancelSelectedItem: function (tempNewDayIndex, tempNewPlanIndex, tempNewPlanListItemIndex) {
+            var tempDayIndex = this.currentSelected.dayIndex;
+            var tempPlanIndex = this.currentSelected.planIndex;
+            var tempPlanListItemIndex = this.currentSelected.planListItemIndex;
+
+            if (tempDayIndex >= 0 && this.dayList[tempDayIndex]) {
+                var tempDayItem = this.dayList[tempDayIndex];
+                if (tempNewDayIndex != tempDayIndex) {
+                    tempDayItem.isSelected = false;
+                }
+                
+                if (tempPlanIndex >= 0 && tempDayItem.plans[tempPlanIndex]) {
+                    var tempPlanItem = tempDayItem.plans[tempPlanIndex];
+                    if (tempNewPlanIndex != tempPlanIndex || tempNewDayIndex != tempDayIndex) {
+                        tempPlanItem.isSelected = false;
+                    }
+                    
+                    if (tempPlanListItemIndex >= 0 && tempPlanItem.list[tempPlanListItemIndex]) {
+                        if (tempNewPlanListItemIndex != tempPlanListItemIndex || tempNewPlanIndex != tempPlanIndex || tempNewDayIndex != tempDayIndex) {
+                            var tempPlanListItem = tempPlanItem.list[tempPlanListItemIndex];
+                            tempPlanListItem.isEditor = false;
+                        }
+                    }
+                }
+
+                this.$set(this.dayList, tempDayIndex, tempDayItem);
+            }
         }
     },
 })

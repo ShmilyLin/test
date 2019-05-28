@@ -1,6 +1,7 @@
 function PlanListItemModel(type, params) {
     this.type = type;
     this.timestamp = (new Date()).getTime();
+    this.isEditor = false; // 是否正在编辑
     
     switch (type) {
         case 0: // 起点（包括起点名称，当天历经地点）
@@ -20,7 +21,8 @@ function PlanListItemModel(type, params) {
             
             break;
         case 5: // 说明
-            
+            this.inputContent = false;
+            this.content = "";
             break;
         case 6: // 图片
         

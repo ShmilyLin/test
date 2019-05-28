@@ -1,233 +1,350 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>临时的旅游计划</title>
-    <link rel="stylesheet" href="../../libs/init.css">
-    <link rel="stylesheet" href="../../components/SwitchButton/SwitchButton.css">
-    <link rel="stylesheet" href="./planHeader.css">
-    <link rel="stylesheet" href="./planTools.css">
-    <link rel="stylesheet" href="./plan.css">
-    <link rel="stylesheet" href="./planSectionTools.css">
-    <script src="../../libs/dragscroll2.js"></script>
-    <script src="../../libs/vue.js"></script>
-  </head>
-  <body>
-    <div id="app" @click="appClickEvent">
-        <div class="header" :style="headerStyle">
-            <div class="header-trafficlight" :style="{ width: platform === 'win' ? '102px' : '80px'}">
-                <template v-if="platform === 'win'">
-                    <div class="header-trafficlight-close" @click="headerTrafficlightCloseButtonClickEvent">
-                        <div class="header-trafficlight-close-box"></div>
-                    </div>
-                    <div class="header-trafficlight-minimize" @click="headerTrafficlightMinimizeButtonClickEvent">
-                        <div class="header-trafficlight-minimize-box"></div>
-                    </div>
-                    <div class="header-trafficlight-maximize" @click="headerTrafficlightMaximizeButtonClickEvent">
-                        <div :class="isMaximize ? 'header-trafficlight-unmaximize-box' : 'header-trafficlight-maximize-box'"></div>
-                    </div>
-                </template>
-            </div>
-            <div class="header-autosave">
-                <switch-button class="header-autosave-switch" :is-switch="autoSave" @click.native="autoSaveSwitchButtonClickEvent"></switch-button>
-                <div class="header-autosave-text">{{autoSave ? '已打开自动保存' : '已关闭自动保存'}}</div>
-            </div>
-            <div class="header-actions">
-                <div class="header-actions-save" title="保存"></div>
-                <div class="header-actions-mode" title="切换工具栏模式" @click="headerActionItemChangeModeButtonClickEvent"></div>
-            </div>
-            <div class="header-space" v-if="platform === 'win'"></div>
-        </div>
-        <transition name="tools">
-            <div class="tools" v-if="mode===0">
-        
-            </div>
-        </transition>
-        <div class="dragscroll section" :style="{ height: mode===1 ? 'calc(100% - 40px - 1px - 1px - 30px)' : 'calc(100% - 40px - 100px - 1px - 1px - 30px)' }">
-            <div class="section-canvas" :style="{ paddingLeft: mode===1 ? 'calc(30px + 50px)' : ''}">
-                <div class="section-canvas-day" 
-                    v-for="(dayItem, dayIndex) in dayList" 
-                    :key="dayItem.timestamp" 
-                    :class="{ 'section-canvas-day-selected': dayItem.isSelected }" 
-                    @click.stop="dayItemSelectedEvent(dayIndex)" 
-                    @focus="dayItemSelectedEvent(dayIndex)">
-                    <div class="section-canvas-day-header">
-                        <div class="section-canvas-day-header-title">
-                            <div class="section-canvas-day-header-title-placeholder" v-if="!dayItem.inputTitle && (!dayItem.title || dayItem.title.length <= 0)">请输入主题</div>
-                            <div class="section-canvas-day-header-title-text" 
-                                contenteditable="plaintext-only" 
-                                :class="{ 'section-canvas-day-header-title-text-focus': dayItem.inputTitle }" 
-                                :ref="'day-item-title-input-' + dayIndex"
-                                @mousedown.stop 
-                                @focus="dayItemTitleFocusEvent(dayIndex)" 
-                                @blur="dayItemTitleBlurEvent($event, dayIndex)"></div>
+    <head>
+        <meta charset="UTF-8">
+        <title>临时的旅游计划</title>
+        <link rel="stylesheet" href="../../libs/init.css">
+        <link rel="stylesheet" href="../../components/SwitchButton/SwitchButton.css">
+        <link rel="stylesheet" href="./planHeader.css">
+        <link rel="stylesheet" href="./planTools.css">
+        <link rel="stylesheet" href="./plan.css">
+        <link rel="stylesheet" href="./planSectionRight.css">
+        <link rel="stylesheet" href="./planSectionTools.css">
+        <script src="../../libs/dragscroll2.js"></script>
+        <script src="../../libs/vue.js"></script>
+    </head>
+    <body>
+        <div id="app" @click="appClickEvent">
+            <div class="header" :style="headerStyle">
+                <div class="header-trafficlight" :style="{ width: platform === 'win' ? '102px' : '80px'}">
+                    <template v-if="platform === 'win'">
+                        <div class="header-trafficlight-close" @click="headerTrafficlightCloseButtonClickEvent">
+                            <div class="header-trafficlight-close-box"></div>
                         </div>
-                        <div class="section-canvas-day-header-subtitle">
-                            <div class="section-canvas-day-header-subtitle-placeholder" v-if="!dayItem.inputSubtitle && (!dayItem.subtitle || dayItem.subtitle.length <= 0)">请输入副主题</div>
-                            <div class="section-canvas-day-header-subtitle-text" 
-                                contenteditable="plaintext-only" 
-                                :class="{ 'section-canvas-day-header-subtitle-text-focus': dayItem.inputSubtitle }" 
-                                :ref="'day-item-subtitle-input-' + dayIndex"
-                                @mousedown.stop 
-                                @focus="dayItemSubtitleFocusEvent(dayIndex)" 
-                                @blur="dayItemSubtitleBlurEvent($event, dayIndex)"></div>
+                        <div class="header-trafficlight-minimize" @click="headerTrafficlightMinimizeButtonClickEvent">
+                            <div class="header-trafficlight-minimize-box"></div>
                         </div>
-                        
-                        <div class="section-canvas-day-header-desc" 
-                            v-for="(dayDescItem, dayDescIndex) in dayItem.descList" 
-                            :key="'dayItem.timestamp' + '_desc_' + dayDescItem.timestamp">
-                            <div class="section-canvas-day-header-desc-placeholder" v-if="!dayDescItem.inputDesc && (!dayDescItem.content || dayDescItem.content.length <= 0)">请输入说明</div>
-                            <div class="section-canvas-day-header-desc-text" 
-                                contenteditable="plaintext-only" 
-                                :class="{ 'section-canvas-day-header-desc-text-focus': dayDescItem.inputDesc }" 
-                                :ref="'day-item-desc-input-' + dayDescIndex"
-                                @mousedown.stop 
-                                @focus="dayItemDescItemFocusEvent(dayIndex, dayDescIndex)" 
-                                @blur="dayItemDescItemBlurEvent($event, dayIndex, dayDescIndex)"
-                                @keydown.enter.prevent="dayItemDescItemBlurEvent($event, dayIndex, dayDescIndex)"></div>
+                        <div class="header-trafficlight-maximize" @click="headerTrafficlightMaximizeButtonClickEvent">
+                            <div :class="isMaximize ? 'header-trafficlight-unmaximize-box' : 'header-trafficlight-maximize-box'"></div>
                         </div>
-                        <div class="section-canvas-day-header-desc">
-                            <div class="section-canvas-day-header-desc-placeholder" v-if="!dayItem.inputDesc && (!dayItem.descContent || dayItem.descContent.length <= 0)">请输入说明</div>
-                            <div class="section-canvas-day-header-desc-text" 
-                                contenteditable="plaintext-only" 
-                                :class="{ 'section-canvas-day-header-desc-text-focus': dayItem.inputDesc }" 
-                                ref="day-item-desc-input"
-                                @mousedown.stop 
-                                @focus="dayItemDescContentFocusEvent(dayIndex)" 
-                                @blur="dayItemDescContentBlurEvent($event, dayIndex)" 
-                                @keydown.enter.prevent="dayItemDescContentEnterEvent($event, dayIndex)"></div>
-                        </div>
-                    </div>
-                    <div class="section-canvas-day-plan" 
-                        v-for="(planItem, planIndex) in dayItem.plans" 
-                        :key="dayItem.timestamp + '_' + planItem.timestamp" 
-                        :class="{ 'section-canvas-day-plan-some': dayItem.plans.length > 1 }">
-                        <div class="section-canvas-day-plan-name" 
-                            :class="{ 'section-canvas-day-plan-name-input': planItem.inputName }" 
-                            v-if="dayItem.plans.length > 1">
-                            <input type="text" 
-                                placeholder="输入计划名称" 
-                                v-model="planItem.name" 
-                                @focus="planItem.inputName=true" 
-                                @blur="planItem.inputName=false">
-                        </div>
-                        <div class="section-canvas-day-plan-content">
-                            <div class="section-canvas-day-plan-content-item" 
-                                v-for="planListItem in planItem.list" 
-                                :key="dayItem.timestamp + '_' + planItem.timestamp + '_' + planListItem.timestamp">
-                                <div class="section-canvas-day-plan-content-item-left">
-                                    <!-- 起点 -->
-                                    <template v-if="planListItem.type === 0">
-                                        <div class="day-plan-list-item-start">
-                                            <div class="day-plan-list-item-start-name" :class="{ 'day-plan-list-item-start-name-focus': planListItem.inputPointName }">
-                                                <input type="text" 
-                                                    v-model="planListItem.pointName" 
-                                                    placeholder="集合地点" 
-                                                    @focus="planListItem.inputPointName=true" 
-                                                    @blur="planListItem.inputPointName=false">
-                                            </div>
-                                            <div class="day-plan-list-item-start-path">
-                                                <div class="day-plan-list-item-start-path-icon"></div>
-                                                <ul class="day-plan-list-item-start-path-list">
-                                                    <li class="day-plan-list-item-start-path-list-item" 
-                                                        v-for="(pathItem, pathIndex) in getDayPlanPath(dayIndex, planIndex)" 
-                                                        :key="dayItem.timestamp + '_' + planItem.timestamp + '_' + planListItem.timestamp + '_' + pathItem">
-                                                        <div class="day-plan-list-item-start-path-list-item-front" v-if="pathIndex > 0"></div>
-                                                        <div class="day-plan-list-item-start-path-list-item-point">{{pathItem}}</div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </template>
-                                    <!-- 交通 -->
-                                    <template v-if="planListItem.type === 1">
-                                        <div class="day-plan-list-item-traffic">
-                                            
-                                        </div>
-                                    </template>
-                                    <!-- 住宿 -->
-                                    <template v-if="planListItem.type === 2">
-                                        <div class="day-plan-list-item-hotel">
-                                            
-                                        </div>
-                                    </template>
-                                    <!-- 餐饮 -->
-                                    <template v-if="planListItem.type === 3">
-                                        <div class="day-plan-list-item-food">
-                                            
-                                        </div>
-                                    </template>
-                                    <!-- 景点 -->
-                                    <template v-if="planListItem.type === 4">
-                                        <div class="day-plan-list-item-attraction">
-                                            
-                                        </div>
-                                    </template>
-                                    <!-- 说明 -->
-                                    <template v-if="planListItem.type === 5">
-                                        <div class="day-plan-list-item-text">
-                                            
-                                        </div>
-                                    </template>
-                                    <!-- 图片 -->
-                                    <template v-if="planListItem.type === 6">
-                                        <div class="day-plan-list-item-image">
-                                            
-                                        </div>
-                                    </template>
-                                    <!-- 清单 -->
-                                    <template v-if="planListItem.type === 7">
-                                        <div class="day-plan-list-item-list">
-                                            
-                                        </div>
-                                    </template>
-                                </div>
-                                <div class="section-canvas-day-plan-content-item-right">
-                                    <div class="section-canvas-day-plan-content-item-right-add"></div>
-                                    <div class="section-canvas-day-plan-content-item-right-more"></div>
-                                    <div class="section-canvas-day-plan-content-item-right-move"></div>
-                                </div>
-                            </div>
-                            <div class="section-canvas-day-plan-content-new">
-                                <div class="section-canvas-day-plan-content-new-start" @click="createAPlanListItem(dayIndex, planIndex, 0)"></div>
-                                <div class="section-canvas-day-plan-content-new-traffic" @click="createAPlanListItem(dayIndex, planIndex, 1)"></div>
-                                <div class="section-canvas-day-plan-content-new-hotel" @click="createAPlanListItem(dayIndex, planIndex, 2)"></div>
-                                <div class="section-canvas-day-plan-content-new-food" @click="createAPlanListItem(dayIndex, planIndex, 3)"></div>
-                                <div class="section-canvas-day-plan-content-new-attraction" @click="createAPlanListItem(dayIndex, planIndex, 4)"></div>
-                                <div class="section-canvas-day-plan-content-new-text" @click="createAPlanListItem(dayIndex, planIndex, 5)"></div>
-                                <div class="section-canvas-day-plan-content-new-image" @click="createAPlanListItem(dayIndex, planIndex, 6)"></div>
-                                <div class="section-canvas-day-plan-content-new-list" @click="createAPlanListItem(dayIndex, planIndex, 7)"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="section-canvas-day-plan-new">
-
-                    </div>
+                    </template>
                 </div>
-                <div class="section-canvas-day">
-                    <div class=""></div>
+                <div class="header-autosave">
+                    <switch-button class="header-autosave-switch" :is-switch="autoSave" @click.native="autoSaveSwitchButtonClickEvent"></switch-button>
+                    <div class="header-autosave-text">{{autoSave ? '已打开自动保存' : '已关闭自动保存'}}</div>
                 </div>
+                <div class="header-actions">
+                    <div class="header-actions-save" title="保存"></div>
+                    <div class="header-actions-mode" title="切换工具栏模式" @click="headerActionItemChangeModeButtonClickEvent"></div>
+                </div>
+                <div class="header-space" v-if="platform === 'win'"></div>
             </div>
-            <transition name="section-tools">
-                <div class="section-tools" v-if="mode===1">
-
+            <transition name="tools">
+                <div class="tools" v-if="mode===0">
+            
                 </div>
             </transition>
-        </div>
-        <div class="footer">
+            <div class="section" :style="{ height: mode===1 ? 'calc(100% - 40px - 1px - 1px - 30px)' : 'calc(100% - 40px - 100px - 1px - 1px - 30px)'}">
+                <div class="dragscroll section-left" :style="{ width: (isAutoShowRight ? rightInfo : true) ? 'calc(100% - 240px - 1px)' : '100%' }">
+                    <div class="section-canvas" :style="{ paddingLeft: mode===1 ? 'calc(30px + 50px)' : ''}">
+                        <div class="section-canvas-day" 
+                            v-for="(dayItem, dayIndex) in dayList" 
+                            :key="dayItem.timestamp" 
+                            :class="{ 'section-canvas-day-selected': dayItem.isSelected }" 
+                            @click.stop="dayItemSelectedEvent(dayIndex)" 
+                            @focus="dayItemSelectedEvent(dayIndex)">
+                            <div class="section-canvas-day-header">
+                                <div class="section-canvas-day-header-title">
+                                    <div class="section-canvas-day-header-title-placeholder" v-if="!dayItem.inputTitle && (!dayItem.title || dayItem.title.length <= 0)">请输入主题</div>
+                                    <div class="section-canvas-day-header-title-text" 
+                                        contenteditable="plaintext-only" 
+                                        :class="{ 'section-canvas-day-header-title-text-focus': dayItem.inputTitle }" 
+                                        :ref="'day-item-title-input-' + dayIndex"
+                                        @mousedown.stop 
+                                        @focus="dayItemTitleFocusEvent(dayIndex)" 
+                                        @blur="dayItemTitleBlurEvent($event, dayIndex)"></div>
+                                </div>
+                                <div class="section-canvas-day-header-subtitle">
+                                    <div class="section-canvas-day-header-subtitle-placeholder" v-if="!dayItem.inputSubtitle && (!dayItem.subtitle || dayItem.subtitle.length <= 0)">请输入副主题</div>
+                                    <div class="section-canvas-day-header-subtitle-text" 
+                                        contenteditable="plaintext-only" 
+                                        :class="{ 'section-canvas-day-header-subtitle-text-focus': dayItem.inputSubtitle }" 
+                                        :ref="'day-item-subtitle-input-' + dayIndex"
+                                        @mousedown.stop 
+                                        @focus="dayItemSubtitleFocusEvent(dayIndex)" 
+                                        @blur="dayItemSubtitleBlurEvent($event, dayIndex)"></div>
+                                </div>
+                                
+                                <div class="section-canvas-day-header-desc" 
+                                    v-for="(dayDescItem, dayDescIndex) in dayItem.descList" 
+                                    :key="'dayItem.timestamp' + '_desc_' + dayDescItem.timestamp">
+                                    <div class="section-canvas-day-header-desc-placeholder" v-if="!dayDescItem.inputDesc && (!dayDescItem.content || dayDescItem.content.length <= 0)">请输入说明</div>
+                                    <div class="section-canvas-day-header-desc-text" 
+                                        contenteditable="plaintext-only" 
+                                        :class="{ 'section-canvas-day-header-desc-text-focus': dayDescItem.inputDesc }" 
+                                        :ref="'day-item-desc-input-' + dayDescIndex"
+                                        @mousedown.stop 
+                                        @focus="dayItemDescItemFocusEvent(dayIndex, dayDescIndex)" 
+                                        @blur="dayItemDescItemBlurEvent($event, dayIndex, dayDescIndex)"
+                                        @keydown.enter.prevent="dayItemDescItemBlurEvent($event, dayIndex, dayDescIndex)"></div>
+                                </div>
+                                <div class="section-canvas-day-header-desc">
+                                    <div class="section-canvas-day-header-desc-placeholder" v-if="!dayItem.inputDesc && (!dayItem.descContent || dayItem.descContent.length <= 0)">请输入说明</div>
+                                    <div class="section-canvas-day-header-desc-text" 
+                                        contenteditable="plaintext-only" 
+                                        :class="{ 'section-canvas-day-header-desc-text-focus': dayItem.inputDesc }" 
+                                        ref="day-item-desc-input"
+                                        @mousedown.stop 
+                                        @focus="dayItemDescContentFocusEvent(dayIndex)" 
+                                        @blur="dayItemDescContentBlurEvent($event, dayIndex)" 
+                                        @keydown.enter.prevent="dayItemDescContentEnterEvent($event, dayIndex)"></div>
+                                </div>
+                            </div>
+                            <div class="section-canvas-day-plan" 
+                                v-for="(planItem, planIndex) in dayItem.plans" 
+                                :key="dayItem.timestamp + '_' + planItem.timestamp" 
+                                :class="{ 'section-canvas-day-plan-some': dayItem.plans.length > 1 }">
+                                <div class="section-canvas-day-plan-name" 
+                                    :class="{ 'section-canvas-day-plan-name-input': planItem.inputName }" 
+                                    v-if="dayItem.plans.length > 1">
+                                    <input type="text" 
+                                        placeholder="输入计划名称" 
+                                        v-model="planItem.name" 
+                                        @focus="planItem.inputName=true" 
+                                        @blur="planItem.inputName=false">
+                                </div>
+                                <div class="section-canvas-day-plan-content">
+                                    <div class="section-canvas-day-plan-content-item" 
+                                        v-for="(planListItem, planListIndex) in planItem.list" 
+                                        :key="dayItem.timestamp + '_' + planItem.timestamp + '_' + planListItem.timestamp" 
+                                        :class="{ 'section-canvas-day-plan-content-item-edit': planListItem.isEditor }">
+                                        <div class="section-canvas-day-plan-content-item-left">
+                                            <!-- 起点 -->
+                                            <template v-if="planListItem.type === 0">
+                                                <div class="day-plan-list-item-start">
+                                                    <div class="day-plan-list-item-start-name" :class="{ 'day-plan-list-item-start-name-focus': planListItem.inputPointName }">
+                                                        <input type="text" 
+                                                            v-model="planListItem.pointName" 
+                                                            placeholder="集合地点" 
+                                                            @focus="planListItem.inputPointName=true" 
+                                                            @blur="planListItem.inputPointName=false">
+                                                    </div>
+                                                    <div class="day-plan-list-item-start-path">
+                                                        <div class="day-plan-list-item-start-path-icon"></div>
+                                                        <ul class="day-plan-list-item-start-path-list">
+                                                            <li class="day-plan-list-item-start-path-list-item" 
+                                                                v-for="(pathItem, pathIndex) in getDayPlanPath(dayIndex, planIndex)" 
+                                                                :key="dayItem.timestamp + '_' + planItem.timestamp + '_' + planListItem.timestamp + '_' + pathItem.id">
+                                                                <div class="day-plan-list-item-start-path-list-item-front" v-if="pathIndex > 0"></div>
+                                                                <div class="day-plan-list-item-start-path-list-item-point">{{pathItem.content}}</div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <!-- 交通 -->
+                                            <template v-else-if="planListItem.type === 1">
+                                                <div class="day-plan-list-item-traffic">
+                                                    
+                                                </div>
+                                            </template>
+                                            <!-- 住宿 -->
+                                            <template v-else-if="planListItem.type === 2">
+                                                <div class="day-plan-list-item-hotel">
+                                                    
+                                                </div>
+                                            </template>
+                                            <!-- 餐饮 -->
+                                            <template v-else-if="planListItem.type === 3">
+                                                <div class="day-plan-list-item-food">
+                                                    
+                                                </div>
+                                            </template>
+                                            <!-- 景点 -->
+                                            <template v-else-if="planListItem.type === 4">
+                                                <div class="day-plan-list-item-attraction">
+                                                    
+                                                </div>
+                                            </template>
+                                            <!-- 说明 -->
+                                            <template v-else-if="planListItem.type === 5">
+                                                <div class="day-plan-list-item-text" :class="{ 'day-plan-list-item-text-focus': planListItem.inputContent }">
+                                                    <div class="day-plan-list-item-text-placeholder"></div>
+                                                    <div class="day-plan-list-item-text-input" 
+                                                        contenteditable="plaintext-only" 
+                                                        :ref="'day-plan-list-item-text-input-' + planListIndex"
+                                                        @mousedown.stop 
+                                                        @focus="dayPlanListItemTextFocusEvent(dayIndex, planIndex, planListIndex)" 
+                                                        @blur="dayPlanListItemTextBlurEvent($event, dayIndex, planIndex, planListIndex)"></div>
+                                                </div>
+                                            </template>
+                                            <!-- 图片 -->
+                                            <template v-else-if="planListItem.type === 6">
+                                                <div class="day-plan-list-item-image">
+                                                    
+                                                </div>
+                                            </template>
+                                            <!-- 清单 -->
+                                            <template v-else-if="planListItem.type === 7">
+                                                <div class="day-plan-list-item-list">
+                                                    
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div class="section-canvas-day-plan-content-item-right">
+                                            <div class="section-canvas-day-plan-content-item-right-add"></div>
+                                            <div class="section-canvas-day-plan-content-item-right-more"></div>
+                                            <div class="section-canvas-day-plan-content-item-right-move"></div>
+                                        </div>
+                                    </div>
+                                    <div class="section-canvas-day-plan-content-new">
+                                        <div class="section-canvas-day-plan-content-new-start" @click="createAPlanListItem(dayIndex, planIndex, 0)"></div>
+                                        <div class="section-canvas-day-plan-content-new-traffic" @click="createAPlanListItem(dayIndex, planIndex, 1)"></div>
+                                        <div class="section-canvas-day-plan-content-new-hotel" @click="createAPlanListItem(dayIndex, planIndex, 2)"></div>
+                                        <div class="section-canvas-day-plan-content-new-food" @click="createAPlanListItem(dayIndex, planIndex, 3)"></div>
+                                        <div class="section-canvas-day-plan-content-new-attraction" @click="createAPlanListItem(dayIndex, planIndex, 4)"></div>
+                                        <div class="section-canvas-day-plan-content-new-text" @click="createAPlanListItem(dayIndex, planIndex, 5)"></div>
+                                        <div class="section-canvas-day-plan-content-new-image" @click="createAPlanListItem(dayIndex, planIndex, 6)"></div>
+                                        <div class="section-canvas-day-plan-content-new-list" @click="createAPlanListItem(dayIndex, planIndex, 7)"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="section-canvas-day-plan-new">
 
-        </div>
-    </div>
+                            </div>
+                        </div>
+                        <div class="section-canvas-day">
+                            <div class=""></div>
+                        </div>
+                    </div>
+                    <transition name="section-tools">
+                        <div class="section-tools" v-if="mode===1">
 
-    <!-- SwitchButton -->
-    <template id="switch-button">
-        <div class="switch-button" :class="{ 'switch-button-selected': isSwitch }">
-            <div class="switch-button-ball" :class="{ 'switch-button-ball-selected ': isSwitch }"></div>
+                        </div>
+                    </transition>
+                </div>
+                <transition name="section-right">
+                    <div class="section-right" 
+                        v-if="isAutoShowRight ? rightInfo : true">
+                        <div class="section-right-header">
+                            <div class="section-right-header-title">右边栏</div>
+                            <div class="section-right-header-actions">
+                                <div :class="isAutoShowRight ? 'section-right-header-actions-autoshow' : 'section-right-header-actions-show'" :title="isAutoShowRight ? '当前为自动显示右边栏' : '当前为始终显示右边栏'" @click="sectionRightHeaderActionAutoShowButtonClick"></div>
+                            </div>
+                        </div>
+                        <div class="section-right-content">
+                            <!-- 无 -->
+                            <template v-if="!rightInfo">
+                                <div class="section-right-content-info">
+                                    <div class="section-right-content-info-name" :class="{ 'section-right-content-info-name-focus': planInfo.inputName }">
+                                        <div class="section-right-content-info-name-placeholder" v-if="!planInfo.inputName && (!planInfo.name || planInfo.name.length <= 0)">请输入旅行计划的名字</div>
+                                        <div class="section-right-content-info-name-text" 
+                                            contenteditable="plaintext-only" 
+                                            :ref="'section-right-content-info-name'"
+                                            @mousedown.stop 
+                                            @focus="planInfoNameFocusEvent()" 
+                                            @blur="planInfoNameBlurEvent($event)" 
+                                            @keydown.enter.prevent="planInfoNameEnterEvent($event)"></div>
+                                    </div>
+                                    <div class="section-right-content-info-desc" :class="{ 'section-right-content-info-desc-focus': planInfo.inputDesc }">
+                                        <div class="section-right-content-info-desc-placeholder" v-if="!planInfo.inputDesc && (!planInfo.desc || planInfo.desc.length <= 0)">旅行计划的简介</div>
+                                        <div class="section-right-content-info-desc-text" 
+                                            contenteditable="plaintext-only" 
+                                            :ref="'section-right-content-info-desc'"
+                                            @mousedown.stop 
+                                            @focus="planInfoDescFocusEvent()" 
+                                            @blur="planInfoDescBlurEvent($event)"></div>
+                                    </div>
+                                    <div class="section-right-content-info-line"></div>
+                                    <div class="section-right-content-info-count">
+                                        <div class="section-right-content-info-count-title">天数</div>
+                                        <div class="section-right-content-info-count-content">
+                                            <div class="section-right-content-info-count-content-num">{{planInfo.numberOfDays}}</div>
+                                            <div class="section-right-content-info-count-content-actions">
+                                                <div class="section-right-content-info-count-content-actions-less">-</div>
+                                                <div class="section-right-content-info-count-content-actions-plus">+</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="section-right-content-info-date">
+                                        <div class="section-right-content-info-date-title">开始时间</div>
+                                        <div class="section-right-content-info-date-content">
+                                            <div class="section-right-content-info-date-content-show">{{planInfo.startDateShow}}</div>
+                                            <div class="section-right-content-info-date-content-choose">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="section-right-content-info-date">
+                                        <div class="section-right-content-info-date-title">结束时间</div>
+                                        <div class="section-right-content-info-date-content">
+                                            <div class="section-right-content-info-date-content-show">{{planInfo.endDateShow}}</div>
+                                            <div class="section-right-content-info-date-content-choose">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="section-right-content-info-line"></div>
+                                    <div class="section-right-content-info-count">
+                                        <div class="section-right-content-info-count-title">人数</div>
+                                        <div class="section-right-content-info-count-content">
+                                            <div class="section-right-content-info-count-content-num">{{planInfo.numberOfPeople}}</div>
+                                            <div class="section-right-content-info-count-content-actions">
+                                                <div class="section-right-content-info-count-content-actions-less">-</div>
+                                                <div class="section-right-content-info-count-content-actions-plus">+</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="section-right-content-info-categorylist">
+                                        <div class="section-right-content-info-categorylist-title">人员</div>
+                                    </div>
+                                    <div class="section-right-content-info-categorylist">
+                                        <div class="section-right-content-info-categorylist-title">未定人员</div>
+                                    </div>
+                                </div>
+                            </template>
+                            <!-- 交通卡 -->
+                            <template v-else-if="rightInfo.type===1">
+                                <div>
+                                    
+                                </div>
+                            </template>
+                            <!-- 住宿卡 -->
+                            <template v-else-if="rightInfo.type===2">
+                                <div>
+                                    
+                                </div>
+                            </template>
+                            <!-- 餐饮卡 -->
+                            <template v-else-if="rightInfo.type===2">
+                                <div>
+                                    
+                                </div>
+                            </template>
+                            <!-- 景点卡 -->
+                            <template v-else-if="rightInfo.type===2">
+                                <div>
+                                    
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+            <div class="footer">
+
+            </div>
         </div>
-    </template>
-    <script src="../../components/SwitchButton/SwitchButton.js"></script>
-    <script>
-      require('./plan.js');
-    </script>
-  </body>
+
+        <!-- SwitchButton -->
+        <template id="switch-button">
+            <div class="switch-button" :class="{ 'switch-button-selected': isSwitch }">
+                <div class="switch-button-ball" :class="{ 'switch-button-ball-selected ': isSwitch }"></div>
+            </div>
+        </template>
+        <script src="../../components/SwitchButton/SwitchButton.js"></script>
+        <script>
+            require('./plan.js');
+        </script>
+    </body>
 </html>

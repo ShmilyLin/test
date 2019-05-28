@@ -2,6 +2,7 @@ const PlanListItemModel = require("./PlanListItemModel.js");
 
 function PlanModel(name) {
     this.name = name ? name : "计划",
+    this.isSelected = false;
     this.timestamp = (new Date()).getTime();
     this.inputName = false;
     this.list = []
