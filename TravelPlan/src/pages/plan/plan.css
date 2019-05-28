@@ -228,6 +228,8 @@ html, body {
 
 .day-plan-list-item-start .day-plan-list-item-start-name-focus {
     border: 1px solid lightgray;
+    border-radius: 4px;
+    background-color: white;
 }
 
 .day-plan-list-item-start .day-plan-list-item-start-name > input {
@@ -285,10 +287,105 @@ html, body {
 
 }
 
+
+/* 天 > 计划 > 项 - 住宿 */
 .day-plan-list-item-hotel {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.day-plan-list-item-hotel-icon {
+    margin-top: 3px;
+    width: 20px;
+    height: 20px;
+    background-image: url(../../assets/plan_list_item_new_hotel.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    margin-right: 5px;
+}
+
+.day-plan-list-item-hotel-right {
+    width: calc(100% - 20px - 5px);
+}
+
+.day-plan-list-item-hotel-default {
 
 }
 
+.day-plan-list-item-hotel-default-none {
+    color: lightgray;
+    font-size: 17px;
+    font-weight: 500px;
+    line-height: 1.5;
+    width: 100%;
+}
+
+.day-plan-list-item-hotel-default-info {
+
+}
+
+.day-plan-list-item-hotel-default-info-name {
+    font-size: 17px;
+    font-weight: 500px;
+    line-height: 1.5;
+}
+
+.day-plan-list-item-hotel-default-info-type {
+
+}
+
+.day-plan-list-item-hotel-default-address {
+
+}
+
+.day-plan-list-item-hotel-default-address-icon {
+
+}
+
+.day-plan-list-item-hotel-default-address-content {
+
+}
+
+.day-plan-list-item-hotel-default-room {
+
+}
+
+.day-plan-list-item-hotel-default-room-header {
+
+}
+
+.day-plan-list-item-hotel-default-room-header-title {
+
+}
+
+.day-plan-list-item-hotel-default-room-header-add {
+
+}
+
+.day-plan-list-item-hotel-default-room-list {
+
+}
+
+.day-plan-list-item-hotel-default-room-list-item {
+
+}
+
+.day-plan-list-item-hotel-default-room-list-subtitle {
+
+}
+
+.day-plan-list-item-hotel-default-room-list-item {
+
+}
+
+.day-plan-list-item-hotel-additional {
+
+}
+
+
+
+/* 天 > 计划 > 项 - 美食 */
 .day-plan-list-item-food {
 
 }
@@ -306,6 +403,8 @@ html, body {
 
 .day-plan-list-item-text-focus {
     border: 1px solid lightgray;
+    border-radius: 4px;
+    background-color: white;
 }
 
 .day-plan-list-item-text-placeholder {

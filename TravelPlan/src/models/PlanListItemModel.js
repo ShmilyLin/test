@@ -1,3 +1,6 @@
+const HotelModel = require('./HotelModel.js');
+const HotelCardModel = require('./HotelCardModel.js');
+
 function PlanListItemModel(type, params) {
     this.type = type;
     this.timestamp = (new Date()).getTime();
@@ -12,7 +15,8 @@ function PlanListItemModel(type, params) {
         
             break;
         case 2: // 住宿（住宿类型、住宿（酒店卡）、备选（酒店卡））
-
+            this.hotal = new HotelModel();
+            this.isShowAdditional = false; // 是否显示备选酒店
             break;
         case 3: // 餐饮（餐饮类型、餐厅（餐厅卡）、备选）
 

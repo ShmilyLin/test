@@ -5,6 +5,8 @@ const {
   BrowserWindow, 
   ipcMain
 } = require('electron');
+// const path = require('path');
+// const os = require('os');
 
 // 主窗口
 let mainWindow;
@@ -18,9 +20,11 @@ app.setName("旅行计划");
 function appOnReady () {
   console.log(process, process.argv);
 
+  // BrowserWindow.addDevToolsExtension(path.join(os.homedir(), 'Library/Application Support/Google/Chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.1.0_0'));
+
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1000,
+    height: 700,
     minWidth: 800,
     minHeight: 600,
     center: true, // 窗口居中

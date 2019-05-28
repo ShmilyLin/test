@@ -3,6 +3,7 @@ const {
     remote
 } = require('electron');
 const DayModel = require('../../models/DayModel.js');
+const HotelCardModel = require('../../models/HotelCardModel.js');
 
 var vm = new Vue({
     el: '#app',
@@ -39,7 +40,11 @@ var vm = new Vue({
                 dayIndex: -1,
                 planIndex: -1,
                 planListItemIndex: -1,
-            }
+            },
+
+            hotelCardList: [],
+
+            isTouchedACard: false,
         }
     },
     computed: {
@@ -83,6 +88,15 @@ var vm = new Vue({
 
             this.dayList.push(tempModel);
         }
+
+        var tempHotelCardItem = new HotelCardModel();
+        tempHotelCardItem.name = "阳光大酒店";
+        tempHotelCardItem.desc = "阿萨德九分裤 v 来问了情况你到了千万年多了去看望你";
+        tempHotelCardItem.type = "五星级酒店";
+        tempHotelCardItem.tags = ["好", "特别好"];
+        tempHotelCardItem.address.content = "阿克苏领导能力你看完了你离开哪位旅客努力外壳拿了努力为肯";
+
+        this.hotelCardList = [tempHotelCardItem];
     },
     mounted: function() {
         console.log(this.$refs);
@@ -93,13 +107,16 @@ var vm = new Vue({
     },
     methods: {
         appClickEvent: function () {
-            for (var i = 0; i < this.dayList.length; i++) {
-                var tempDayItem = this.dayList[i];
-                if (tempDayItem.isSelected) {
-                    tempDayItem.isSelected = false;
-                    this.$set(this.dayList, i, tempDayItem);
-                }
-            }
+            console.log("appClickEvent");
+            this.cancelSelectedItem(-1, -1, -1);
+            this.rightInfo = null;
+            // for (var i = 0; i < this.dayList.length; i++) {
+            //     var tempDayItem = this.dayList[i];
+            //     if (tempDayItem.isSelected) {
+            //         tempDayItem.isSelected = false;
+            //         this.$set(this.dayList, i, tempDayItem);
+            //     }
+            // }
         },
 
         // Windows专属，红路灯操作事件
@@ -150,9 +167,12 @@ var vm = new Vue({
          * 选中一天
          */
         dayItemSelectedEvent: function (dayIndex) {
+            console.log("dayItemSelectedEvent", dayIndex);
             var tempDayItem = this.dayList[dayIndex];
             tempDayItem.isSelected = true;
             this.$set(this.dayList, dayIndex, tempDayItem);
+            this.cancelSelectedItem(dayIndex, -1, -1);
+            this.rightInfo = null;
         },
 
         /**
@@ -343,19 +363,23 @@ var vm = new Vue({
          * 创建一个新的计划项
          */ 
         createAPlanListItem: function (dayIndex, planIndex, type) {
+            console.log("createAPlanListItem", dayIndex, planIndex, type);
             var tempDayItem = this.dayList[dayIndex];
+            tempDayItem.isSelected = true;
             var tempPlanItem = tempDayItem.plans[planIndex];
+            tempPlanItem.isSelected = true;
             var tempPlanListIndex = tempPlanItem.list.length;
             var tempPlanListItem = tempPlanItem.createAListItem(type);
             tempPlanListItem.isEditor = true;
             this.$set(this.dayList, dayIndex, tempDayItem);
 
-            this.currentSelected.dayIndex = dayIndex;
-            this.currentSelected.planIndex = planIndex;
-            this.currentSelected.planListItemIndex = tempPlanListIndex;
+            this.cancelSelectedItem(dayIndex, planIndex, tempPlanListIndex);
+            
+            console.log(tempPlanListItem);
 
             switch (type) {
                 case 0:
+                    this.rightInfo = null;
                     break;
                 case 1:
                     this.rightInfo = {
@@ -363,18 +387,51 @@ var vm = new Vue({
 
                     }
                     break;
+                case 2:
+                    this.rightInfo = {
+                        type: 2,
+
+                    }
+                    break;
+                case 5:
+                    setTimeout(() => {
+                        this.$refs['day-plan-list-item-text-input-' + tempPlanListIndex][0].focus();
+                    });
+                    break;
             }
+        },
+
+        /**
+         * 天 > 计划 > 项-起点 > 输入框聚焦事件
+         */
+        planListItemPointNameFocusEvent(dayIndex, planIndex, planListIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            tempDayItem.isSelected = true;
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            tempPlanItem.isSelected = true;
+            var tempPlanListItem = tempPlanItem.list[planListIndex];
+            tempPlanListItem.isEditor = true;
+            tempPlanListItem.inputPointName = true;
+            this.$set(this.dayList, dayIndex, tempDayItem);
+
+            this.cancelSelectedItem(dayIndex, planIndex, planListIndex);
         },
 
         /**
          * 天 > 计划 > 项-文字 > 输入框聚焦事件
          */
         dayPlanListItemTextFocusEvent: function (dayIndex, planIndex, planListIndex) {
+            console.log("dayPlanListItemTextFocusEvent", dayIndex, planIndex, planListIndex);
             var tempDayItem = this.dayList[dayIndex];
+            tempDayItem.isSelected = true;
             var tempPlanItem = tempDayItem.plans[planIndex];
+            tempPlanItem.isSelected = true;
             var tempPlanListItem = tempPlanItem.list[planListIndex];
+            tempPlanListItem.isEditor = true;
             tempPlanListItem.inputContent = true;
             this.$set(this.dayList, dayIndex, tempDayItem);
+
+            this.cancelSelectedItem(dayIndex, planIndex, planListIndex);
         },
         
         /**
@@ -462,6 +519,18 @@ var vm = new Vue({
 
                 this.$set(this.dayList, tempDayIndex, tempDayItem);
             }
+
+            this.currentSelected.dayIndex = tempNewDayIndex;
+            this.currentSelected.planIndex = tempNewPlanIndex;
+            this.currentSelected.planListItemIndex = tempNewPlanListItemIndex;
+        },
+
+        /**
+         * 右边栏 > 住宿卡 > 点击一个住宿卡
+         */
+        sectionRightHotelItemMousedownEvent: function (event, hotelCardIndex) {
+            var tempHotelCardItem = this.hotelCardList[hotelCardIndex];
+            console.log("sectionRightHotelItemMousedownEvent", event, hotelCardIndex);
         }
     },
 })

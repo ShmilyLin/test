@@ -1,4 +1,5 @@
 function HotelRoomModel() {
+    this.id = "";
     this.roomType = ""; // 房间类型
     this.roomUnit = "间"; // 房间数量单位
     this.originalPrice = ""; // 原价

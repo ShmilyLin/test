@@ -126,7 +126,8 @@
                                                         <input type="text" 
                                                             v-model="planListItem.pointName" 
                                                             placeholder="集合地点" 
-                                                            @focus="planListItem.inputPointName=true" 
+                                                            @click.stop 
+                                                            @focus="planListItemPointNameFocusEvent(dayIndex, planIndex, planListIndex)" 
                                                             @blur="planListItem.inputPointName=false">
                                                     </div>
                                                     <div class="day-plan-list-item-start-path">
@@ -151,7 +152,47 @@
                                             <!-- 住宿 -->
                                             <template v-else-if="planListItem.type === 2">
                                                 <div class="day-plan-list-item-hotel">
-                                                    
+                                                    <div class="day-plan-list-item-hotel-icon"></div>
+                                                    <div class="day-plan-list-item-hotel-right">
+                                                        <div class="day-plan-list-item-hotel-default">
+                                                            <template v-if="!planListItem.hotal.default">
+                                                                <div class="day-plan-list-item-hotel-default-none">请从右边栏拖动住宿卡至此以添加住宿地点</div>
+                                                            </template>
+                                                            <template v-else>
+                                                                <div class="day-plan-list-item-hotel-default-info">
+                                                                    <div class="day-plan-list-item-hotel-default-info-name">{{planListItem.hotal.defaultHotel.name}}</div>
+                                                                    <div class="day-plan-list-item-hotel-default-info-type">{{planListItem.hotal.defaultHotel.type}}</div>
+                                                                </div>
+                                                                <div class="day-plan-list-item-hotel-default-address">
+                                                                    <div class="day-plan-list-item-hotel-default-address-icon"></div>
+                                                                    <div class="day-plan-list-item-hotel-default-address-content">{{planListItem.hotal.defaultHotel.address.content}}</div>
+                                                                </div>
+                                                                <div class="day-plan-list-item-hotel-default-room">
+                                                                    <div class="day-plan-list-item-hotel-default-room-header">
+                                                                        <div class="day-plan-list-item-hotel-default-room-header-title">房型</div>
+                                                                        <div class="day-plan-list-item-hotel-default-room-header-add"></div>
+                                                                    </div>
+                                                                    <ul class="day-plan-list-item-hotel-default-room-list">
+                                                                        <li class="day-plan-list-item-hotel-default-room-list-item" v-for="roomItem in planListItem.hotal.defaultHotel.defaultRooms" :key="'room_' + roomItem.id"></li>
+                                                                        <li class="day-plan-list-item-hotel-default-room-list-subtitle">备选</li>
+                                                                        <li class="day-plan-list-item-hotel-default-room-list-item" v-for="roomItem in planListItem.hotal.defaultHotel.rooms" :key="'room_' + roomItem.id"></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                        <div class="day-plan-list-item-hotel-additional" v-if="planListItem.isShowAdditional">
+                                                            <template>
+                                                                <div>拖动至此来添加备选住宿</div>
+                                                            </template>
+                                                            <template>
+                                                                <div class="">备选住宿</div>
+                                                                <ul class="">
+                                                                    <li class=""></li>
+                                                                    <li class="" v-if="">拖动至此来添加备选住宿</li>
+                                                                </ul>
+                                                            </template>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </template>
                                             <!-- 餐饮 -->
@@ -174,6 +215,7 @@
                                                         contenteditable="plaintext-only" 
                                                         :ref="'day-plan-list-item-text-input-' + planListIndex"
                                                         @mousedown.stop 
+                                                        @click.stop
                                                         @focus="dayPlanListItemTextFocusEvent(dayIndex, planIndex, planListIndex)" 
                                                         @blur="dayPlanListItemTextBlurEvent($event, dayIndex, planIndex, planListIndex)"></div>
                                                 </div>
@@ -199,11 +241,11 @@
                                     </div>
                                     <div class="section-canvas-day-plan-content-new">
                                         <div class="section-canvas-day-plan-content-new-start" @click="createAPlanListItem(dayIndex, planIndex, 0)"></div>
-                                        <div class="section-canvas-day-plan-content-new-traffic" @click="createAPlanListItem(dayIndex, planIndex, 1)"></div>
-                                        <div class="section-canvas-day-plan-content-new-hotel" @click="createAPlanListItem(dayIndex, planIndex, 2)"></div>
+                                        <div class="section-canvas-day-plan-content-new-traffic" @click.stop="createAPlanListItem(dayIndex, planIndex, 1)"></div>
+                                        <div class="section-canvas-day-plan-content-new-hotel" @click.stop="createAPlanListItem(dayIndex, planIndex, 2)"></div>
                                         <div class="section-canvas-day-plan-content-new-food" @click="createAPlanListItem(dayIndex, planIndex, 3)"></div>
                                         <div class="section-canvas-day-plan-content-new-attraction" @click="createAPlanListItem(dayIndex, planIndex, 4)"></div>
-                                        <div class="section-canvas-day-plan-content-new-text" @click="createAPlanListItem(dayIndex, planIndex, 5)"></div>
+                                        <div class="section-canvas-day-plan-content-new-text" @click.stop="createAPlanListItem(dayIndex, planIndex, 5)"></div>
                                         <div class="section-canvas-day-plan-content-new-image" @click="createAPlanListItem(dayIndex, planIndex, 6)"></div>
                                         <div class="section-canvas-day-plan-content-new-list" @click="createAPlanListItem(dayIndex, planIndex, 7)"></div>
                                     </div>
@@ -225,7 +267,9 @@
                 </div>
                 <transition name="section-right">
                     <div class="section-right" 
-                        v-if="isAutoShowRight ? rightInfo : true">
+                        v-if="isAutoShowRight ? rightInfo : true" 
+                        @click.stop 
+                        @mousedown.stop>
                         <div class="section-right-header">
                             <div class="section-right-header-title">右边栏</div>
                             <div class="section-right-header-actions">
@@ -311,8 +355,81 @@
                             </template>
                             <!-- 住宿卡 -->
                             <template v-else-if="rightInfo.type===2">
-                                <div>
-                                    
+                                <div class="section-right-content-hotel">
+                                    <div class="section-right-content-hotel-header">
+                                        <div class="section-right-content-hotel-header-title">住宿卡</div>
+                                        <div contenteditable='false' class="section-right-content-hotel-header-action">
+                                            <div class="section-right-content-hotel-header-action-filter"></div>
+                                            <div class="section-right-content-hotel-header-action-add"></div>
+                                        </div>
+                                    </div>
+                                    <div class="section-right-content-hotel-search">
+                                        <div class="section-right-content-hotel-search-bar">
+                                            <input type="text" placeholder="搜索">
+                                            <div class="section-right-content-hotel-search-bar-cancel"></div>
+                                        </div>
+                                    </div>
+                                    <div class="section-right-content-hotel-filter" v-if="false">
+                                        <div class="section-right-content-hotel-filter-picker">
+                                            <div class="section-right-content-hotel-filter-picker-title">位置</div>
+                                            <div class="section-right-content-hotel-filter-picker-list">
+                                                <div class="section-right-content-hotel-filter-picker-list-item">国家</div>
+                                                <div class="section-right-content-hotel-filter-picker-list-item">省份</div>
+                                                <div class="section-right-content-hotel-filter-picker-list-item">城市</div>
+                                            </div>
+                                        </div>
+                                        <div class="section-right-content-hotel-filter-choose">
+                                            <div class="section-right-content-hotel-filter-choose-title">类型</div>
+                                            <ul class="section-right-content-hotel-filter-choose-list">
+                                                <li class="section-right-content-hotel-filter-choose-list-item"></li>
+                                            </ul>
+                                        </div>
+                                        <div class="section-right-content-hotel-filter-choose">
+                                            <div class="section-right-content-hotel-filter-choose-title">标签</div>
+                                            <ul class="section-right-content-hotel-filter-choose-list">
+                                                <li class="section-right-content-hotel-filter-choose-list-item"></li>
+                                            </ul>
+                                        </div>
+                                        <div class="section-right-content-hotel-filter-choose">
+                                            <div class="section-right-content-hotel-filter-choose-title">分组</div>
+                                            <ul class="section-right-content-hotel-filter-choose-list">
+                                                <li class="section-right-content-hotel-filter-choose-list-item"></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <ul class="section-right-content-hotel-list">
+                                        <li class="section-right-content-hotel-list-item" v-for="(hotelCardItem, hotelCardIndex) in hotelCardList" @mousedown.stop='sectionRightHotelItemMousedownEvent($event, hotelCardIndex)'>
+                                            <div class="section-right-content-hotel-list-item-info">
+                                                <div class="section-right-content-hotel-list-item-info-name">{{hotelCardItem.name}}</div>
+                                                <div class="section-right-content-hotel-list-item-info-type">{{hotelCardItem.type}}</div>
+                                                <div class="section-right-content-hotel-list-item-info-tags">
+                                                    <div class="section-right-content-hotel-list-item-info-tags-item" v-for="hotelCardTagItem in hotelCardItem.tags">{{hotelCardTagItem}}</div>
+                                                </div>
+                                                <div class="section-right-content-hotel-list-item-info-address">
+                                                    <div class="section-right-content-hotel-list-item-info-address-icon"></div>
+                                                    <div class="section-right-content-hotel-list-item-info-address-content">{{hotelCardItem.address.content}}</div>
+                                                </div>
+                                                <div class="section-right-content-hotel-list-item-info-edit" title="编辑住宿卡"></div>
+                                            </div>
+                                            <div class="section-right-content-hotel-list-item-rooms">
+                                                <div class="section-right-content-hotel-list-item-rooms-header">
+                                                    <div class="section-right-content-hotel-list-item-rooms-header-title">房型</div>
+                                                    <div class="section-right-content-hotel-list-item-rooms-header-show">展开</div>
+                                                </div>
+                                                <ul class="section-right-content-hotel-list-item-rooms-list">
+                                                    <li class="section-right-content-hotel-list-item-rooms-list-item">
+                                                        <div class="section-right-content-hotel-list-item-rooms-list-item-info">
+                                                            <div class="section-right-content-hotel-list-item-rooms-list-item-info-name">房型名称</div>
+                                                            <div class="section-right-content-hotel-list-item-rooms-list-item-info-more" title="更多信息"></div>
+                                                        </div>
+                                                        <div class="section-right-content-hotel-list-item-rooms-list-item-more">
+
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </template>
                             <!-- 餐饮卡 -->
