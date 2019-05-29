@@ -11,8 +11,10 @@ const {
 // 主窗口
 let mainWindow;
 
+app.commandLine.appendSwitch('remote-debugging-port', '8315')
 // 设置应用名字
 app.setName("旅行计划");
+
 
 
 // 当 Electron 完成初始化时被触发。 
@@ -20,6 +22,8 @@ app.setName("旅行计划");
 function appOnReady () {
   console.log(process, process.argv);
 
+  // 设置应用名字
+  app.setName("旅行计划");
   // BrowserWindow.addDevToolsExtension(path.join(os.homedir(), 'Library/Application Support/Google/Chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.1.0_0'));
 
   mainWindow = new BrowserWindow({

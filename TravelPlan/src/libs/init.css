@@ -24,3 +24,30 @@ input, textarea, div {
     border: none;
     background-color: transparent;
 }
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #EEEEEE;
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    border: none;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: lightgray;
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    border: none;
+}

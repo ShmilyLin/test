@@ -1,7 +1,7 @@
 .section-right {
     width: 240px;
     height: 100%;
-    border-right: 1px solid lightgray;
+    border-left: 1px solid lightgray;
     background-color: #F5F5F5;
 }
 
@@ -267,7 +267,7 @@
 .section-right-content-hotel-header {
     width: calc(100% - 20px);
     padding: 5px 10px;
-    background-color: lightgray;
+    background-color: #F0F0F0;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -307,7 +307,7 @@
 
 .section-right-content-hotel-search {
     width: 100%;
-    background-color: lightgray;
+    background-color: #F0F0F0;
     height: 40px;
     display: flex;
     flex-direction: column;
@@ -319,7 +319,6 @@
     width: calc(100% - 20px - 36px);
     height: 26px;
     border-radius: 10px;
-    background-color: #E5E5E5;
     padding-left: 10px;
     padding-right: 26px;
 }
@@ -351,7 +350,7 @@
 .section-right-content-hotel-filter {
     width: calc(100% - 20px);
     padding: 5px 10px;
-    background-color: lightgray;
+    background-color: #F0F0F0;
     position: absolute;
     top: calc(28px + 40px);
     left: 0;
@@ -444,8 +443,9 @@
 
 .section-right-content-hotel-list-item {
     padding: 5px 10px;
-    border-bottom: 1px solid lightgray;
+    /* border-bottom: 1px solid lightgray; */
     background-color: white;
+    margin-bottom: 5px;
 }
 
 .section-right-content-hotel-list-item-info {

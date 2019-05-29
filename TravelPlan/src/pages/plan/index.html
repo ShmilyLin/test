@@ -44,12 +44,13 @@
             
                 </div>
             </transition>
-            <div class="section" :style="{ height: mode===1 ? 'calc(100% - 40px - 1px - 1px - 30px)' : 'calc(100% - 40px - 100px - 1px - 1px - 30px)'}">
+            <div class="section" ref="section" :style="{ height: mode===1 ? 'calc(100% - 40px - 1px - 1px - 30px)' : 'calc(100% - 40px - 100px - 1px - 1px - 30px)'}">
                 <div class="dragscroll section-left" :style="{ width: (isAutoShowRight ? rightInfo : true) ? 'calc(100% - 240px - 1px)' : '100%' }">
                     <div class="section-canvas" :style="{ paddingLeft: mode===1 ? 'calc(30px + 50px)' : ''}">
                         <div class="section-canvas-day" 
                             v-for="(dayItem, dayIndex) in dayList" 
                             :key="dayItem.timestamp" 
+                            :ref="'section-canvas-day-' + dayIndex"
                             :class="{ 'section-canvas-day-selected': dayItem.isSelected }" 
                             @click.stop="dayItemSelectedEvent(dayIndex)" 
                             @focus="dayItemSelectedEvent(dayIndex)">
@@ -103,6 +104,7 @@
                             <div class="section-canvas-day-plan" 
                                 v-for="(planItem, planIndex) in dayItem.plans" 
                                 :key="dayItem.timestamp + '_' + planItem.timestamp" 
+                                :ref="'section-canvas-day-plan-' + dayIndex + '-' + planIndex"
                                 :class="{ 'section-canvas-day-plan-some': dayItem.plans.length > 1 }">
                                 <div class="section-canvas-day-plan-name" 
                                     :class="{ 'section-canvas-day-plan-name-input': planItem.inputName }" 
@@ -117,7 +119,8 @@
                                     <div class="section-canvas-day-plan-content-item" 
                                         v-for="(planListItem, planListIndex) in planItem.list" 
                                         :key="dayItem.timestamp + '_' + planItem.timestamp + '_' + planListItem.timestamp" 
-                                        :class="{ 'section-canvas-day-plan-content-item-edit': planListItem.isEditor }">
+                                        :class="{ 'section-canvas-day-plan-content-item-edit': planListItem.isEditor }" 
+                                        @click="dayPlanListItemClickEvent($event, dayIndex, planIndex, planListIndex)">
                                         <div class="section-canvas-day-plan-content-item-left">
                                             <!-- 起点 -->
                                             <template v-if="planListItem.type === 0">
@@ -154,8 +157,8 @@
                                                 <div class="day-plan-list-item-hotel">
                                                     <div class="day-plan-list-item-hotel-icon"></div>
                                                     <div class="day-plan-list-item-hotel-right">
-                                                        <div class="day-plan-list-item-hotel-default">
-                                                            <template v-if="!planListItem.hotal.default">
+                                                        <div class="day-plan-list-item-hotel-default" :ref="'day-plan-list-item-hotel-default-' + dayIndex + '-' + planIndex + '-' + planListIndex">
+                                                            <template v-if="!planListItem.hotal.defaultHotel">
                                                                 <div class="day-plan-list-item-hotel-default-none">请从右边栏拖动住宿卡至此以添加住宿地点</div>
                                                             </template>
                                                             <template v-else>
@@ -269,7 +272,9 @@
                     <div class="section-right" 
                         v-if="isAutoShowRight ? rightInfo : true" 
                         @click.stop 
-                        @mousedown.stop>
+                        @mousedown.stop 
+                        @mousemove.stop 
+                        @mouseup.stop>
                         <div class="section-right-header">
                             <div class="section-right-header-title">右边栏</div>
                             <div class="section-right-header-actions">
@@ -359,17 +364,21 @@
                                     <div class="section-right-content-hotel-header">
                                         <div class="section-right-content-hotel-header-title">住宿卡</div>
                                         <div contenteditable='false' class="section-right-content-hotel-header-action">
-                                            <div class="section-right-content-hotel-header-action-filter"></div>
+                                            <div class="section-right-content-hotel-header-action-filter" @click="rightInfo.isShowFilter=!rightInfo.isShowFilter"></div>
                                             <div class="section-right-content-hotel-header-action-add"></div>
                                         </div>
                                     </div>
                                     <div class="section-right-content-hotel-search">
-                                        <div class="section-right-content-hotel-search-bar">
-                                            <input type="text" placeholder="搜索">
-                                            <div class="section-right-content-hotel-search-bar-cancel"></div>
+                                        <div class="section-right-content-hotel-search-bar" :style="{ backgroundColor: rightInfo.isInputSearch ? 'white' : '#F9F9F9' }">
+                                            <input type="text" 
+                                                placeholder="搜索" 
+                                                v-model="rightInfo.searchContent" 
+                                                @focus="rightInfo.isInputSearch=true" 
+                                                @blur="rightInfo.isInputSearch=false">
+                                            <div class="section-right-content-hotel-search-bar-cancel" v-if="rightInfo.searchContent.length > 0" @click="rightInfo.searchContent=''"></div>
                                         </div>
                                     </div>
-                                    <div class="section-right-content-hotel-filter" v-if="false">
+                                    <div class="section-right-content-hotel-filter" v-if="rightInfo.isShowFilter">
                                         <div class="section-right-content-hotel-filter-picker">
                                             <div class="section-right-content-hotel-filter-picker-title">位置</div>
                                             <div class="section-right-content-hotel-filter-picker-list">
@@ -450,6 +459,15 @@
             </div>
             <div class="footer">
 
+            </div>
+            <div class="moving-card-background" 
+                v-if="isTouchedACard" 
+                @mousemove.stop="movingCardCoverViewMousemoveEvent($event)" 
+                @mouseup.stop="movingCardCoverViewMouseupEvent($event)">
+                <div class="moving-card" 
+                    :style="{ top: (movingCard.y - 20) + 'px', left: (movingCard.x - 100) + 'px' }" 
+                    @click.stop 
+                    @mousedown.stop>{{movingCard.content}}</div>
             </div>
         </div>
 

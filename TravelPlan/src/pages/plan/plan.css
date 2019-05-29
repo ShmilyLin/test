@@ -310,61 +310,94 @@ html, body {
 }
 
 .day-plan-list-item-hotel-default {
-
+    width: 100%;
 }
 
 .day-plan-list-item-hotel-default-none {
     color: lightgray;
-    font-size: 17px;
-    font-weight: 500px;
-    line-height: 1.5;
+    font-size: 14px;
+    font-weight: 300px;
+    line-height: 26px;
     width: 100%;
 }
 
 .day-plan-list-item-hotel-default-info {
-
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .day-plan-list-item-hotel-default-info-name {
     font-size: 17px;
-    font-weight: 500px;
-    line-height: 1.5;
+    font-weight: 500;
+    line-height: 26px;
+    width: calc(100% - 62px);
 }
 
 .day-plan-list-item-hotel-default-info-type {
-
+    font-size: 12px;
+    color: dodgerblue;
+    line-height: 1;
+    margin-top: 5px;
+    width: 60px;
 }
 
 .day-plan-list-item-hotel-default-address {
-
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-top: 4px;
 }
 
 .day-plan-list-item-hotel-default-address-icon {
-
+    width: 20px;
+    height: 20px;
+    background-image: url(../../assets/address_icon.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    margin-right: 4px;
 }
 
 .day-plan-list-item-hotel-default-address-content {
-
+    width: calc(100% - 24px);
+    font-size: 14px;
+    font-weight: 300;
+    color: #999999;
+    line-height: 1.5;
 }
 
 .day-plan-list-item-hotel-default-room {
-
+    width: 100%;
+    margin-top: 5px;
 }
 
 .day-plan-list-item-hotel-default-room-header {
-
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
 }
 
 .day-plan-list-item-hotel-default-room-header-title {
-
+    font-size: 14px;
+    line-height: 1;
 }
 
 .day-plan-list-item-hotel-default-room-header-add {
-
+    width: 14px;
+    height: 14px;
+    background-image: url(../../assets/right_sidebar_add.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
 }
 
 .day-plan-list-item-hotel-default-room-list {
-
+    width: calc(1005 - 15px);
+    margin-left: 15px;
 }
 
 .day-plan-list-item-hotel-default-room-list-item {
@@ -633,4 +666,27 @@ html, body {
     width: 100%;
     height: 30px;
     border-top: 1px solid lightgray;
+}
+
+
+.moving-card-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+}
+
+.moving-card {
+    position: fixed;
+    background-color: white;
+    width: 200px;
+    height: 30px;
+    padding: 5px 10px;
+    opacity: 0.8;
+    font-size: 12px;
+    line-height: 30px;
+    color: #666666;
+    border: 1px solid lightgray;
 }

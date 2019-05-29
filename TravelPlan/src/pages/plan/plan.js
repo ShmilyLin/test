@@ -45,6 +45,12 @@ var vm = new Vue({
             hotelCardList: [],
 
             isTouchedACard: false,
+            movingCard: {
+                type: 0,
+                data: null,
+                x: 0,
+                y: 0,
+            }
         }
     },
     computed: {
@@ -384,13 +390,16 @@ var vm = new Vue({
                 case 1:
                     this.rightInfo = {
                         type: 1,
-
+                        
                     }
                     break;
                 case 2:
                     this.rightInfo = {
                         type: 2,
-
+                        isShowFilter: false,
+                        isSearching: false,
+                        isInputSearch: false,
+                        searchContent: "",
                     }
                     break;
                 case 5:
@@ -398,6 +407,31 @@ var vm = new Vue({
                         this.$refs['day-plan-list-item-text-input-' + tempPlanListIndex][0].focus();
                     });
                     break;
+            }
+        },
+
+        /**
+         * 点击一个计划项
+         */
+        dayPlanListItemClickEvent: function (event, dayIndex, planIndex, planListIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            var tempPlanListItem = tempPlanItem.list[planListIndex];
+
+            if (tempPlanListItem.type === 2) { // 住宿
+                tempDayItem.isSelected = true;
+                tempPlanItem.isSelected = true;
+                tempPlanListItem.isEditor = true;
+                this.$set(this.dayList, dayIndex, tempDayItem);
+                this.cancelSelectedItem(dayIndex, planIndex, planListIndex);
+                this.rightInfo = {
+                    type: 2,
+                    isShowFilter: false,
+                    isSearching: false,
+                    isInputSearch: false,
+                    searchContent: "",
+                }
+                event.stopPropagation();
             }
         },
 
@@ -530,7 +564,81 @@ var vm = new Vue({
          */
         sectionRightHotelItemMousedownEvent: function (event, hotelCardIndex) {
             var tempHotelCardItem = this.hotelCardList[hotelCardIndex];
-            console.log("sectionRightHotelItemMousedownEvent", event, hotelCardIndex);
+            this.movingCard.type = 2;
+            this.movingCard.content = "住宿：" + tempHotelCardItem.name;
+            this.movingCard.data = tempHotelCardItem;
+            this.movingCard.x = event.x;
+            this.movingCard.y = event.y;
+            this.isTouchedACard = true;
+        },
+
+        movingCardCoverViewMousemoveEvent: function (event) {
+            if (this.isTouchedACard) {
+                this.movingCard.x = event.x;
+                this.movingCard.y = event.y;
+            }
+        },
+
+        movingCardCoverViewMouseupEvent: function (event) {
+            if (this.isTouchedACard) {
+                console.log("movingCardCoverViewMouseupEvent", event, this.$refs);
+                this.isTouchedACard = false;
+                var tempSectionDom = this.$refs["section"];
+                var tempSectionDomRect = tempSectionDom.getBoundingClientRect();
+                if (event.x >= tempSectionDomRect.left && event.x <= (tempSectionDomRect.left + tempSectionDomRect.width) && event.y >= tempSectionDomRect.top && event.y <= (tempSectionDomRect.top + tempSectionDomRect.height)) {
+                    var tempDayList = this.dayList;
+                    for (var i = 0; i < tempDayList.length; i++) {
+                        var tempDayDom = this.$refs['section-canvas-day-' + i][0];
+                        console.log("tempDayDom", tempDayDom);
+                        var tempDayDomRect = tempDayDom.getBoundingClientRect();
+                        if (event.x >= tempDayDomRect.left && event.x <= (tempDayDomRect.left + tempDayDomRect.width) && event.y >= tempDayDomRect.top && event.y <= (tempDayDomRect.top + tempDayDomRect.height)) {
+                            var tempDayItem = tempDayList[i];
+                            if (tempDayItem.plans && tempDayItem.plans.length > 0) {
+                                for (var j = 0; j < tempDayItem.plans.length; j++) {
+                                    var tempPlanDom = this.$refs['section-canvas-day-plan-' + i + '-' + j][0];
+                                    console.log("tempPlanDom", tempPlanDom);
+                                    var tempPlanDomRect = tempPlanDom.getBoundingClientRect();
+                                    if (event.x >= tempPlanDomRect.left && event.x <= (tempPlanDomRect.left + tempPlanDomRect.width) && event.y >= tempPlanDomRect.top && event.y <= (tempPlanDomRect.top + tempPlanDomRect.height)) {
+                                        var tempPlanItem = tempDayItem.plans[j];
+                                        if (tempPlanItem.list && tempPlanItem.list.length > 0) {
+                                            for (var n = 0; n < tempPlanItem.list.length; n++) {
+                                                var tempPlanListItem = tempPlanItem.list[n];
+                                                if (tempPlanListItem.type === this.movingCard.type) {
+                                                    switch (this.movingCard.type) {
+                                                        case 2:
+                                                            if (tempPlanListItem.hotal && tempPlanListItem.hotal.defaultHotel) {
+
+                                                            }else {
+                                                                // 没有默认的住宿卡
+                                                                var tempDefaultHotelDom = this.$refs['day-plan-list-item-hotel-default-' + i + '-' + j + '-' + n][0];
+                                                                console.log("tempDefaultHotelDom", tempDefaultHotelDom);
+                                                                var tempDefaultHotelDomRect = tempDefaultHotelDom.getBoundingClientRect();
+                                                                if (event.x >= tempDefaultHotelDomRect.left && event.x <= (tempDefaultHotelDomRect.left + tempDefaultHotelDomRect.width) && event.y >= tempDefaultHotelDomRect.top && event.y <= (tempDefaultHotelDomRect.top + tempDefaultHotelDomRect.height)) {
+                                                                    console.log("哈哈", this.movingCard.data);
+                                                                    tempPlanListItem.hotal.defaultHotel = this.movingCard.data;
+                                                                    this.$set(this.dayList, i, tempDayItem);
+                                                                }
+                                                            }
+                                                            break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            break;
+                        }
+                    }
+                }
+                this.movingCard.type = 0;
+                this.movingCard.content = "";
+                this.movingCard.data = null;
+                this.movingCard.x = event.x;
+                this.movingCard.y = event.y;
+                
+            }
         }
     },
 })
