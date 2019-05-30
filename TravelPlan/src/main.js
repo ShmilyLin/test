@@ -90,6 +90,33 @@ ipcMain.on('create-a-new-plan', (event, arg) => {
   mainWindow.loadFile('./src/pages/plan/index.html');
 })
 
+ipcMain.on('create-hotel-card', (event, arg) => {
+  console.log("【Main】 create-hotel-card", arg);
+  let childWindow = new BrowserWindow({
+    width: 500,
+    height: 600,
+    resizable: false,
+    parent: mainWindow, 
+    show: false,
+    center: true, // 窗口居中
+    webPreferences: { // 网页功能的设置 
+      devTools: true, //  是否开启 DevTools
+      nodeIntegration: true,
+      textAreasAreResizable: false, // 禁止TextArea元素调整大小
+    },
+    frame: false, // 无边框
+    titleBarStyle: 'hiddenInset', 
+  })
+  
+  childWindow.once('ready-to-show', () => {
+    childWindow.show();
+  })
+  childWindow.on('closed', () => {
+    mainWindow.webContents.send('child-window-closed');
+  });
+  childWindow.loadFile('./src/modals/CreateHotelCard/CreateHotelCard.html');
+})
+
 
 function getMenuOption () {
   return [{

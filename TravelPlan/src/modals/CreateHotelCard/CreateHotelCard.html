@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>创建住宿卡</title>
+        <link rel="stylesheet" href="../../libs/init.css">
+        <link rel="stylesheet" href="./CreateHotelCard.js">
+        <link rel="stylesheet" href="./CreateHotelCard.css">
+        <script src="../../libs/vue.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <div class="header">
+                <div class="header-title">创建住宿卡</div>
+            </div>
+            <div class="section">
+                <div class="section-inputitem">
+                    <div class="section-inputitem-placeholder section-inputitem-placeholder-name" 
+                        :class="{ 'section-inputitem-placeholder-typing': inputName || name.length > 0 }">住宿地点的名称</div>
+                    <div class="section-inputitem-input section-inputitem-input-name" 
+                        :class="{ 'section-inputitem-typing': inputName }" 
+                        contenteditable="plaintext-only" 
+                        ref="section-inputitem-input-name"
+                        @focus="inputNameFocusEvent" 
+                        @blur="inputNameBlurEvent($event)"></div>
+                </div>
+                <div class="section-inputitem">
+                    <div class="section-inputitem-placeholder section-inputitem-placeholder-type" 
+                        :class="{ 'section-inputitem-placeholder-typing': inputType || type.length > 0 }">住宿地点的类型</div>
+                    <div class="section-inputitem-input section-inputitem-input-type" 
+                        :class="{ 'section-inputitem-typing': inputType }">
+                        <input type="text" 
+                            v-model.trim="type"
+                            @keydown.tab.stop.prevent="inputTypeTabKeyDownEvent($event)" 
+                            @keyup.tab.stop.prevent 
+                            @keydown.enter="inputTypeEnterKeyDownEvent($event)" 
+                            @focus="inputTypeFocusEvent" 
+                            @blur="inputTypeBlurEvent">
+                    </div>
+                    <div class="section-inputitem-input-list" v-if="inputType && type.length > 0 && typeList && typeList.length > 0">
+                        <div class="section-inputitem-input-list-item" 
+                            :class="{ 'section-inputitem-input-list-item-selected': typeItemIndex===typeIndex }" 
+                            v-for="(typeItem, typeItemIndex) in typeList" 
+                            :key="typeItem.id" 
+                            @mouseenter="typeIndex=typeItemIndex" 
+                            @mousedown="type=typeItem.content">{{typeItem.content}}</div>
+                    </div>
+                </div>
+                <div class="section-lineItem"></div>
+                <div class="section-inputitem section-inputitem-address">
+                    <div class="section-inputitem-placeholder section-inputitem-placeholder-address" 
+                        :class="{ 'section-inputitem-placeholder-typing-address': inputCountry || country.length > 0 }">所在国家</div>
+                    <div class="section-inputitem-input section-inputitem-input-address" 
+                        :class="{ 'section-inputitem-typing': inputCountry }">
+                        <input type="text" 
+                            v-model.trim="country"
+                            @focus="inputCountryFocusEvent" 
+                            @blur="inputCountryBlurEvent">
+                    </div>
+                </div>
+                <div class="section-inputitem section-inputitem-address">
+                    <div class="section-inputitem-placeholder section-inputitem-placeholder-address" 
+                        :class="{ 'section-inputitem-placeholder-typing-address': inputProvince || province.length > 0 }">所在省</div>
+                    <div class="section-inputitem-input section-inputitem-input-address" 
+                        :class="{ 'section-inputitem-typing': inputProvince }">
+                        <input type="text" 
+                            v-model.trim="province"
+                            @focus="inputProvinceFocusEvent" 
+                            @blur="inputProvinceBlurEvent">
+                    </div>
+                </div>
+                <div class="section-inputitem section-inputitem-address">
+                    <div class="section-inputitem-placeholder section-inputitem-placeholder-address" 
+                        :class="{ 'section-inputitem-placeholder-typing-address': inputCity || city.length > 0 }">所在城市</div>
+                    <div class="section-inputitem-input section-inputitem-input-address" 
+                        :class="{ 'section-inputitem-typing': inputCity }">
+                        <input type="text" 
+                            v-model.trim="city"
+                            @focus="inputCityFocusEvent" 
+                            @blur="inputCityBlurEvent">
+                    </div>
+                </div>
+                <div class="section-inputitem section-inputitem-address">
+                    <div class="section-inputitem-placeholder section-inputitem-placeholder-address" 
+                        :class="{ 'section-inputitem-placeholder-typing-address': inputDistrict || district.length > 0 }">所在区/县</div>
+                    <div class="section-inputitem-input section-inputitem-input-address" 
+                        :class="{ 'section-inputitem-typing': inputDistrict }">
+                        <input type="text" 
+                            v-model.trim="district"
+                            @focus="inputDistrictFocusEvent" 
+                            @blur="inputDistrictBlurEvent">
+                    </div>
+                </div>
+                <div class="section-inputitem section-inputitem-address">
+                    <div class="section-inputitem-placeholder section-inputitem-placeholder-address" 
+                        :class="{ 'section-inputitem-placeholder-typing-address': inputAddress || address.length > 0 }">详细地址</div>
+                    <div class="section-inputitem-input section-inputitem-input-address" 
+                        :class="{ 'section-inputitem-typing': inputAddress }" 
+                        contenteditable="plaintext-only" 
+                        ref="section-inputitem-input-address"
+                        @focus="inputAddressFocusEvent" 
+                        @blur="inputAddressBlurEvent($event)"></div>
+                </div>
+                <div class="section-lineItem"></div>
+                <div class="section-roomsItem">
+                    <div class="section-roomsItem-header">房型</div>
+                    <ul class="section-roomsItem-list">
+                        <li class="section-roomsItem-list-item" v-for="(roomItem, roomIndex) in rooms" :key="roomItem.id">
+                            <div class="section-roomsItem-list-item-header">
+                                <div class="section-roomsItem-list-item-header-left">
+                                    <div class="section-roomsItem-list-item-header-delete" @click="roomItemDeleteButtonClickEvent(roomIndex)"></div>
+                                    <div class="section-roomsItem-list-item-header-name" :class="{ 'section-roomsItem-list-item-header-name-input': roomItem.inputRoomType }">
+                                        <input type="text" 
+                                            placeholder="请输入房型" 
+                                            v-model.trim="roomItem.roomType" 
+                                            @focus="roomItem.inputRoomType=true" 
+                                            @blur="roomItem.inputRoomType=false">
+                                    </div>
+                                </div>
+                                <div :class="roomItem.isShow ? 'section-roomsItem-list-item-header-show' : 'section-roomsItem-list-item-header-hidden'" @click="roomItemShowDetailButtonClickEvent(roomIndex)"></div>
+                            </div>
+                            <div class="section-roomsItem-list-item-section" v-if="roomItem.isShow">
+                                <div class="section-roomsItem-list-item-section-1">
+                                    <div class="section-roomsItem-list-item-section-1-title">平米数</div>
+                                    <div class="section-roomsItem-list-item-section-1-input">
+                                        <input type="text" v-model.trim="roomItem.squareMeter">
+                                    </div>
+                                </div>
+                                <div class="section-roomsItem-list-item-section-1">
+                                    <div class="section-roomsItem-list-item-section-1-title">房间数量单位</div>
+                                    <div class="section-roomsItem-list-item-section-1-input">
+                                        <input type="text" v-model.trim="roomItem.roomUnit">
+                                    </div>
+                                </div>
+                                <div class="section-roomsItem-list-item-section-2">
+                                    <div class="section-roomsItem-list-item-section-2-title">房间价格</div>
+                                    <div class="section-roomsItem-list-item-section-2-right">
+                                        <div class="section-roomsItem-list-item-section-2-right-unit">
+                                            <div class="">价格单位：</div>
+                                            <div class="">
+                                                <input type="text" v-model.trim="roomItem.priceUnit">
+                                            </div>
+                                        </div>
+                                        <div class="section-roomsItem-list-item-section-2-right-price">
+                                            <div class="">
+                                                <div class="">现价：</div>
+                                                <div class="">
+                                                    <input type="text" v-model.trim="roomItem.price">
+                                                </div>
+                                            </div>
+                                            <div class="">
+                                                <div class="">原价：</div>
+                                                <div class="">
+                                                    <input type="text" v-model.trim="roomItem.originalPrice">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=""></div>
+                            </div>
+                        </li>
+                        <li class="section-roomsItem-list-item-add" @click="addRoomButtonClickEvent">
+                            <div class="section-roomsItem-list-item-add-icon"></div>
+                            <div class="section-roomsItem-list-item-add-text">添加一个房型</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script>
+            require('./CreateHotelCard.js');
+        </script>
+    </body>
+</html>

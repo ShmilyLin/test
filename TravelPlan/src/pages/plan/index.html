@@ -365,7 +365,7 @@
                                         <div class="section-right-content-hotel-header-title">住宿卡</div>
                                         <div contenteditable='false' class="section-right-content-hotel-header-action">
                                             <div class="section-right-content-hotel-header-action-filter" @click="rightInfo.isShowFilter=!rightInfo.isShowFilter"></div>
-                                            <div class="section-right-content-hotel-header-action-add"></div>
+                                            <div class="section-right-content-hotel-header-action-add" @click="sectionRightHotelHeaderAddButtonClickEvent"></div>
                                         </div>
                                     </div>
                                     <div class="section-right-content-hotel-search">
@@ -469,6 +469,8 @@
                     @click.stop 
                     @mousedown.stop>{{movingCard.content}}</div>
             </div>
+
+            <div class="cover-view" v-if="isShowCoverView" @mousemove.stop @mouseup.stop @mousedown.stop @click.stop></div>
         </div>
 
         <!-- SwitchButton -->

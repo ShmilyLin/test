@@ -690,3 +690,13 @@ html, body {
     color: #666666;
     border: 1px solid lightgray;
 }
+
+
+.cover-view {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 999;
+}

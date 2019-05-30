@@ -266,6 +266,7 @@
 
 .section-right-content-hotel-header {
     width: calc(100% - 20px);
+    height: 24px;
     padding: 5px 10px;
     background-color: #F0F0F0;
     display: flex;
@@ -274,13 +275,17 @@
     justify-content: space-between;
 }
 
+.section-right-content-hotel-header:hover .section-right-content-hotel-header-action {
+    display: flex;
+}
+
 .section-right-content-hotel-header-title {
     font-size: 14px;
-    line-height: 1.5px;
+    line-height: 1.5;
 }
 
 .section-right-content-hotel-header-action {
-    display: flex;
+    display: none;
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;

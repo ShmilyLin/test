@@ -11,6 +11,7 @@ var vm = new Vue({
         return {
             platform: "", // 平台
             isMaximize: false, // 是否最大化
+            isShowCoverView: false, // 是否显示顶层遮盖
             mode: 0, // 编辑模式，0为工具栏置顶，1为工具栏悬浮
             isShowRight: false, // 是否显示右边栏
             isAutoShowRight: false, // 是否是自动显示隐藏右边栏
@@ -94,6 +95,10 @@ var vm = new Vue({
 
             this.dayList.push(tempModel);
         }
+
+        ipcRenderer.on('child-window-closed', () => {
+            this.isShowCoverView = false;
+        })
 
         var tempHotelCardItem = new HotelCardModel();
         tempHotelCardItem.name = "阳光大酒店";
@@ -560,6 +565,14 @@ var vm = new Vue({
         },
 
         /**
+         * 右边栏 > 住宿卡 > 新建一个住宿卡
+         */
+        sectionRightHotelHeaderAddButtonClickEvent: function () {
+            this.isShowCoverView = true;
+            ipcRenderer.send('create-hotel-card');
+        },
+
+        /**
          * 右边栏 > 住宿卡 > 点击一个住宿卡
          */
         sectionRightHotelItemMousedownEvent: function (event, hotelCardIndex) {
@@ -576,6 +589,7 @@ var vm = new Vue({
             if (this.isTouchedACard) {
                 this.movingCard.x = event.x;
                 this.movingCard.y = event.y;
+                // var eles = document.elementsFromPoint(event.x,event.y);
             }
         },
 
@@ -601,6 +615,7 @@ var vm = new Vue({
                                     if (event.x >= tempPlanDomRect.left && event.x <= (tempPlanDomRect.left + tempPlanDomRect.width) && event.y >= tempPlanDomRect.top && event.y <= (tempPlanDomRect.top + tempPlanDomRect.height)) {
                                         var tempPlanItem = tempDayItem.plans[j];
                                         if (tempPlanItem.list && tempPlanItem.list.length > 0) {
+                                            var tempFind = false;
                                             for (var n = 0; n < tempPlanItem.list.length; n++) {
                                                 var tempPlanListItem = tempPlanItem.list[n];
                                                 if (tempPlanListItem.type === this.movingCard.type) {
@@ -617,13 +632,20 @@ var vm = new Vue({
                                                                     console.log("哈哈", this.movingCard.data);
                                                                     tempPlanListItem.hotal.defaultHotel = this.movingCard.data;
                                                                     this.$set(this.dayList, i, tempDayItem);
+                                                                    tempFind = true;
                                                                 }
                                                             }
                                                             break;
                                                     }
                                                 }
+
+                                                if (tempFind) {
+                                                    break;
+                                                }
                                             }
                                         }
+
+                                        break;
                                     }
                                 }
                             }
