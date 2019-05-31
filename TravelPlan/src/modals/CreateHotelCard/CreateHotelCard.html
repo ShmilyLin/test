@@ -4,8 +4,9 @@
         <meta charset="UTF-8">
         <title>创建住宿卡</title>
         <link rel="stylesheet" href="../../libs/init.css">
-        <link rel="stylesheet" href="./CreateHotelCard.js">
+        <link rel="stylesheet" href="../../components/ModalView/ModalView.css">
         <link rel="stylesheet" href="./CreateHotelCard.css">
+        <script src="../../utils/string.js"></script>
         <script src="../../libs/vue.js"></script>
     </head>
     <body>
@@ -121,44 +122,108 @@
                             </div>
                             <div class="section-roomsItem-list-item-section" v-if="roomItem.isShow">
                                 <div class="section-roomsItem-list-item-section-1">
-                                    <div class="section-roomsItem-list-item-section-1-title">平米数</div>
+                                    <div class="section-roomsItem-list-item-section-1-title">平米数:</div>
                                     <div class="section-roomsItem-list-item-section-1-input">
-                                        <input type="text" v-model.trim="roomItem.squareMeter">
+                                        <input type="text" v-model.trim="roomItem.squareMeter" placeholder="0" @blur="roomItemSquareMeterInputBlurEvent(roomIndex)">
                                     </div>
                                 </div>
                                 <div class="section-roomsItem-list-item-section-1">
-                                    <div class="section-roomsItem-list-item-section-1-title">房间数量单位</div>
+                                    <div class="section-roomsItem-list-item-section-1-title">房间数量单位:</div>
                                     <div class="section-roomsItem-list-item-section-1-input">
-                                        <input type="text" v-model.trim="roomItem.roomUnit">
+                                        <input type="text" v-model.trim="roomItem.roomUnit" placeholder="间">
                                     </div>
                                 </div>
-                                <div class="section-roomsItem-list-item-section-2">
-                                    <div class="section-roomsItem-list-item-section-2-title">房间价格</div>
+                                <div class="section-roomsItem-list-item-section-1">
+                                    <div class="section-roomsItem-list-item-section-1-title">房间价格单位:</div>
+                                    <div class="section-roomsItem-list-item-section-1-input">
+                                        <input type="text" v-model.trim="roomItem.priceUnit" placeholder="人民币">
+                                    </div>
+                                </div>
+                                <!-- <div class="section-roomsItem-list-item-section-2">
+                                    <div class="section-roomsItem-list-item-section-2-title">房间价格:</div>
                                     <div class="section-roomsItem-list-item-section-2-right">
                                         <div class="section-roomsItem-list-item-section-2-right-unit">
-                                            <div class="">价格单位：</div>
-                                            <div class="">
-                                                <input type="text" v-model.trim="roomItem.priceUnit">
+                                            <div class="section-roomsItem-list-item-section-2-right-unit-title">价格单位</div>
+                                            <div class="section-roomsItem-list-item-section-2-right-unit-input">
+                                                <input type="text" v-model.trim="roomItem.priceUnit" placeholder="人民币">
                                             </div>
                                         </div>
                                         <div class="section-roomsItem-list-item-section-2-right-price">
-                                            <div class="">
-                                                <div class="">现价：</div>
-                                                <div class="">
+                                            <div class="section-roomsItem-list-item-section-2-right-price-item">
+                                                <div class="section-roomsItem-list-item-section-2-right-price-item-title">现价</div>
+                                                <div class="section-roomsItem-list-item-section-2-right-price-item-input">
                                                     <input type="text" v-model.trim="roomItem.price">
                                                 </div>
                                             </div>
-                                            <div class="">
-                                                <div class="">原价：</div>
-                                                <div class="">
+                                            <div class="section-roomsItem-list-item-section-2-right-price-item">
+                                                <div class="section-roomsItem-list-item-section-2-right-price-item-title">原价</div>
+                                                <div class="section-roomsItem-list-item-section-2-right-price-item-input">
                                                     <input type="text" v-model.trim="roomItem.originalPrice">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div> -->
+                                <div class="section-roomsItem-list-item-section-3">
+                                    <div class="section-roomsItem-list-item-section-3-title">可住人数:</div>
+                                    <div class="section-roomsItem-list-item-section-3-right">
+                                        <div class="section-roomsItem-list-item-section-3-right-number">
+                                            <div class="section-roomsItem-list-item-section-3-right-number-item">
+                                                <div class="section-roomsItem-list-item-section-3-right-number-item-title">成年人</div>
+                                                <div class="section-roomsItem-list-item-section-3-right-number-item-input">
+                                                    <input type="text" v-model.trim="roomItem.numberOfPeopleAvailable.adult" placeholder="1" @blur="roomItemNumOfAdultInputBlurEvent(roomIndex)">
+                                                </div>
+                                            </div>
+                                            <div class="section-roomsItem-list-item-section-3-right-number-item">
+                                                <div class="section-roomsItem-list-item-section-3-right-number-item-title">儿童</div>
+                                                <div class="section-roomsItem-list-item-section-3-right-number-item-input">
+                                                    <input type="text" v-model.trim="roomItem.numberOfPeopleAvailable.child" placeholder="0" @blur="roomItemNumOfChildInputBlurEvent(roomIndex)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="section-roomsItem-list-item-section-3-right-checkbox" @click="roomItem.numberOfPeopleAvailable.canExtraBed=!roomItem.numberOfPeopleAvailable.canExtraBed">
+                                            <div :class="roomItem.numberOfPeopleAvailable.canExtraBed ? 'section-roomsItem-list-item-section-3-right-checkbox-checked' : 'section-roomsItem-list-item-section-3-right-checkbox-none'"></div>
+                                            <div class="section-roomsItem-list-item-section-3-right-checkbox-desc">是否可以加床</div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class=""></div>
+                                <div class="section-roomsItem-list-item-section-1">
+                                    <div class="section-roomsItem-list-item-section-1-title">窗户:</div>
+                                    <div class="section-roomsItem-list-item-section-1-input">
+                                        <input type="text" v-model.trim="roomItem.windowTyps">
+                                    </div>
+                                </div>
+                                <div class="section-roomsItem-list-item-section-3">
+                                    <div class="section-roomsItem-list-item-section-3-title">其他设置:</div>
+                                    <div class="section-roomsItem-list-item-section-3-right">
+                                        <div class="section-roomsItem-list-item-section-3-right-input">
+                                            <div class="section-roomsItem-list-item-section-3-right-input-title">免费提供早餐数量</div>
+                                            <div class="section-roomsItem-list-item-section-3-right-input-input">
+                                                <input type="text" v-model.trim="roomItem.numberOfBreakfast" placeholder="0" @blur="roomItemNumberOfBreakfastInputBlurEvent(roomIndex)">
+                                            </div>
+                                        </div>
+                                        <div class="section-roomsItem-list-item-section-3-right-checkbox" @click="roomItem.nonsmoking=!roomItem.nonsmoking">
+                                            <div :class="roomItem.nonsmoking ? 'section-roomsItem-list-item-section-3-right-checkbox-checked' : 'section-roomsItem-list-item-section-3-right-checkbox-none'"></div>
+                                            <div class="section-roomsItem-list-item-section-3-right-checkbox-desc">禁烟</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="section-roomsItem-list-item-section-4">
+                                    <div class="section-roomsItem-list-item-section-4-title">床型说明:</div>
+                                    <div class="section-roomsItem-list-item-section-4-right" 
+                                        contenteditable="plaintext-only" 
+                                        ref="section-roomsItem-list-item-section-4-right-bedtype"
+                                        @blur="inputBedtypeBlurEvent($event, roomIndex)"></div>
+                                </div>
+                                <div class="section-roomsItem-list-item-section-4">
+                                    <div class="section-roomsItem-list-item-section-4-title">房间说明:</div>
+                                    <div class="section-roomsItem-list-item-section-4-right" 
+                                        contenteditable="plaintext-only" 
+                                        ref="section-roomsItem-list-item-section-4-right-roomdesc"
+                                        @blur="inputRoomdescBlurEvent($event, roomIndex)"></div>
+                                </div>
                             </div>
+                            <div class="section-roomsItem-list-item-line"></div>
                         </li>
                         <li class="section-roomsItem-list-item-add" @click="addRoomButtonClickEvent">
                             <div class="section-roomsItem-list-item-add-icon"></div>
@@ -166,8 +231,27 @@
                         </li>
                     </ul>
                 </div>
+                <div class="section-lineItem" style="margin-top: 10px;"></div>
+                <div class="section-actions">
+                    <div class="section-actions-confirm" @click="createAHotelCardButtonClickEvent">创建住宿卡</div>
+                </div>
             </div>
+            <modal-view v-if="isShowModal" :content="modalContent" @confirm-click="isShowModal=false"></modal-view>
         </div>
+
+        <!-- ModalView -->
+        <template id="modal-view">
+            <div class="modal-view">
+                <div class="modal-view-content">
+                    <div class="modal-view-content-text">{{content}}</div>
+                    <div class="modal-view-content-actions">
+                        <div class="modal-view-content-actions-cancel" v-if="showCancel" @click="cancelButtonClickEvent">{{cancelText}}</div>
+                        <div class="modal-view-content-actions-confirm" @click="confirmButtonClickEvent">{{confirmText}}</div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <script src="../../components/ModalView/ModalView.js"></script>
         <script>
             require('./CreateHotelCard.js');
         </script>

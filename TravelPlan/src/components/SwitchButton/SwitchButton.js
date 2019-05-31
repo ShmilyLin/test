@@ -11,9 +11,4 @@ Vue.component('switch-button', {
           
         }
     },
-    watch: {
-      'isSwitch': function () {
-        console.log("【Switch Button】 watch isSwitch", this.isSwitch);
-      }
-    },
 })

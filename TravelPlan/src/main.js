@@ -40,6 +40,8 @@ function appOnReady () {
     frame: false, // 无边框
     titleBarStyle: 'hiddenInset', // macOS, 左上角仍然有标准的窗口控制按钮，其中控制按钮到窗口边框的距离更大。
     show: false,
+    fullscreen: false,
+    fullscreenable: false,
   })
 
   // 关闭主窗口
@@ -106,6 +108,11 @@ ipcMain.on('create-hotel-card', (event, arg) => {
     },
     frame: false, // 无边框
     titleBarStyle: 'hiddenInset', 
+    fullscreen: false,
+    fullscreenable: false,
+    maximizable: false,
+    minimizable: false,
+    movable: false,
   })
   
   childWindow.once('ready-to-show', () => {
