@@ -173,12 +173,12 @@
                                                                 <div class="day-plan-list-item-hotel-default-room">
                                                                     <div class="day-plan-list-item-hotel-default-room-header">
                                                                         <div class="day-plan-list-item-hotel-default-room-header-title">房型</div>
-                                                                        <div class="day-plan-list-item-hotel-default-room-header-add"></div>
+                                                                        <div class="day-plan-list-item-hotel-default-room-header-add" @click="planListItemHotelAddRoomButtonClickEvent(dayIndex, planIndex, planListIndex)"></div>
                                                                     </div>
                                                                     <ul class="day-plan-list-item-hotel-default-room-list">
                                                                         <li class="day-plan-list-item-hotel-default-room-list-item" v-for="roomItem in planListItem.hotal.defaultHotel.defaultRooms" :key="'room_' + roomItem.id"></li>
                                                                         <li class="day-plan-list-item-hotel-default-room-list-subtitle">备选</li>
-                                                                        <li class="day-plan-list-item-hotel-default-room-list-item" v-for="roomItem in planListItem.hotal.defaultHotel.rooms" :key="'room_' + roomItem.id"></li>
+                                                                        <li class="day-plan-list-item-hotel-default-room-list-item" v-for="roomItem in planListItem.hotal.defaultHotel.othersRooms" :key="'room_' + roomItem.id"></li>
                                                                     </ul>
                                                                 </div>
                                                             </template>
@@ -407,7 +407,9 @@
                                         </div>
                                     </div>
                                     <ul class="section-right-content-hotel-list">
-                                        <li class="section-right-content-hotel-list-item" v-for="(hotelCardItem, hotelCardIndex) in hotelCardList" @mousedown.stop='sectionRightHotelItemMousedownEvent($event, hotelCardIndex)'>
+                                        <li class="section-right-content-hotel-list-item" 
+                                            v-for="(hotelCardItem, hotelCardIndex) in hotelCardList" :key="'hotel_card_item_' + hotelCardItem._id"
+                                            @mousedown.stop='sectionRightHotelItemMousedownEvent($event, hotelCardIndex)'>
                                             <div class="section-right-content-hotel-list-item-info">
                                                 <div class="section-right-content-hotel-list-item-info-name">{{hotelCardItem.name}}</div>
                                                 <div class="section-right-content-hotel-list-item-info-type">{{hotelCardItem.type}}</div>
@@ -423,16 +425,31 @@
                                             <div class="section-right-content-hotel-list-item-rooms">
                                                 <div class="section-right-content-hotel-list-item-rooms-header">
                                                     <div class="section-right-content-hotel-list-item-rooms-header-title">房型</div>
-                                                    <div class="section-right-content-hotel-list-item-rooms-header-show">展开</div>
+                                                    <div class="section-right-content-hotel-list-item-rooms-header-show" 
+                                                        title="显示所有房型" 
+                                                        @mousedown.stop 
+                                                        @mouseup.stop
+                                                        @click.stop="sectionRightHotelCardItemShowButtonClickEvent(hotelCardIndex)">{{hotelCardItem.isShowRooms ? '收起' : '展开'}}</div>
                                                 </div>
-                                                <ul class="section-right-content-hotel-list-item-rooms-list">
-                                                    <li class="section-right-content-hotel-list-item-rooms-list-item">
+                                                <ul class="section-right-content-hotel-list-item-rooms-list" v-if="hotelCardItem.isShowRooms">
+                                                    <li class="section-right-content-hotel-list-item-rooms-list-item" 
+                                                        v-for="(roomItem, roomIndex) in hotelCardItem.rooms" 
+                                                        :key="'hotel_card_item_' + hotelCardItem._id + '_room_' + roomItem.id">
                                                         <div class="section-right-content-hotel-list-item-rooms-list-item-info">
-                                                            <div class="section-right-content-hotel-list-item-rooms-list-item-info-name">房型名称</div>
-                                                            <div class="section-right-content-hotel-list-item-rooms-list-item-info-more" title="更多信息"></div>
+                                                            <div class="section-right-content-hotel-list-item-rooms-list-item-info-name">{{roomItem.roomType}}</div>
+                                                            <div :class="roomItem.isShow ? 'section-right-content-hotel-list-item-rooms-list-item-info-more-show' : 'section-right-content-hotel-list-item-rooms-list-item-info-more'" 
+                                                                title="更多信息" 
+                                                                @mousedown.stop 
+                                                                @mouseup.stop
+                                                                @click.stop="sectionRightHotelCardItemRoomItemShowButtonClickEvent(hotelCardIndex, roomIndex)"></div>
                                                         </div>
-                                                        <div class="section-right-content-hotel-list-item-rooms-list-item-more">
-
+                                                        <div class="section-right-content-hotel-list-item-rooms-list-item-more" v-if="roomItem.isShow">
+                                                            <div class="section-right-content-hotel-list-item-rooms-list-item-more-text">房间大小: {{roomItem.squareMeter}}㎡</div>
+                                                            <div class="section-right-content-hotel-list-item-rooms-list-item-more-text">可住人数: {{roomItem.numberOfPeopleAvailable.adult}}名成年人{{roomItem.numberOfPeopleAvailable.child > 0 ? '， ' + roomItem.numberOfPeopleAvailable.child + '名儿童' : ''}}{{roomItem.numberOfPeopleAvailable.canExtraBed ? '（可加床）' : '（不可加床）'}}</div>
+                                                            <div class="section-right-content-hotel-list-item-rooms-list-item-more-text">床型说明: {{roomItem.bedType}}</div>
+                                                            <div class="section-right-content-hotel-list-item-rooms-list-item-more-text">房间窗户: {{roomItem.windowTyps}}</div>
+                                                            <div class="section-right-content-hotel-list-item-rooms-list-item-more-text">{{roomItem.nonsmoking ? '房间禁烟' : '房间可以吸烟'}}</div>
+                                                            <div class="section-right-content-hotel-list-item-rooms-list-item-more-text" v-if="roomItem.roomDesc && roomItem.roomDesc.length > 0">房间说明: {{roomItem.roomDesc}}</div>
                                                         </div>
                                                     </li>
                                                 </ul>

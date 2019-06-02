@@ -506,6 +506,8 @@ var vm = new Vue({
 
             HotelCardDB.insert(hotelSave, (err, newDoc) => {
                 console.log("插入一条住宿卡回调", err, newDoc);
+                var currentWindow = remote.getCurrentWindow();
+                currentWindow.close();
             })
         }
     },

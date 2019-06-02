@@ -2,8 +2,18 @@ const {
     ipcRenderer,
     remote
 } = require('electron');
+const path = require('path');
+const nedb = require('nedb');
+
 const DayModel = require('../../models/DayModel.js');
 const HotelCardModel = require('../../models/HotelCardModel.js');
+
+console.log(path.join(remote.app.getPath('userData'), 'data/resource.db'));
+const HotelCardDB = new nedb({
+    filename: path.join(remote.app.getPath('userData'), 'data/hotelcard.db'),
+    autoload: true, // 当数据存储被创建时，数据将自动从文件中加载到内存，不必去调用loadDatabase。注意所有命令操作只有在数据加载完成后才会被执行。
+    corruptAlertThreshold: 0, // 默认10%,取值在0-1之间。如果数据文件损坏率超过这个百分比，NeDB将不会启动。取0，意味着不能容忍任何数据损坏；取1，意味着忽略数据损坏问题。
+});
 
 var vm = new Vue({
     el: '#app',
@@ -100,14 +110,24 @@ var vm = new Vue({
             this.isShowCoverView = false;
         })
 
-        var tempHotelCardItem = new HotelCardModel();
-        tempHotelCardItem.name = "阳光大酒店";
-        tempHotelCardItem.desc = "阿萨德九分裤 v 来问了情况你到了千万年多了去看望你";
-        tempHotelCardItem.type = "五星级酒店";
-        tempHotelCardItem.tags = ["好", "特别好"];
-        tempHotelCardItem.address.content = "阿克苏领导能力你看完了你离开哪位旅客努力外壳拿了努力为肯";
+        HotelCardDB.find({}, (err, docs) => {
+            console.log("HotelCardDB find all", err, docs);
+            if (err) {
 
-        this.hotelCardList = [tempHotelCardItem];
+            }else {
+                for (var i = 0; i < docs.length; i++) {
+                    docs[i].isShowRooms = false;
+                    if (docs[i].rooms) {
+                        for (var j = 0; j < docs[i].rooms.length; j++) {
+                            docs[i].rooms[j].isShow = false;
+                        }
+                    }
+                }
+                
+                this.hotelCardList = docs;
+            }
+        })
+        
     },
     mounted: function() {
         console.log(this.$refs);
@@ -486,6 +506,17 @@ var vm = new Vue({
         },
 
         /**
+         * 天 > 计划 > 项-住宿 > 点击选择房型
+         */
+        planListItemHotelAddRoomButtonClickEvent(dayIndex, planIndex, planListIndex) {
+            var tempDayItem = this.dayList[dayIndex];
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            var tempPlanListItem = tempPlanItem.list[planListIndex];
+            tempPlanListItem.isShowAddRoom = true;
+            this.$set(this.dayList, dayIndex, tempDayItem);
+        },
+
+        /**
          * 右边栏 > 顶部 > 固定按钮点击事件
          */
         sectionRightHeaderActionAutoShowButtonClick: function () {
@@ -564,6 +595,8 @@ var vm = new Vue({
             this.currentSelected.planListItemIndex = tempNewPlanListItemIndex;
         },
 
+        
+
         /**
          * 右边栏 > 住宿卡 > 新建一个住宿卡
          */
@@ -621,20 +654,22 @@ var vm = new Vue({
                                                 if (tempPlanListItem.type === this.movingCard.type) {
                                                     switch (this.movingCard.type) {
                                                         case 2:
-                                                            if (tempPlanListItem.hotal && tempPlanListItem.hotal.defaultHotel) {
+                                                            // if (tempPlanListItem.hotal && tempPlanListItem.hotal.defaultHotel) {
 
-                                                            }else {
+                                                            // }else {
                                                                 // 没有默认的住宿卡
                                                                 var tempDefaultHotelDom = this.$refs['day-plan-list-item-hotel-default-' + i + '-' + j + '-' + n][0];
                                                                 console.log("tempDefaultHotelDom", tempDefaultHotelDom);
                                                                 var tempDefaultHotelDomRect = tempDefaultHotelDom.getBoundingClientRect();
                                                                 if (event.x >= tempDefaultHotelDomRect.left && event.x <= (tempDefaultHotelDomRect.left + tempDefaultHotelDomRect.width) && event.y >= tempDefaultHotelDomRect.top && event.y <= (tempDefaultHotelDomRect.top + tempDefaultHotelDomRect.height)) {
-                                                                    console.log("哈哈", this.movingCard.data);
-                                                                    tempPlanListItem.hotal.defaultHotel = this.movingCard.data;
+                                                                    var tempMovingData = JSON.parse(JSON.stringify(this.movingCard.data));
+                                                                    console.log("tempMovingData", tempMovingData);
+                                                                    tempMovingData.isShowAddRoom = false;
+                                                                    tempPlanListItem.hotal.defaultHotel = tempMovingData;
                                                                     this.$set(this.dayList, i, tempDayItem);
                                                                     tempFind = true;
                                                                 }
-                                                            }
+                                                            // }
                                                             break;
                                                     }
                                                 }
@@ -660,6 +695,34 @@ var vm = new Vue({
                 this.movingCard.x = event.x;
                 this.movingCard.y = event.y;
                 
+            }
+        },
+
+        /**
+         * 右边栏 > 住宿卡 > 点击显示一个住宿卡的所有房型
+         */
+        sectionRightHotelCardItemShowButtonClickEvent: function (hotelCardIndex) {
+            var tempHotelItem = this.hotelCardList[hotelCardIndex];
+            tempHotelItem.isShowRooms = !tempHotelItem.isShowRooms;
+            this.$set(this.hotelCardList, hotelCardIndex, tempHotelItem);
+        },
+
+        /**
+         * 右边栏 > 住宿卡 > 点击显示一个房型的详细信息
+         */
+        sectionRightHotelCardItemRoomItemShowButtonClickEvent: function (hotelCardIndex, roomIndex) {
+            var tempHotelItem = this.hotelCardList[hotelCardIndex];
+            var tempRoomItem = tempHotelItem.rooms[roomIndex];
+            tempRoomItem.isShow = !tempRoomItem.isShow;
+            this.$set(this.hotelCardList, hotelCardIndex, tempHotelItem);
+        },
+
+        getHotelCardRoomItemNumberOfPeopleAvailable: function (roomItem) {
+            var tempStr = roomItem.numberOfPeopleAvailable.adult + "名成年人";
+            if (roomItem.numberOfPeopleAvailable.child > 0) {
+                tempStr += ", " + roomItem.numberOfPeopleAvailable.child + "名儿童";
+            }else {
+
             }
         }
     },

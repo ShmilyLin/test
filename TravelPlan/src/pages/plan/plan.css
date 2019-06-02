@@ -387,6 +387,7 @@ html, body {
 }
 
 .day-plan-list-item-hotel-default-room-header-add {
+    display: none;
     width: 14px;
     height: 14px;
     background-image: url(../../assets/right_sidebar_add.png);
@@ -394,6 +395,10 @@ html, body {
     background-size: 100% 100%;
     cursor: pointer;
 }
+
+.day-plan-list-item-hotel-default-room-header:hover .day-plan-list-item-hotel-default-room-header-add {
+    display: block;
+}   
 
 .day-plan-list-item-hotel-default-room-list {
     width: calc(1005 - 15px);
@@ -682,7 +687,6 @@ html, body {
     position: fixed;
     background-color: white;
     width: 200px;
-    height: 30px;
     padding: 5px 10px;
     opacity: 0.8;
     font-size: 12px;

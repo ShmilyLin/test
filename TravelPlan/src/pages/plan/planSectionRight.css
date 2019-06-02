@@ -458,7 +458,7 @@
 }
 
 .section-right-content-hotel-list-item-info-name {
-    width: 100%;
+    width: calc(100% - 20px);
     font-size: 18px;
     font-weight: 500;
     line-height: 1.5;
@@ -592,12 +592,30 @@
     cursor: pointer;
     width: 14px;
     height: 14px;
-    background-image: url();
+    background-image: url(../../assets/hidden_999999.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    cursor: pointer;
+}
+
+.section-right-content-hotel-list-item-rooms-list-item-info-more-show {
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+    background-image: url(../../assets/show_999999.png);
     background-repeat: no-repeat;
     background-size: 100%;
     cursor: pointer;
 }
 
 .section-right-content-hotel-list-item-rooms-list-item-more {
+    width: calc(100% - 30px);
+    margin-left: 15px;
+}
 
+.section-right-content-hotel-list-item-rooms-list-item-more-text {
+    font-size: 12px;
+    font-weight: 300;
+    color: #777777;
+    line-height: 1.5;
 }
