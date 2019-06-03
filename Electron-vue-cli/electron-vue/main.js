@@ -52,11 +52,11 @@ function appOnReady () {
     if (global.needOpenFile) {
     // TODO: 需要打开文件
     }else {
-        if (process.env.npm_lifecycle_event === 'start') {
-			mainWindow.loadURL('http://localhost:8080/welcome.html');
-		}else {
-			mainWindow.loadFile('dist/welcome.html');
-		}
+      if (process.env.runtype === 'dev') {
+        mainWindow.loadURL('http://localhost:8080/welcome.html');
+      }else {
+        mainWindow.loadFile('dist/welcome.html');
+      }
     }
 
     const menu = Menu.buildFromTemplate(getMenuOption());

@@ -17,7 +17,7 @@ export default {
 		createAPlanButtonClickEvent: function () {
             var currentWindow = remote.getCurrentWindow();
 
-            if (window.process.env.npm_lifecycle_event === 'start') {
+            if (window.process.env.runtype === 'dev') {
                 // currentWindow.loadURL('http://localhost:8080/welcome.html');
             }else {
                 currentWindow.loadFile('dist/welcome.html');

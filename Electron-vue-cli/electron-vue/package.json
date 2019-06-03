@@ -4,7 +4,7 @@
   "private": true,
   "main": "main.js",
   "scripts": {
-    "begin": "npm run serve & npm run start",
+    "dev": "node build/dev-run.js",
     "start": "electron .",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -21,6 +21,7 @@
     "@vue/cli-plugin-eslint": "^3.8.0",
     "@vue/cli-service": "^3.8.0",
     "babel-eslint": "^10.0.1",
+    "electron": "^5.0.2",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "sass": "^1.18.0",
