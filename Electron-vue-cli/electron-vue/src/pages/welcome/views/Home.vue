@@ -1,31 +1,30 @@
 <template>
   <div class="home">
     <Header></Header>
-	<div class="section">
-        <div class="section-left">
-          <div class="section-left-title">最近使用</div>
-          <ul class="section-left-list">
-            <template v-if="fileList && fileList.length > 0">
-              <li class="section-left-list-item" v-for="fileItem in fileList" :key="fileItem.fileId">
-                <div class="section-left-list-item-name">{{fileItem.name}}</div>
-                <div class="section-left-list-item-path" v-if="fileItem.type===1">{{fileItem.path}}</div>
-              </li>
-            </template>
-            <template v-else>
-              <li class="section-left-list-none" @click="createAPlanButtonClickEvent">创建旅行计划</li>
-            </template>
-          </ul>
-        </div>
-        <div class="section-right">
+	  <div class="section">
+      <div class="section-left">
+        <div class="section-left-title">最近使用</div>
+        <ul class="section-left-list">
+          <template v-if="fileList && fileList.length > 0">
+            <li class="section-left-list-item" v-for="fileItem in fileList" :key="fileItem.fileId">
+              <div class="section-left-list-item-name">{{fileItem.name}}</div>
+              <div class="section-left-list-item-path" v-if="fileItem.type===1">{{fileItem.path}}</div>
+            </li>
+          </template>
+          <template v-else>
+            <li class="section-left-list-none" @click="createAPlanButtonClickEvent">创建旅行计划</li>
+          </template>
+        </ul>
+      </div>
+      <div class="section-right">
 
-        </div>
+      </div>
     </div>
     <Footer></Footer>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 import Header from '@/pages/welcome/components/Header.vue';
 import Footer from '@/pages/welcome/components/Footer.vue';
 
@@ -54,9 +53,9 @@ export default {
       var currentWindow = remote.getCurrentWindow();
 
       if (window.process.env.runtype === 'dev') {
-          // currentWindow.loadURL('http://localhost:8080/welcome.html');
+          currentWindow.loadURL('http://localhost:8080/plan.html');
       }else {
-          currentWindow.loadFile('dist/welcome.html');
+          currentWindow.loadFile('dist/plan.html');
       }
 		}
   }
@@ -65,6 +64,11 @@ export default {
 
 
 <style lang="scss" scoped>
+.home {
+  width: 100%;
+  height: 100%;
+}
+
 .section {
     padding: 20px;
     width: calc(100% - 40px);

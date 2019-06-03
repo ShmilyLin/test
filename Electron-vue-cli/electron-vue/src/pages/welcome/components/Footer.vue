@@ -18,9 +18,9 @@ export default {
             var currentWindow = remote.getCurrentWindow();
 
             if (window.process.env.runtype === 'dev') {
-                // currentWindow.loadURL('http://localhost:8080/welcome.html');
+                currentWindow.loadURL('http://localhost:8080/plan.html');
             }else {
-                currentWindow.loadFile('dist/welcome.html');
+                currentWindow.loadFile('dist/plan.html');
             }
 		}
 	}

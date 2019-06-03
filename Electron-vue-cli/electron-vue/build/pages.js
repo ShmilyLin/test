@@ -3,6 +3,10 @@ var pagesConfig = {
         name: "welcome",
         title: "欢迎使用“旅行计划”",
         // template: "",
+    },
+    plan: {
+        name: "plan",
+        title: "新建“旅行计划”",
     }
 }
 
