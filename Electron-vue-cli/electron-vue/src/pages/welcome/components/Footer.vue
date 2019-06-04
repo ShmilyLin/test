@@ -28,6 +28,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../../../utils/GlobalScss.scss";
+
 .footer {
     margin: 0 20px;
     padding: 20px 0;
@@ -39,34 +41,37 @@ export default {
 }
 
 .footer-left {
-    width: 120px;
-    text-align: center;
-    font-size: 14px;
-    line-height: 30px;
-    border-radius: 4px;
-    background-color: #FF6F61;
-    cursor: pointer;
-    color: white;
+    @include main-button;
+    // width: 120px;
+    // text-align: center;
+    // font-size: 14px;
+    // line-height: 30px;
+    // border-radius: 4px;
+    // background-color: #FF6F61;
+    // cursor: pointer;
+    // color: white;
 }
 
-.footer-left:hover {
-    background-color: #E94B3C;
-}
+// .footer-left:hover {
+//     background-color: #E94B3C;
+// }
 
 .footer-right {
+    @include secondary-button;
+
     margin-left: 20px;
-    width: 120px;
-    text-align: center;
-    font-size: 14px;
-    line-height: 28px;
-    border-radius: 4px;
-    border: 1px solid #FF6F61;
-    cursor: pointer;
+    // width: 120px;
+    // text-align: center;
+    // font-size: 14px;
+    // line-height: 28px;
+    // border-radius: 4px;
+    // border: 1px solid #FF6F61;
+    // cursor: pointer;
 }
 
-.footer-right:hover {
-    background-color: #E94B3C;
-    border: 1px solid #E94B3C;
-    color: white;
-}
+// .footer-right:hover {
+//     background-color: #E94B3C;
+//     border: 1px solid #E94B3C;
+//     color: white;
+// }
 </style>

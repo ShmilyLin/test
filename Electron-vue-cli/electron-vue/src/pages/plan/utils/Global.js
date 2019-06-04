@@ -1,7 +1,8 @@
 export default {
     Store: {
         MutationsKeys: {
-            SetAutoSave: "SetAutoSave"
+            SetAutoSave: "SetAutoSave",
+            SetAutoShowRightSidebar: "SetAutoShowRightSidebar",
         }
     }
 }

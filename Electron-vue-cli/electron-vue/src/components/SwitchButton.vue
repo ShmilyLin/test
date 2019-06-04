@@ -44,9 +44,11 @@ export default {
     transition: all 0.5s;
     margin-top: 2px;
     background-color: white;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
 }
 
 .switch-button-ball-selected {
     margin-left: calc(30px - 2px - 12px);
+    box-shadow: none;
 }
 </style>

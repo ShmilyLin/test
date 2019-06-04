@@ -26,6 +26,11 @@
 </template>
 
 <script>
+const {
+    ipcRenderer,
+    remote
+} = window.require('electron');
+
 import Global from '../utils/Global.js';
 
 import SwitchButton from '../../../components/SwitchButton.vue';

@@ -25,6 +25,11 @@
 </template>
 
 <script>
+const {
+    ipcRenderer,
+    remote
+} = window.require('electron');
+
 import Header from '@/pages/welcome/components/Header.vue';
 import Footer from '@/pages/welcome/components/Footer.vue';
 
