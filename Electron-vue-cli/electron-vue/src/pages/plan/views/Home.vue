@@ -1,5 +1,5 @@
 <template>
-	<div class="home">
+	<div class="home" @click="homeClickEvent">
 		<TopMenu :topToolMode="topToolMode" 
 			@top-tool-mode="topMenuToolModeChangeEvent" 
 			@mouseenter.native="homeTopMouseEnterEvent" 
@@ -13,10 +13,12 @@
 				<div class="home-section-canvas">
 					<DayItem v-for="(dayItem, dayIndex) in dayList" 
                         :key="dayItem.timestamp" 
-						:ref="'section-canvas-day-' + dayIndex" 
-						:class="{ 'home-section-canvas-day-selected': dayItem.isSelected }" 
+						:ref="'section-canvas-day-' + dayIndex"
 						:dayItem="dayItem"
 						:dayIndex="dayIndex"></DayItem>
+					<div class="home-section-canvas-day">
+						<div class=""></div>
+					</div>
 				</div>
 			</div>
 			<transition name="section-right">
@@ -77,6 +79,19 @@ export default {
 			rightInfo: null, // 右边栏信息
 
 			dayList: [], // 
+			currentSelected: { // 当前选中的项
+                dayIndex: -1,
+                planIndex: -1,
+                planListItemIndex: -1,
+            },
+
+			isTouchedACard: false,
+            movingCard: {
+                type: 0,
+                data: null,
+                x: 0,
+                y: 0,
+            }
         }
 	},
 	computed: {
@@ -106,6 +121,10 @@ export default {
 		
 	},
 	methods: {
+		homeClickEvent: function () {
+			this.cancelSelectedItem(-1, -1, -1);
+            this.rightInfo = null;
+		},
 		/**
 		 * 顶部工具栏显示状态改变
 		 */
@@ -144,7 +163,43 @@ export default {
 			if ('desc' in params) {
 				this.planInfo.desc = params.desc;
 			}
-		}
+		},
+
+		/**
+         * 取消选中状态
+         */
+        cancelSelectedItem: function (tempNewDayIndex, tempNewPlanIndex, tempNewPlanListItemIndex) {
+            var tempDayIndex = this.currentSelected.dayIndex;
+            var tempPlanIndex = this.currentSelected.planIndex;
+            var tempPlanListItemIndex = this.currentSelected.planListItemIndex;
+
+            if (tempDayIndex >= 0 && this.dayList[tempDayIndex]) {
+                var tempDayItem = this.dayList[tempDayIndex];
+                if (tempNewDayIndex != tempDayIndex) {
+                    tempDayItem.isSelected = false;
+                }
+                
+                if (tempPlanIndex >= 0 && tempDayItem.plans[tempPlanIndex]) {
+                    var tempPlanItem = tempDayItem.plans[tempPlanIndex];
+                    if (tempNewPlanIndex != tempPlanIndex || tempNewDayIndex != tempDayIndex) {
+                        tempPlanItem.isSelected = false;
+                    }
+                    
+                    if (tempPlanListItemIndex >= 0 && tempPlanItem.list[tempPlanListItemIndex]) {
+                        if (tempNewPlanListItemIndex != tempPlanListItemIndex || tempNewPlanIndex != tempPlanIndex || tempNewDayIndex != tempDayIndex) {
+                            var tempPlanListItem = tempPlanItem.list[tempPlanListItemIndex];
+                            tempPlanListItem.isEditor = false;
+                        }
+                    }
+                }
+
+                this.$set(this.dayList, tempDayIndex, tempDayItem);
+            }
+
+            this.currentSelected.dayIndex = tempNewDayIndex;
+            this.currentSelected.planIndex = tempNewPlanIndex;
+            this.currentSelected.planListItemIndex = tempNewPlanListItemIndex;
+        },
 	}
 }
 </script>
@@ -181,7 +236,26 @@ export default {
 		transition: width 0.5s linear;
 
 		.home-section-content {
+			width: 100%;
+			height: 100%;
+			overflow: scroll;
 
+			.home-section-canvas {
+				display: flex;
+				flex-direction: row;
+				transition: all 0.5s linear;
+				min-height: 100%;
+
+				.home-section-canvas-day {
+					width: calc(500px - 40px);
+					padding: 20px;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					border-right: 1px dashed lightgray;
+					flex-shrink: 0;
+				}
+			}
 		}
 	}
 }

@@ -1,5 +1,8 @@
 <template>
-    <div class="day-item">
+    <div class="day-item" 
+        :class="{ 'day-item-selected': dayItem.isSelected }" 
+        @click.stop="dayItemSelectedEvent" 
+        @focus="dayItemSelectedEvent">
         <div class="day-item-header">
             <div class="day-item-header-title">
                 <div class="day-item-header-title-placeholder" v-if="!dayItem.inputTitle && (!dayItem.title || dayItem.title.length <= 0)">请输入主题</div>
@@ -159,7 +162,7 @@
                         <!-- 说明 -->
                         <template v-else-if="planListItem.type === 5">
                             <div class="day-plan-list-item-text" :class="{ 'day-plan-list-item-text-focus': planListItem.inputContent }">
-                                <div class="day-plan-list-item-text-placeholder"></div>
+                                <div class="day-plan-list-item-text-placeholder" v-if="!planListItem.inputContent && (!planListItem.content || planListItem.content.length <= 0)">请输入描述文字</div>
                                 <div class="day-plan-list-item-text-input" 
                                     contenteditable="plaintext-only" 
                                     :ref="'day-plan-list-item-text-input-' + planListIndex"
@@ -232,6 +235,16 @@ export default {
         }
     },
 	methods: {
+        /**
+         * 点击自己
+         */
+        dayItemSelectedEvent: function () {
+            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            tempDayItem.isSelected = true;
+            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$parent.cancelSelectedItem(this.dayIndex, -1, -1);
+            this.$parent.rightInfo = null;
+        },
 		/**
          * 标题的聚焦事件
          */
@@ -380,6 +393,119 @@ export default {
         },
 
         /**
+         * 点击一个计划项
+         */
+        dayPlanListItemClickEvent: function (event, planIndex, planListIndex) {
+            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            var tempPlanListItem = tempPlanItem.list[planListIndex];
+
+            if (tempPlanListItem.type === 2) { // 住宿
+                tempDayItem.isSelected = true;
+                tempPlanItem.isSelected = true;
+                tempPlanListItem.isEditor = true;
+                this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+                this.$parent.cancelSelectedItem(this.dayIndex, planIndex, planListIndex);
+                this.$parent.rightInfo = {
+                    type: 2,
+                    isShowFilter: false,
+                    isSearching: false,
+                    isInputSearch: false,
+                    searchContent: "",
+                }
+                event.stopPropagation();
+            }
+        },
+
+        /**
+         * 计划 - 项-起点 - 输入框聚焦事件
+         */
+        planListItemPointNameFocusEvent(planIndex, planListIndex) {
+            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            tempDayItem.isSelected = true;
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            tempPlanItem.isSelected = true;
+            var tempPlanListItem = tempPlanItem.list[planListIndex];
+            tempPlanListItem.isEditor = true;
+            tempPlanListItem.inputPointName = true;
+            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+
+            this.$parent.cancelSelectedItem(this.dayIndex, planIndex, planListIndex);
+        },
+
+        /**
+         * 天 - 计划 - 项-文字 - 输入框聚焦事件
+         */
+        dayPlanListItemTextFocusEvent: function (planIndex, planListIndex) {
+            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            tempDayItem.isSelected = true;
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            tempPlanItem.isSelected = true;
+            var tempPlanListItem = tempPlanItem.list[planListIndex];
+            tempPlanListItem.isEditor = true;
+            tempPlanListItem.inputContent = true;
+            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+
+            this.$parent.cancelSelectedItem(this.dayIndex, planIndex, planListIndex);
+        },
+        
+        /**
+         * 天 - 计划 - 项-文字 - 输入框失焦事件
+         */
+        dayPlanListItemTextBlurEvent: function (event, planIndex, planListIndex) {
+            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            var tempPlanListItem = tempPlanItem.list[planListIndex];
+            tempPlanListItem.inputContent = false;
+            tempPlanListItem.content = event.target.innerText;
+            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+        },
+
+        /**
+         * 创建一个新的计划项
+         */ 
+        createAPlanListItem: function (planIndex, type) {
+            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            tempDayItem.isSelected = true;
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            tempPlanItem.isSelected = true;
+            var tempPlanListIndex = tempPlanItem.list.length;
+            var tempPlanListItem = tempPlanItem.createAListItem(type);
+            tempPlanListItem.isEditor = true;
+            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+
+            this.$parent.cancelSelectedItem(this.dayIndex, planIndex, tempPlanListIndex);
+            
+            console.log(tempPlanListItem);
+
+            switch (type) {
+                case 0:
+                    this.$parent.rightInfo = null;
+                    break;
+                case 1:
+                    this.$parent.rightInfo = {
+                        type: 1,
+                        
+                    }
+                    break;
+                case 2:
+                    this.$parent.rightInfo = {
+                        type: 2,
+                        isShowFilter: false,
+                        isSearching: false,
+                        isInputSearch: false,
+                        searchContent: "",
+                    }
+                    break;
+                case 5:
+                    setTimeout(() => {
+                        this.$refs['day-plan-list-item-text-input-' + tempPlanListIndex][0].focus();
+                    });
+                    break;
+            }
+        },
+
+        /**
          * 获取当天的旅游路线
          */
         getDayPlanPath: function (planIndex) {
@@ -403,16 +529,13 @@ export default {
 <style lang="scss" scoped>
 .day-item {
     width: calc(500px - 40px);
+    min-height: 100%;
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     border-right: 1px dashed lightgray;
     flex-shrink: 0;
-
-    .day-item-selected {
-        border-right: 1px dashed lightskyblue;
-    }
 
     /* 天 > 头部 */
     .day-item-header {
@@ -1024,4 +1147,9 @@ export default {
 
     }
 }
+
+.day-item-selected {
+        border-right: 1px solid lightskyblue;
+        box-shadow: 0 0 4px 0 rgba(135, 206, 250, 0.5);
+    }
 </style>
