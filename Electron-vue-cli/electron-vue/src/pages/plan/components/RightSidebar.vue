@@ -1,5 +1,9 @@
 <template>
-    <div class="right-sidebar">
+    <div class="right-sidebar" 
+		@click.stop 
+		@mousedown.stop 
+		@mousemove.stop 
+		@mouseup.stop>
         <div class="rs-header">
 			<div class="rs-header-title">右边栏</div>
 			<div class="rs-header-actions">
@@ -134,7 +138,9 @@
 					<div class="rs-content-hotel-list">
 						<HotelCard v-for="(hotelCardItem, hotelCardIndex) in hotelCardList" 
 							:key="'hotel_card_item_' + hotelCardItem._id" 
-							@mousedown.stop='sectionRightHotelItemMousedownEvent($event, hotelCardIndex)'></HotelCard>
+							:cardInfo="hotelCardItem" 
+							:cardIndex="hotelCardIndex"
+							@mousedown.stop.native='sectionRightHotelItemMousedownEvent($event, hotelCardIndex)'></HotelCard>
 					</div>
 				</div>
 			</template>
@@ -155,12 +161,26 @@
 </template>
 
 <script>
+const {
+    ipcRenderer,
+    remote
+} = window.require('electron');
+const path = window.require('path');
+const { BrowserWindow } = remote;
+import nedb from 'nedb';
+
 import Global from '../utils/Global.js';
 import { Trim } from '../../../utils/String.js';
 import { GetDayDateWithTimeStamp } from '../../../utils/Date.js';
 
 import HotelCard from './HotelCard.vue';
 
+console.log(path.join(remote.app.getPath('userData'), 'data/resource.db'));
+const HotelCardDB = new nedb({
+    filename: path.join(remote.app.getPath('userData'), 'data/hotelcard.db'),
+    autoload: true, // 当数据存储被创建时，数据将自动从文件中加载到内存，不必去调用loadDatabase。注意所有命令操作只有在数据加载完成后才会被执行。
+    corruptAlertThreshold: 0, // 默认10%,取值在0-1之间。如果数据文件损坏率超过这个百分比，NeDB将不会启动。取0，意味着不能容忍任何数据损坏；取1，意味着忽略数据损坏问题。
+});
 
 export default {
 	name: 'RightSidebar',
@@ -193,7 +213,7 @@ export default {
                 numberOfDays: 1, // 历时天数
                 endDate: 0, // 结束日期
                 endDateShow: "" // 
-			}
+			},
 		}
 	},
 	computed: {
@@ -202,16 +222,33 @@ export default {
 		},           
 	},
 	watch: {
-		'planInfo': 'watchPlanInfoEvent'
+		'planInfo': 'watchPlanInfoEvent',
+		'rightInfo': {
+			handler: 'watchRightInfoEvent',
+			deep: true,
+		}
+	},
+	created: function () {
+		HotelCardDB.find({}, (err, docs) => {
+            console.log("HotelCardDB find all", err, docs);
+            if (err) {
+
+            }else {
+                for (var i = 0; i < docs.length; i++) {
+                    docs[i].isShowRooms = false;
+                    if (docs[i].rooms) {
+                        for (var j = 0; j < docs[i].rooms.length; j++) {
+                            docs[i].rooms[j].isShow = false;
+                        }
+                    }
+                }
+                
+                this.hotelCardList = docs;
+            }
+        })
 	},
 	mounted: function () {
-		this.$refs['rs-content-info-name'].innerText = this.planInfo.name;
-		this.$refs['rs-content-info-desc'].innerText = this.planInfo.desc;
-		this.planInfoEdit.numberOfDays = this.planInfo.numberOfDays;
-		this.planInfoEdit.startDateShow = GetDayDateWithTimeStamp(this.planInfoEdit.startDate);
-		this.planInfoEdit.endDateShow = GetDayDateWithTimeStamp(this.planInfoEdit.endDate);
-
-		this.watchPlanInfoEvent();
+		this.watchRightInfoEvent();
 	},
 	methods: {
 		watchPlanInfoEvent: function () {
@@ -241,6 +278,20 @@ export default {
 
 			if (this.planInfoEdit.numberOfPeople !== this.planInfo.numberOfPeople) {
 				this.planInfoEdit.numberOfPeople = this.planInfo.numberOfPeople;
+			}
+		},
+
+		watchRightInfoEvent: function () {
+			if (!this.rightInfo) {
+				setTimeout(() => {
+					this.$refs['rs-content-info-name'].innerText = this.planInfo.name;
+					this.$refs['rs-content-info-desc'].innerText = this.planInfo.desc;
+					this.planInfoEdit.numberOfDays = this.planInfo.numberOfDays;
+					this.planInfoEdit.startDateShow = GetDayDateWithTimeStamp(this.planInfoEdit.startDate);
+					this.planInfoEdit.endDateShow = GetDayDateWithTimeStamp(this.planInfoEdit.endDate);
+
+					this.watchPlanInfoEvent();
+				});
 			}
 		},
 
@@ -297,8 +348,69 @@ export default {
 			this.$emit("plan-info-change", {
 				desc: this.planInfoEdit.desc
 			})
+		},
+		
+
+
+
+		/**
+         * 右边栏 > 住宿卡 > 新建一个住宿卡
+         */
+        sectionRightHotelHeaderAddButtonClickEvent: function () {
+			this.$parent.isShowCoverView = true;
+			var currentWindow = remote.getCurrentWindow();
+			
+			let childWindow = new BrowserWindow({
+				width: 500,
+				height: 600,
+				resizable: false,
+				parent: currentWindow, 
+				show: false,
+				center: true, // 窗口居中
+				webPreferences: { // 网页功能的设置 
+				devTools: true, //  是否开启 DevTools
+				nodeIntegration: true,
+				textAreasAreResizable: false, // 禁止TextArea元素调整大小
+				},
+				frame: false, // 无边框
+				titleBarStyle: 'hiddenInset', 
+				fullscreen: false,
+				fullscreenable: false,
+				maximizable: false,
+				minimizable: false,
+				movable: false,
+			})
+			
+			childWindow.once('ready-to-show', () => {
+				childWindow.show();
+			})
+			childWindow.on('closed', () => {
+				this.$parent.isShowCoverView = false;
+				// mainWindow.webContents.send('child-window-closed');
+			});
+
+			if (window.process.env.runtype === 'dev') {
+                childWindow.loadURL('http://localhost:8080/CreateHotelCard.html');
+            }else {
+				childWindow.loadFile('dist/CreateHotelCard.html');
+			}
+			
+            // ipcRenderer.send('create-hotel-card');
         },
 
+        /**
+         * 右边栏 > 住宿卡 > 点击一个住宿卡
+         */
+        sectionRightHotelItemMousedownEvent: function (event, hotelCardIndex) {
+			console.log("【Right Sidebar】 sectionRightHotelItemMousedownEvent");
+            var tempHotelCardItem = this.hotelCardList[hotelCardIndex];
+            this.$parent.movingCard.type = 2;
+            this.$parent.movingCard.content = "住宿：" + tempHotelCardItem.name;
+            this.$parent.movingCard.data = tempHotelCardItem;
+            this.$parent.movingCard.x = event.x;
+            this.$parent.movingCard.y = event.y;
+            this.$parent.isTouchedACard = true;
+        },
 	}
 }
 </script>
@@ -893,7 +1005,7 @@ export default {
 		cursor: pointer;
 		width: 14px;
 		height: 14px;
-		background-image: url(../assets/hidden_999999.png);
+		background-image: url(../../../assets/hidden_999999.png);
 		background-repeat: no-repeat;
 		background-size: 100%;
 		cursor: pointer;
@@ -903,7 +1015,7 @@ export default {
 		cursor: pointer;
 		width: 14px;
 		height: 14px;
-		background-image: url(../assets/show_999999.png);
+		background-image: url(../../../assets/show_999999.png);
 		background-repeat: no-repeat;
 		background-size: 100%;
 		cursor: pointer;

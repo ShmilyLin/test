@@ -54,8 +54,8 @@ function vueLog (data, type) {
 
 function startRenderer () {
   return new Promise((resolve, reject) => {
-    let vueCliServiceObject = new VueCliService(path.join(__dirname, '../'));
-    console.log("vueCliServiceObject", vueCliServiceObject);
+    // let vueCliServiceObject = new VueCliService(path.join(__dirname, '../'));
+    // console.log("vueCliServiceObject", vueCliServiceObject);
     // console.log("WebpackDevServer", WebpackDevServer);
     // WebpackDevServer.
     // manualRestart = true;
@@ -95,15 +95,16 @@ function startRenderer () {
 function startElectron () {
   process.env.runtype = "dev";
 
-  var args = [
-    // '--inspect=5858',
-    path.join(__dirname, '../main.js')
-  ]
+  // var args = [
+  //   // '--inspect=5858',
+  //   path.join(__dirname, '../main.js')
+  // ]
 
-  args = args.concat(process.argv.slice(2))
-  console.log("electronProcess args", args);
+  // args = args.concat(process.argv.slice(2))
+  // console.log("electronProcess args", args);
 
-  electronProcess = spawn(electron, args)
+  // electronProcess = spawn(electron, args)
+  electronProcess = spawn("electron", ["."]);
   
   electronProcess.stdout.on('data', data => {
     electronLog(data, 'blue')

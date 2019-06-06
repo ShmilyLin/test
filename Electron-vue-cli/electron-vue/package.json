@@ -1,5 +1,6 @@
 {
-  "name": "electron-vue",
+  "name": "travelplan",
+  "productName": "Travel Plan",
   "version": "0.1.0",
   "private": true,
   "main": "main.js",
@@ -12,6 +13,7 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
+    "nedb": "^1.8.0",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1"

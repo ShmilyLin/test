@@ -8,7 +8,7 @@
 			</div>
 			<div class="hotel-card-info-address">
 				<div class="hotel-card-info-address-icon"></div>
-				<div class="hotel-card-info-address-content">{{cardDetail.address.content}}</div>
+				<div class="hotel-card-info-address-content">{{addressContent}}</div>
 			</div>
 			<div class="hotel-card-info-edit" title="编辑住宿卡"></div>
 		</div>
@@ -55,13 +55,43 @@ export default {
 		cardInfo: {
 			type: Object,
 			required: true,
-		},
+        },
+        cardIndex: {
+            type: Number,
+            default: -1
+        }
 	},
 	data() {
 		return {
 			cardDetail: null,
 		}
-	},
+    },
+    computed: {
+        addressContent: function () {
+            var tempContent = "";
+            if (this.cardInfo.address.country && this.cardInfo.address.country.length > 0) {
+                tempContent += this.cardInfo.address.country + " ";
+            }
+
+            if (this.cardInfo.address.province && this.cardInfo.address.province.length > 0 && this.cardInfo.address.province !== this.cardInfo.address.city) {
+                tempContent += this.cardInfo.address.province;
+            }
+
+            if (this.cardInfo.address.city && this.cardInfo.address.city.length > 0) {
+                tempContent += this.cardInfo.address.city;
+            }
+
+            if (this.cardInfo.address.district && this.cardInfo.address.district.length > 0) {
+                tempContent += this.cardInfo.address.district;
+            }
+            
+            if (this.cardInfo.address.content && this.cardInfo.address.content.length > 0) {
+                tempContent += this.cardInfo.address.content;
+            }
+
+            return tempContent;
+        }
+    },
 	watch: {
 		'cardInfo': {
 			handler: 'watchCardInfoChangeEvent',
@@ -250,7 +280,7 @@ export default {
     cursor: pointer;
     width: 14px;
     height: 14px;
-    background-image: url(../assets/hidden_999999.png);
+    background-image: url(../../../assets/hidden_999999.png);
     background-repeat: no-repeat;
     background-size: 100%;
     cursor: pointer;
@@ -260,7 +290,7 @@ export default {
     cursor: pointer;
     width: 14px;
     height: 14px;
-    background-image: url(../assets/show_999999.png);
+    background-image: url(../../../assets/show_999999.png);
     background-repeat: no-repeat;
     background-size: 100%;
     cursor: pointer;

@@ -8,7 +8,7 @@
 			:class="{ 'home-top-tools' : topToolMode === 0 , 'home-top-tools-absolute': topToolMode !== 0 }" 
 			@mouseenter.native="homeTopToolsMouseEnterEvent" 
 			@mouseleave.native="homeTopToolsMouseLeaveEvent"></TopTools>
-		<div class="home-section" :style="{ height : topToolMode === 0 ? 'calc(100% - 40px - 100px - 1px - 30px - 1px)' : 'calc(100% - 40px - 1px - 30px - 1px)'}">
+		<div class="home-section" ref="section" :style="{ height : topToolMode === 0 ? 'calc(100% - 40px - 100px - 1px - 30px - 1px)' : 'calc(100% - 40px - 1px - 30px - 1px)'}">
 			<div class="dragscroll home-section-content" :style="{ width: (isAutoShowRight ? rightInfo : true) ? 'calc(100% - 240px - 1px)' : '100%' }">
 				<div class="home-section-canvas">
 					<DayItem v-for="(dayItem, dayIndex) in dayList" 
@@ -24,10 +24,28 @@
 			<transition name="section-right">
 				<RightSidebar v-if="isAutoShowRight ? rightInfo : true" 
 					:planInfo="planInfo" 
+					:rightInfo="rightInfo" 
 					@plan-info-change="rightSidebarPlanInfoChangeEvent"></RightSidebar>
 			</transition>
 		</div>
 		<Footer></Footer>
+
+		<div class="moving-card-background" 
+			v-if="isTouchedACard" 
+			@mousemove.stop="movingCardCoverViewMousemoveEvent($event)" 
+			@mouseup.stop="movingCardCoverViewMouseupEvent($event)">
+			<div class="moving-card" 
+				:style="{ top: (movingCard.y - 20) + 'px', left: (movingCard.x - 100) + 'px' }" 
+				@click.stop 
+				@mousedown.stop>{{movingCard.content}}</div>
+		</div>
+		
+		<div class="cover-view" 
+			v-if="isShowCoverView" 
+			@mousemove.stop 
+			@mouseup.stop 
+			@mousedown.stop 
+			@click.stop></div>
 	</div>
 </template>
 
@@ -83,7 +101,7 @@ export default {
                 dayIndex: -1,
                 planIndex: -1,
                 planListItemIndex: -1,
-            },
+			},
 
 			isTouchedACard: false,
             movingCard: {
@@ -91,7 +109,9 @@ export default {
                 data: null,
                 x: 0,
                 y: 0,
-            }
+			},
+
+			isShowCoverView: false,
         }
 	},
 	computed: {
@@ -199,6 +219,96 @@ export default {
             this.currentSelected.dayIndex = tempNewDayIndex;
             this.currentSelected.planIndex = tempNewPlanIndex;
             this.currentSelected.planListItemIndex = tempNewPlanListItemIndex;
+		},
+		
+		/**
+		 * 移动卡片
+		 */
+		movingCardCoverViewMousemoveEvent: function (event) {
+            if (this.isTouchedACard) {
+                this.movingCard.x = event.x;
+                this.movingCard.y = event.y;
+                // var eles = document.elementsFromPoint(event.x,event.y);
+            }
+        },
+
+		/**
+		 * 移动卡片
+		 */
+        movingCardCoverViewMouseupEvent: function (event) {
+            if (this.isTouchedACard) {
+                console.log("movingCardCoverViewMouseupEvent", event, this.$refs);
+				this.isTouchedACard = false;
+				// Section
+                var tempSectionDom = this.$refs["section"];
+                var tempSectionDomRect = tempSectionDom.getBoundingClientRect();
+                if (event.x >= tempSectionDomRect.left && event.x <= (tempSectionDomRect.left + tempSectionDomRect.width) && event.y >= tempSectionDomRect.top && event.y <= (tempSectionDomRect.top + tempSectionDomRect.height)) {
+					var tempDayList = this.dayList;
+                    for (var i = 0; i < tempDayList.length; i++) {
+						// Day
+                        var tempDayDom = this.$refs['section-canvas-day-' + i][0];
+                        console.log("tempDayDom", tempDayDom);
+                        var tempDayDomRect = tempDayDom.$el.getBoundingClientRect();
+                        if (event.x >= tempDayDomRect.left && event.x <= (tempDayDomRect.left + tempDayDomRect.width) && event.y >= tempDayDomRect.top && event.y <= (tempDayDomRect.top + tempDayDomRect.height)) {
+                            var tempDayItem = tempDayList[i];
+                            if (tempDayItem.plans && tempDayItem.plans.length > 0) {
+                                for (var j = 0; j < tempDayItem.plans.length; j++) {
+									// Plan
+                                    var tempPlanDom = tempDayDom.$refs['day-item-plan-' + j][0];
+                                    console.log("tempPlanDom", tempPlanDom);
+                                    var tempPlanDomRect = tempPlanDom.getBoundingClientRect();
+                                    if (event.x >= tempPlanDomRect.left && event.x <= (tempPlanDomRect.left + tempPlanDomRect.width) && event.y >= tempPlanDomRect.top && event.y <= (tempPlanDomRect.top + tempPlanDomRect.height)) {
+                                        var tempPlanItem = tempDayItem.plans[j];
+                                        if (tempPlanItem.list && tempPlanItem.list.length > 0) {
+                                            var tempFind = false;
+                                            for (var n = 0; n < tempPlanItem.list.length; n++) {
+                                                var tempPlanListItem = tempPlanItem.list[n];
+                                                if (tempPlanListItem.type === this.movingCard.type) {
+                                                    switch (this.movingCard.type) {
+                                                        case 2:
+                                                            // if (tempPlanListItem.hotal && tempPlanListItem.hotal.defaultHotel) {
+
+                                                            // }else {
+                                                                // 没有默认的住宿卡
+																var tempHotelDom = tempDayDom.$refs['day-plan-list-item-hotel-' + j + '-' + n][0];
+																var tempDefaultHotelDom = tempHotelDom.$refs['phi-default'];
+                                                                console.log("tempDefaultHotelDom", tempDefaultHotelDom);
+                                                                var tempDefaultHotelDomRect = tempDefaultHotelDom.getBoundingClientRect();
+                                                                if (event.x >= tempDefaultHotelDomRect.left && event.x <= (tempDefaultHotelDomRect.left + tempDefaultHotelDomRect.width) && event.y >= tempDefaultHotelDomRect.top && event.y <= (tempDefaultHotelDomRect.top + tempDefaultHotelDomRect.height)) {
+                                                                    var tempMovingData = JSON.parse(JSON.stringify(this.movingCard.data));
+                                                                    console.log("tempMovingData", tempMovingData);
+                                                                    tempMovingData.isShowAddRoom = false;
+                                                                    tempPlanListItem.hotal.defaultHotel = tempMovingData;
+                                                                    this.$set(this.dayList, i, tempDayItem);
+                                                                    tempFind = true;
+                                                                }
+                                                            // }
+                                                            break;
+                                                    }
+                                                }
+
+                                                if (tempFind) {
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            break;
+                        }
+                    }
+                }
+                this.movingCard.type = 0;
+                this.movingCard.content = "";
+                this.movingCard.data = null;
+                this.movingCard.x = event.x;
+                this.movingCard.y = event.y;
+                
+            }
         },
 	}
 }
@@ -266,5 +376,48 @@ export default {
 }
 .section-right-enter, .section-right-leave-to {
     margin-right: -240px;
+}
+
+
+
+
+/* 底部 */
+.footer {
+    width: 100%;
+    height: 30px;
+    border-top: 1px solid lightgray;
+}
+
+
+.moving-card-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+}
+
+.moving-card {
+    position: fixed;
+    background-color: white;
+    width: 200px;
+    padding: 5px 10px;
+    opacity: 0.8;
+    font-size: 12px;
+    line-height: 30px;
+    color: #666666;
+    border: 1px solid lightgray;
+}
+
+
+
+.cover-view {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 999;
 }
 </style>

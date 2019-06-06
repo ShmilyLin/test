@@ -103,49 +103,10 @@
                         </template>
                         <!-- 住宿 -->
                         <template v-else-if="planListItem.type === 2">
-                            <div class="day-plan-list-item-hotel">
-                                <div class="day-plan-list-item-hotel-icon"></div>
-                                <div class="day-plan-list-item-hotel-right">
-                                    <div class="day-plan-list-item-hotel-default" :ref="'day-plan-list-item-hotel-default-' + planIndex + '-' + planListIndex">
-                                        <template v-if="!planListItem.hotal.defaultHotel">
-                                            <div class="day-plan-list-item-hotel-default-none">请从右边栏拖动住宿卡至此以添加住宿地点</div>
-                                        </template>
-                                        <template v-else>
-                                            <div class="day-plan-list-item-hotel-default-info">
-                                                <div class="day-plan-list-item-hotel-default-info-name">{{planListItem.hotal.defaultHotel.name}}</div>
-                                                <div class="day-plan-list-item-hotel-default-info-type">{{planListItem.hotal.defaultHotel.type}}</div>
-                                            </div>
-                                            <div class="day-plan-list-item-hotel-default-address">
-                                                <div class="day-plan-list-item-hotel-default-address-icon"></div>
-                                                <div class="day-plan-list-item-hotel-default-address-content">{{planListItem.hotal.defaultHotel.address.content}}</div>
-                                            </div>
-                                            <div class="day-plan-list-item-hotel-default-room">
-                                                <div class="day-plan-list-item-hotel-default-room-header">
-                                                    <div class="day-plan-list-item-hotel-default-room-header-title">房型</div>
-                                                    <div class="day-plan-list-item-hotel-default-room-header-add" @click="planListItemHotelAddRoomButtonClickEvent(planIndex, planListIndex)"></div>
-                                                </div>
-                                                <ul class="day-plan-list-item-hotel-default-room-list">
-                                                    <li class="day-plan-list-item-hotel-default-room-list-item" v-for="roomItem in planListItem.hotal.defaultHotel.defaultRooms" :key="'room_' + roomItem.id"></li>
-                                                    <li class="day-plan-list-item-hotel-default-room-list-subtitle">备选</li>
-                                                    <li class="day-plan-list-item-hotel-default-room-list-item" v-for="roomItem in planListItem.hotal.defaultHotel.othersRooms" :key="'room_' + roomItem.id"></li>
-                                                </ul>
-                                            </div>
-                                        </template>
-                                    </div>
-                                    <div class="day-plan-list-item-hotel-additional" v-if="planListItem.isShowAdditional">
-                                        <template>
-                                            <div>拖动至此来添加备选住宿</div>
-                                        </template>
-                                        <template>
-                                            <div class="">备选住宿</div>
-                                            <ul class="">
-                                                <li class=""></li>
-                                                <!-- <li class="" v-if="">拖动至此来添加备选住宿</li> -->
-                                            </ul>
-                                        </template>
-                                    </div>
-                                </div>
-                            </div>
+                            <PlanHotelItem :planListItem="planListItem" 
+                                :planListIndex="planListIndex" 
+                                :ref="'day-plan-list-item-hotel-' + planIndex + '-' + planListIndex" 
+                                @show-add-room="planListItemHotelShowAddRoom(planIndex, planListIndex)"></PlanHotelItem>
                         </template>
                         <!-- 餐饮 -->
                         <template v-else-if="planListItem.type === 3">
@@ -212,8 +173,13 @@
 <script>
 import { Trim } from '../../../utils/String';
 
+import PlanHotelItem from './PlanHotelItem.vue';
+
 export default {
     name: 'DayItem',
+    components: {
+        PlanHotelItem
+    },
     props: {
         dayItem: {
             type: Object,
@@ -428,6 +394,22 @@ export default {
             var tempPlanListItem = tempPlanItem.list[planListIndex];
             tempPlanListItem.isEditor = true;
             tempPlanListItem.inputPointName = true;
+            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+
+            this.$parent.cancelSelectedItem(this.dayIndex, planIndex, planListIndex);
+        },
+
+        /**
+         * 天 - 计划 - 项-住宿 - 显示添加房间
+         */
+        planListItemHotelShowAddRoom(planIndex, planListIndex) {
+            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            tempDayItem.isSelected = true;
+            var tempPlanItem = tempDayItem.plans[planIndex];
+            tempPlanItem.isSelected = true;
+            var tempPlanListItem = tempPlanItem.list[planListIndex];
+            tempPlanListItem.isEditor = true;
+            tempPlanListItem.isShowAddRoom = !tempPlanListItem.isShowAddRoom;
             this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
 
             this.$parent.cancelSelectedItem(this.dayIndex, planIndex, planListIndex);
