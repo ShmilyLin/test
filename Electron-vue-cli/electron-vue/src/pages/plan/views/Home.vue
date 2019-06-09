@@ -55,6 +55,8 @@ const {
     remote
 } = window.require('electron');
 
+import Listener from '../../../utils/Listener.js';
+
 import TopMenu from '@/pages/plan/components/TopMenu.vue';
 import TopTools from '@/pages/plan/components/TopTools.vue';
 import DayItem from '@/pages/plan/components/DayItem.vue';
@@ -135,12 +137,18 @@ export default {
             console.log(tempModel);
 
             this.dayList.push(tempModel);
-        }
+		}
+		
+		this.registerListener();
 	},
 	mounted: function () {
 		
 	},
 	methods: {
+		registerListener: function () {
+			
+		},
+
 		homeClickEvent: function () {
 			this.cancelSelectedItem(-1, -1, -1);
             this.rightInfo = null;

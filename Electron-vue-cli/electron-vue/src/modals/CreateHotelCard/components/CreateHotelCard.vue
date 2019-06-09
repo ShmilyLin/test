@@ -211,6 +211,7 @@ const {
 } = window.require('electron');
 const path = window.require('path');
 import nedb from 'nedb';
+import Listener from '../../../utils/Listener.js';
 
 import { Trim } from '@/utils/String.js';
 
@@ -712,8 +713,9 @@ export default {
 
             HotelCardDB.insert(hotelSave, (err, newDoc) => {
                 console.log("插入一条住宿卡回调", err, newDoc);
-                var currentWindow = remote.getCurrentWindow();
-                currentWindow.close();
+                Listener.done(Listener.Keys.HotelCardDBModified);
+                // var currentWindow = remote.getCurrentWindow();
+                // currentWindow.close();
             })
         }
 	}

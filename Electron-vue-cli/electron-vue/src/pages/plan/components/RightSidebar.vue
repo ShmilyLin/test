@@ -168,6 +168,7 @@ const {
 const path = window.require('path');
 const { BrowserWindow } = remote;
 import nedb from 'nedb';
+import Listener from '../../../utils/Listener.js';
 
 import Global from '../utils/Global.js';
 import { Trim } from '../../../utils/String.js';
@@ -229,26 +230,15 @@ export default {
 		}
 	},
 	created: function () {
-		HotelCardDB.find({}, (err, docs) => {
-            console.log("HotelCardDB find all", err, docs);
-            if (err) {
-
-            }else {
-                for (var i = 0; i < docs.length; i++) {
-                    docs[i].isShowRooms = false;
-                    if (docs[i].rooms) {
-                        for (var j = 0; j < docs[i].rooms.length; j++) {
-                            docs[i].rooms[j].isShow = false;
-                        }
-                    }
-                }
-                
-                this.hotelCardList = docs;
-            }
-        })
+		console.log("Listener", Listener);
+		Listener.on(Listener.Keys.HotelCardDBModified, this.getHotelCardDBData);
+		this.getHotelCardDBData();
 	},
 	mounted: function () {
 		this.watchRightInfoEvent();
+	},
+	destroyed: function () {
+		Listener.off(Listener.Keys.HotelCardDBModified);
 	},
 	methods: {
 		watchPlanInfoEvent: function () {
@@ -293,6 +283,26 @@ export default {
 					this.watchPlanInfoEvent();
 				});
 			}
+		},
+
+		getHotelCardDBData: function () {
+			HotelCardDB.find({}, (err, docs) => {
+				console.log("HotelCardDB find all", err, docs);
+				if (err) {
+
+				}else {
+					for (var i = 0; i < docs.length; i++) {
+						docs[i].isShowRooms = false;
+						if (docs[i].rooms) {
+							for (var j = 0; j < docs[i].rooms.length; j++) {
+								docs[i].rooms[j].isShow = false;
+							}
+						}
+					}
+					
+					this.hotelCardList = docs;
+				}
+			})
 		},
 
 		sectionRightHeaderActionAutoShowButtonClick: function () {
@@ -386,6 +396,7 @@ export default {
 			})
 			childWindow.on('closed', () => {
 				this.$parent.isShowCoverView = false;
+				currentWindow.setFocusable(true);
 				// mainWindow.webContents.send('child-window-closed');
 			});
 
@@ -394,6 +405,8 @@ export default {
             }else {
 				childWindow.loadFile('dist/CreateHotelCard.html');
 			}
+
+			currentWindow.setFocusable(false);
 			
             // ipcRenderer.send('create-hotel-card');
         },

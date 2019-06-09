@@ -397,6 +397,7 @@ export default {
             this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
 
             this.$parent.cancelSelectedItem(this.dayIndex, planIndex, planListIndex);
+            this.$parent.rightInfo = null;
         },
 
         /**
