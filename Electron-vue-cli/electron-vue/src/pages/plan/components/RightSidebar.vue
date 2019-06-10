@@ -167,7 +167,7 @@ const {
 } = window.require('electron');
 const path = window.require('path');
 const { BrowserWindow } = remote;
-import nedb from 'nedb';
+// import nedb from 'nedb';
 import Listener from '../../../utils/Listener.js';
 
 import Global from '../utils/Global.js';
@@ -176,12 +176,12 @@ import { GetDayDateWithTimeStamp } from '../../../utils/Date.js';
 
 import HotelCard from './HotelCard.vue';
 
-console.log(path.join(remote.app.getPath('userData'), 'data/resource.db'));
-const HotelCardDB = new nedb({
-    filename: path.join(remote.app.getPath('userData'), 'data/hotelcard.db'),
-    autoload: true, // 当数据存储被创建时，数据将自动从文件中加载到内存，不必去调用loadDatabase。注意所有命令操作只有在数据加载完成后才会被执行。
-    corruptAlertThreshold: 0, // 默认10%,取值在0-1之间。如果数据文件损坏率超过这个百分比，NeDB将不会启动。取0，意味着不能容忍任何数据损坏；取1，意味着忽略数据损坏问题。
-});
+// console.log(path.join(remote.app.getPath('userData'), 'data/resource.db'));
+// const HotelCardDB = new nedb({
+//     filename: path.join(remote.app.getPath('userData'), 'data/hotelcard.db'),
+//     autoload: true, // 当数据存储被创建时，数据将自动从文件中加载到内存，不必去调用loadDatabase。注意所有命令操作只有在数据加载完成后才会被执行。
+//     corruptAlertThreshold: 0, // 默认10%,取值在0-1之间。如果数据文件损坏率超过这个百分比，NeDB将不会启动。取0，意味着不能容忍任何数据损坏；取1，意味着忽略数据损坏问题。
+// });
 
 export default {
 	name: 'RightSidebar',
@@ -286,23 +286,23 @@ export default {
 		},
 
 		getHotelCardDBData: function () {
-			HotelCardDB.find({}, (err, docs) => {
-				console.log("HotelCardDB find all", err, docs);
-				if (err) {
+			// HotelCardDB.find({}, (err, docs) => {
+			// 	console.log("HotelCardDB find all", err, docs);
+			// 	if (err) {
 
-				}else {
-					for (var i = 0; i < docs.length; i++) {
-						docs[i].isShowRooms = false;
-						if (docs[i].rooms) {
-							for (var j = 0; j < docs[i].rooms.length; j++) {
-								docs[i].rooms[j].isShow = false;
-							}
-						}
-					}
+			// 	}else {
+			// 		for (var i = 0; i < docs.length; i++) {
+			// 			docs[i].isShowRooms = false;
+			// 			if (docs[i].rooms) {
+			// 				for (var j = 0; j < docs[i].rooms.length; j++) {
+			// 					docs[i].rooms[j].isShow = false;
+			// 				}
+			// 			}
+			// 		}
 					
-					this.hotelCardList = docs;
-				}
-			})
+			// 		this.hotelCardList = docs;
+			// 	}
+			// })
 		},
 
 		sectionRightHeaderActionAutoShowButtonClick: function () {
