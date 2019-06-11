@@ -5,6 +5,7 @@
   "private": true,
   "main": "main.js",
   "scripts": {
+    "postinstall": "install-app-deps",
     "rebuild": "electron-rebuild -f -w realm",
     "dev": "node build/dev-run.js",
     "start": "electron .",
@@ -14,7 +15,8 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
-    "realm": "^2.28.1",
+    "rxjs": "^6.5.2",
+    "sqlite3": "^4.0.8",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1"
@@ -25,6 +27,7 @@
     "@vue/cli-service": "^3.8.0",
     "babel-eslint": "^10.0.1",
     "electron": "^5.0.2",
+    "electron-builder": "^20.43.0",
     "electron-rebuild": "^1.8.5",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",

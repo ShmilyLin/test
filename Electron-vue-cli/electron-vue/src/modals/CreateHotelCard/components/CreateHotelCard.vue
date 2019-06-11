@@ -210,17 +210,20 @@ const {
     remote
 } = window.require('electron');
 const path = window.require('path');
-const Realm = require('realm');
 import Listener from '../../../utils/Listener.js';
+var sqlite3 = window.require('sqlite3').verbose();
 
 import { Trim } from '@/utils/String.js';
 
 // console.log(path.join(remote.app.getPath('userData'), 'data/resource.db'));
-// const HotelCardDB = new nedb({
-//     filename: path.join(remote.app.getPath('userData'), 'data/hotelcard.db'),
-//     autoload: true, // 当数据存储被创建时，数据将自动从文件中加载到内存，不必去调用loadDatabase。注意所有命令操作只有在数据加载完成后才会被执行。
-//     corruptAlertThreshold: 0, // 默认10%,取值在0-1之间。如果数据文件损坏率超过这个百分比，NeDB将不会启动。取0，意味着不能容忍任何数据损坏；取1，意味着忽略数据损坏问题。
-// });
+var HotelCardDB = new sqlite3.Database('hotelcard.db', (error) => {
+    if (error) {
+        console.log("初始化数据库失败", error);
+    }else {
+        console.log("初始化数据库成功");
+    }
+});
+console.log(HotelCardDB);
 
 export default {
     name: 'CreateHotelCard',
@@ -711,6 +714,7 @@ export default {
 
             console.log("createAHotelCardButtonClickEvent hotelSave", hotelSave);
 
+            HotelCardDB
             // HotelCardDB.insert(hotelSave, (err, newDoc) => {
             //     console.log("插入一条住宿卡回调", err, newDoc);
             //     Listener.done(Listener.Keys.HotelCardDBModified);
