@@ -211,19 +211,10 @@ const {
 } = window.require('electron');
 const path = window.require('path');
 import Listener from '../../../utils/Listener.js';
-var sqlite3 = window.require('sqlite3').verbose();
 
 import { Trim } from '@/utils/String.js';
 
 // console.log(path.join(remote.app.getPath('userData'), 'data/resource.db'));
-var HotelCardDB = new sqlite3.Database('hotelcard.db', (error) => {
-    if (error) {
-        console.log("初始化数据库失败", error);
-    }else {
-        console.log("初始化数据库成功");
-    }
-});
-console.log(HotelCardDB);
 
 export default {
     name: 'CreateHotelCard',
@@ -714,7 +705,11 @@ export default {
 
             console.log("createAHotelCardButtonClickEvent hotelSave", hotelSave);
 
-            HotelCardDB
+            this.$HotelCardDB.Transaction((transaction) => {
+                transaction.Insert(hotelSave);
+            }, () => {
+                
+            })
             // HotelCardDB.insert(hotelSave, (err, newDoc) => {
             //     console.log("插入一条住宿卡回调", err, newDoc);
             //     Listener.done(Listener.Keys.HotelCardDBModified);

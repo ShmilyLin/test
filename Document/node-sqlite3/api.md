@@ -1,6 +1,6 @@
 # API
 
-https://github.com/mapbox/node-sqlite3/wiki/API#databaseconfigureoption-value
+https://github.com/mapbox/node-sqlite3/wiki/API
 
 * Main
     * new sqlite3.Database(filename, [mode], [callback])
@@ -24,15 +24,16 @@ https://github.com/mapbox/node-sqlite3/wiki/API#databaseconfigureoption-value
     * Statement#each([param, ...], [callback], [complete])
 
 # Main
+
 ## new sqlite3.Database(filename, [mode], [callback])
 
-返回一个新的数据库对象，并自动打开这个数据库。没有单独打开数据库的方法。
+返回一个新的Database对象，并自动打开这个数据库。没有单独打开数据库的方法。
 
 * `filename`：有效值是文件名，":memory:"表示匿名存在内存中的数据库，空字符串表示匿名于磁盘的数据库。匿名数据库不会被持久化，关闭数据库句柄时，其内容将会丢失。
 
 * `mode`（可选参数）：`sqlite3.OPEN_READONLY`、`sqlite3.OPEN_READWRITE`和`sqlite3.OPEN_CREATE`三个值的其中一个或多个。默认值是`OPEN_READWRITE | OPEN_CREATE`。
 
-* `callback`（可选参数）：如果提供这个参数，将会在成功打开数据库或打开数据库发生错误时调用此函数。调用函数时，第一个参数时错误信息的对象，如果为`null`，则表示打开数据库成功。如果未提供回调并且发生错误，则`error`事件将会以错误对象的形式，作为数据库对象中唯一的参数返回。如果打开数据库成功，无论是否提供回调，都会触发不带参数的`open`事件。
+* `callback`（可选参数）：如果提供这个参数，将会在成功打开数据库或打开数据库发生错误时调用此函数。调用函数时，第一个参数时错误信息的对象，如果为`null`，则表示打开数据库成功。如果未提供回调并且发生错误，则Database对象的`error`事件将会携带一个错误对象被触发。如果打开数据库成功，无论是否提供回调，都会触发不带参数的`open`事件。
 
 ## sqlite3.verbose()
 
@@ -44,122 +45,145 @@ https://github.com/mapbox/node-sqlite3/wiki/API#databaseconfigureoption-value
 
 关闭数据库。
 
-callback (optional): If provided, this function will be called when the database was closed successfully or when an error occurred. The first argument is an error object. When it is null, closing succeeded. If no callback is provided and an error occurred, an error event with the error object as the only parameter will be emitted on the database object. If closing succeeded, a close event with no parameters is emitted, regardless of whether a callback was provided or not.
-Database#configure(option, value)
-Set a configuration option for the database. Valid options are:
+* `callback`（可选参数）：如果传入了该参数，这个回调函数将会在数据库成功关闭或关闭发生错误的时候被调用，当错误发生的时候，回调函数的第一个参数是一个错误对象；数据库成功的关闭的时候，这个回调函数的参数是`null`。如果没有传入回调函数，并且发生错误的时候，则Database对象的`error`事件将会携带一个错误对象被触发；如果数据库成功关闭，无论是否提供该回调函数参数，Database对象的`close`事件都会不携带参数的被触发。
 
-Tracing & profiling
-trace: provide a function callback as a value. Invoked when an SQL statement executes, with a rendering of the statement text.
-profile: provide a function callback. Invoked every time an SQL statement executes.
-busyTimeout: provide an integer as a value. Sets the busy timeout.
-Database#run(sql, [param, ...], [callback])
-Runs the SQL query with the specified parameters and calls the callback afterwards. It does not retrieve any result data. The function returns the Database object for which it was called to allow for function chaining.
+## Database#configure(option, value)
 
-sql: The SQL query to run. If the SQL query is invalid and a callback was passed to the function, it is called with an error object containing the error message from SQLite. If no callback was passed and preparing fails, an error event will be emitted on the underlying Statement object.
+设置数据库的配置选项。有效选项有：
 
-param, ... (optional): When the SQL statement contains placeholders, you can pass them in here. They will be bound to the statement before it is executed. There are three ways of passing bind parameters: directly in the function's arguments, as an array, and as an object for named parameters. This automatically sanitizes inputs RE: issue #57.
+* [跟踪和分析（tracing & profiling）](https://www.sqlite.org/c3ref/profile.html)
+    * 跟踪（trace）：提供一个回调函数作为值。当一个SQL语句执行时被调用，并返回语句文本。
+    * 分析（profile）：提供一个回调函数作为值。每次执行SQL语句时都会调用。
+* 繁忙超时时间（busyTimeout）：提供一个int值。设置繁忙超时时间。
 
-In case you want to keep the callback as the 3rd parameter, you should set param to "[]" ( Empty Array ) as per issue #116
+## Database#run(sql, [param, ...], [callback])
 
-      // Directly in the function arguments.
-      db.run("UPDATE tbl SET name = ? WHERE id = ?", "bar", 2);
+运行带有指定参数的SQL查询，并在之后调用回调函数。这个方法将不会取回任何结果数据。这个方法返回调用它的Database对象以允许函数链式调用。
 
-      // As an array.
-      db.run("UPDATE tbl SET name = ? WHERE id = ?", [ "bar", 2 ]);
+* `sql`：要运行的SQL查询。如果这个SQL查询是无效的，并且传入了回调函数，则将会调用这个回调，并在回调中返回一个包含来自SQLite的错误信息的错误对象。如果没有传入回调函数并发生错误，底层的Statement对象的`error`事件会被触发。
 
-      // As an object with named parameters.
-      db.run("UPDATE tbl SET name = $name WHERE id = $id", {
-          $id: 2,
-          $name: "bar"
-      });
-Named parameters can be prefixed with :name, @name and $name. We recommend using $name since JavaScript allows using the dollar sign as a variable name without having to escape it. You can also specify a numeric index after a ? placeholder. These correspond to the position in the array. Note that placeholder indexes start at 1 in SQLite. node-sqlite3 maps arrays to start with one so that you don't have to specify an empty value as the first array element (with index 0). You can also use numeric object keys to bind values. Note that in this case, the first index is 1:
+* `param, ...`（可选参数）：当SQL语句包含占位符，你可以通过这个参数传入它们，它们将在执行之前绑定到该语句。这里有三种方式传入绑定参数：直接通过函数的参数，作为一个数组，或者作为一个对象。This automatically sanitizes inputs RE: [issue #57](https://github.com/mapbox/node-sqlite3/issues/57).
 
-      db.run("UPDATE tbl SET name = ?5 WHERE id = ?", {
-          1: 2,
-          5: "bar"
-      });
-This binds the first placeholder ($id) to 2 and the placeholder with index 5 to "bar". While this is valid in SQLite and node-sqlite3, it is not recommended to mix different placeholder types.
+根据[issue #116](https://github.com/mapbox/node-sqlite3/issues/116)，如果你想保持回调函数始终是第三个参数，你需要设置`param`为“`[]`”（空数组）。
 
-If you use an array or an object to bind parameters, it must be the first value in the bind arguments list. If any other object is before it, an error will be thrown. Additional bind parameters after an array or object will be ignored.
+```javascript
+    // 直接设置为函数参数。
+    db.run("UPDATE tbl SET name = ? WHERE id = ?", "bar", 2);
 
-callback (optional): If given, it will be called when an error occurs during any step of the statement preparation or execution, and after the query was run. If an error occurred, the first (and only) parameter will be an error object containing the error message. If execution was successful, the first parameter is null. The context of the function (the this object inside the function) is the statement object. Note that it is not possible to run the statement again because it is automatically finalized after running for the first time. Any subsequent attempts to run the statement again will fail.
+    // 作为一个数组。
+    db.run("UPDATE tbl SET name = ? WHERE id = ?", [ "bar", 2 ]);
 
-If execution was successful, the this object will contain two properties named lastID and changes which contain the value of the last inserted row ID and the number of rows affected by this query respectively. Note that lastID only contains valid information when the query was a successfully completed INSERT statement and changes only contains valid information when the query was a successfully completed UPDATE or DELETE statement. In all other cases, the content of these properties is inaccurate and should not be used. The .run() function is the only query method that sets these two values; all other query methods such as .all() or .get() don't retrieve these values.
+    // 作为一个对象。
+    db.run("UPDATE tbl SET name = $name WHERE id = $id", {
+        $id: 2,
+        $name: "bar"
+    });
+```
 
-Database#get(sql, [param, ...], [callback])
-Runs the SQL query with the specified parameters and calls the callback with the first result row afterwards. The function returns the Database object to allow for function chaining. The parameters are the same as the Database#run function, with the following differences:
+作为对象时，命名参数可以带有这些前缀：`:name`，`@name`和`$name`。自从JavaScript允许美元符号作为变量符号而不用转义之后，我们推荐使用`$name`。你也可以在`?`占位符之后指定一个数字索引，这些索引对应数组中的指定位置，_注意占位符索引在SQLite中从1开始_。`node-sqlite3`会自动将数组映射为从1开始，所以你不需要在数组中指定开始位置的元素为空了。你也可以在对象中使用数字key来绑定值，注意如果这样做，开始的索引也是`：
 
-The signature of the callback is function(err, row) {}. If the result set is empty, the second parameter is undefined, otherwise it is an object containing the values for the first row. The property names correspond to the column names of the result set. It is impossible to access them by column index; the only supported way is by column name.
+```javascript
+    db.run("UPDATE tbl SET name = ?5 WHERE id = ?", {
+        1: 2,
+        5: "bar"
+    });
+```
 
-Database#all(sql, [param, ...], [callback])
-Runs the SQL query with the specified parameters and calls the callback with all result rows afterwards. The function returns the Database object to allow for function chaining. The parameters are the same as the Database#run function, with the following differences:
+这里绑定第一个占位符（`$id`）为`2`，第五个占位符为`"bar"`。这在SQLite和`node-sqlite3`中都是有效的，这里不推荐混合使用不同的占位符类型。
 
-The signature of the callback is function(err, rows) {}. rows is an array. If the result set is empty, it will be an empty array, otherwise it will have an object for each result row which in turn contains the values of that row, like the Database#get function.
+如果你使用一个数组或一个对象来绑定参数，则必须是绑定参数列表（`[param, ...]`）中的第一个，如果又一个其他的对象在它之前，则会抛出错误。其他的在绑定参数后的数组或对象都会被自动忽略。
 
-Note that it first retrieves all result rows and stores them in memory. For queries that have potentially large result sets, use the Database#each function to retrieve all rows or Database#prepare followed by multiple Statement#get calls to retrieve a previously unknown amount of rows.
+* `callback`（可选参数）：如果传入，则查询语句运行起来之后，在语句的准备和执行中发生错误的时候被嗲用。如果一个错误发生，回调函数中的唯一的参数是包含了错误信息的错误对象。如果执行成功，回调函数中的参数为`null`。回调函数的上下文（函数中的`this`对象）是Statement对象。注意一旦运行过该语句，就无法再次运行，因为它是在第一运行后自动完成的。人物再次运行该语句的尝试都将失败。
+<br/><br/>
+如果执行成功，`this`对象将会包含两个属性，为`lastID`和`changes`，分别包含了上一次插入的行的ID以及查询语句结果的行数。注意，当查询语句成功完成`INSERT`语句时`lastID`包含有效的信息，当查询语句成功完成`UPDATE`或`DELETE`语句时`changes`包含有效的信息。所有的其他情况，这两个属性的值都是不准确的，不应该被使用。`.run()`方法是唯一的可以获取这两个值的查询方法，其他的查询方法，例如`.all()`或`.get()`都不会检索这两个值。
 
-Database#each(sql, [param, ...], [callback], [complete])
-Runs the SQL query with the specified parameters and calls the callback once for each result row. The function returns the Database object to allow for function chaining. The parameters are the same as the Database#run function, with the following differences:
+## Database#get(sql, [param, ...], [callback])
 
-The signature of the callback is function(err, row) {}. If the result set succeeds but is empty, the callback is never called. In all other cases, the callback is called once for every retrieved row. The order of calls correspond exactly to the order of rows in the result set.
+运行带有指定参数的SQL查询，并在之后调用回调函数传回结果的第一行。这个方法返回Database对象以允许函数链式调用。这个函数的参数和`Database#run`函数的参数基本一样，只有以下不同：
 
-After all row callbacks were called, the completion callback will be called if present. The first argument is an error object, and the second argument is the number of retrieved rows. If you specify only one function, it will be treated as row callback, if you specify two, the first (== second to last) function will be the row callback, the last function will be the completion callback.
+回调函数的样子是`function(err, row) {}`。如果结果为空，第二个参数为`undefined`。否则是一个包含了第一行值的对象。这个对象的属性名（key）对应结果集合的列名。不可以通过列的索引值访问它们，只能通过列名访问。
 
-If you know that a query only returns a very limited number of rows, it might be more convenient to use Database#all to retrieve all rows at once.
+## Database#all(sql, [param, ...], [callback])
 
-There is currently no way to abort execution.
+运行带有指定参数的SQL查询，并在之后调用回调函数传回所有结果。这个方法返回Database对象以允许函数链式调用。这个函数的参数和`Database#run`函数的参数基本一样，只有以下不同：
 
-Database#exec(sql, [callback])
-Runs all SQL queries in the supplied string. No result rows are retrieved. The function returns the Database object to allow for function chaining. If a query fails, no subsequent statements will be executed (wrap it in a transaction if you want all or none to be executed). When all statements have been executed successfully, or when an error occurs, the callback function is called, with the first parameter being either null or an error object. When no callback is provided and an error occurs, an error event will be emitted on the database object.
+回调函数的样子是`function(err, rows) {}`，`rows`是一个数组。如果结果为空，第二个参数为`undefined`，否则它将为每一行结果提供一个对象，该对象包含了该行的值，类似`Database#get`方法。
 
-Note: This function will only execute statements up to the first NULL byte. Comments are not allowed and will lead to runtime errors.
+注意，第一次收到所有结果时它们是存储在内存中的。查询结果可能是相当大的集合，使用`Database#each`方法接收所有结果或者`Database#prepare`followed by multiple `Statement#get` calls to retrieve a previously unknown amount of rows.
 
-Database#prepare(sql, [param, ...], [callback])
-Prepares the SQL statement and optionally binds the specified parameters and calls the callback when done. The function returns a Statement object.
+## Database#each(sql, [param, ...], [callback], [complete])
 
-When preparing was successful, the first and only argument to the callback is null, otherwise it is the error object. When bind parameters are supplied, they are bound to the prepared statement before calling the callback.
+运行带有指定参数的SQL查询，并在之后为每一行结果调用一次`callback`回调函数传回数据。这个方法返回Database对象以允许函数链式调用。这个函数的参数和`Database#run`函数的参数基本一样，只有以下不同：
 
-Statement
-Statement#bind([param, ...], [callback])
-Binds parameters to the prepared statement and calls the callback when done or when an error occurs. The function returns the Statement object to allow for function chaining. The first and only argument to the callback is null when binding was successful, otherwise it is the error object.
+回调函数的样子是`function(err, row) {}`。如果查询成功但是结果为空，`callback`回调函数永远不会被调用。其他情况下，`callback`回调函数会为每一行回调一次，调用顺序与结果集中的行顺序完全对应。
 
-Binding parameters with this function completely resets the statement object and row cursor and removes all previously bound parameters, if any.
+所有行的回调结束之后，如果`complete`回调函数存在则将会被调用。`complete`回调函数的第一个参数是错误对象，第二个参数是接收到的数据的行数。如果你只传入了一个回调函数，它将被视为行的`callback`回调函数；如果你传入了两个，第一个回调函数将是行的`callback`回调函数，剩下一个将是`complete`回调函数。
 
-Statement#reset([callback])
-Resets the row cursor of the statement and preserves the parameter bindings. Use this function to re-execute the same query with the same bindings. The function returns the Statement object to allow for function chaining. The callback will be called after the reset is complete. This action will never fail and will always return null as the first and only callback parameter.
+如果你知道这个查询只会返回很少数量的结果，可以使用`Database#all`一次接收所有结果。
 
-Statement#finalize([callback])
-Finalizes the statement. This is typically optional, but if you experience long delays before the next query is executed, explicitly finalizing your statement might be necessary. This might be the case when you run an exclusive query (see section Control Flow). After the statement is finalized, all further function calls on that statement object will throw errors.
+这个函数目前无法终止执行。
 
-Statement#run([param, ...], [callback])
-Binds parameters and executes the statement. The function returns the Statement object to allow for function chaining.
+## Database#exec(sql, [callback])
 
-If you specify bind parameters, they will be bound to the statement before it is executed. Note that the bindings and the row cursor are reset when you specify even a single bind parameter.
+运行所有的SQL查询。不返回结果。这个方法返回Database对象以允许函数链式调用。如果其中一个查询失败，将不会运行下面的所有语句（如果你想要执行全部或全部不执行，请将其包装在事务中）。当所有的语句都执行成功，或者又一个错误发生的时候，回调函数会被调用，回调函数的第一个参数是`null`或者是一个错误对象。当没有设置回调函数并且有错误发生，Database对象的`error`事件会被触发。
 
-The callback behavior is identical to the Database#run method with the difference that the statement will not be finalized after it is run. This means you can run it multiple times.
+注意：这个方法只执行语句直到遇到第一个NULL字节。不允许使用注释，这将导致运行时错误。
 
-Statement#get([param, ...], [callback])
-Binds parameters, executes the statement and retrieves the first result row. The function returns the Statement object to allow for function chaining. The parameters are the same as the Statement#run function, with the following differences:
+## Database#prepare(sql, [param, ...], [callback])
 
-The signature of the callback is function(err, row) {}. If the result set is empty, the second parameter is undefined, otherwise it is an object containing the values for the first row. Like with Statement#run, the statement will not be finalized after executing this function.
+准备SQL语句，如果有设置指定的参数，就将参数绑定到语句中，当所有都准备完毕调用回调函数。这个方法返回一个Statement对象。
 
-Using this method can leave the database locked, as the database awaits further calls to Statement#get to retrieve subsequent rows. To inform the database that you are finished retrieving rows, you should either finalize (with Statement#finalize) or reset (with Statement#reset) the statement.
+当准备成功，回调函数的参数为`null`，否则参数为一个错误对象。当提供绑定参数，它们会在调用回调函数之前绑定到语句中。
 
-Statement#all([param, ...], [callback])
-Binds parameters, executes the statement and calls the callback with all result rows. The function returns the Statement object to allow for function chaining. The parameters are the same as the Statement#run function, with the following differences:
+# Statement
 
-The signature of the callback is function(err, rows) {}. If the result set is empty, the second parameter is an empty array, otherwise it contains an object for each result row which in turn contains the values of that row. Like with Statement#run, the statement will not be finalized after executing this function.
+## Statement#bind([param, ...], [callback])
 
-Statement#each([param, ...], [callback], [complete])
-Binds parameters, executes the statement and calls the callback for each result row. The function returns the Statement object to allow for function chaining. The parameters are the same as the Statement#run function, with the following differences:
+绑定参数到准备好的语句中，并在绑定完成或绑定发生错误的时候调用回调函数。这个方法返回Statement对象以允许函数链式调用。当绑定成功，回调函数的第一个参数是`null`，否则参数是一个错误对象。
 
-The signature of the callback is function(err, row) {}. If the result set succeeds but is empty, the callback is never called. In all other cases, the callback is called once for every retrieved row. The order of calls correspond exactly to the order of rows in the result set.
+使用此函数绑定参数会完全重置语句对象和行光标，并删除所有先前绑定的参数（如果有的话）。
 
-After all row callbacks were called, the completion callback will be called if present. The first argument is an error object, and the second argument is the number of retrieved rows. If you specify only one function, it will be treated as row callback, if you specify two, the first (== second to last) function will be the row callback, the last function will be the completion callback.
+## Statement#reset([callback])
 
-Like with Statement#run, the statement will not be finalized after executing this function.
+重置行光标但保留绑定参数。使用这个函数来重新执行有着同样绑定参数的同样的查询。这个函数返回Statement对象以允许函数链式调用。回调函数在重置完成后被调用，这个操作将不会出现失败，回调函数的参数将一直返回`null`。
 
-If you know that a query only returns a very limited number of rows, it might be more convenient to use Statement#all to retrieve all rows at once.
+## Statement#finalize([callback])
 
-There is currently no way to abort execution!
+完成语句。这通常是可选的，但是如果你在执行下一个语句之前遇到长时间的等待，则可能需要手动调用完成你的语句。当你运行独占查询的时候可能遇到这种情况（请参阅[控制流](./ControlFlow.md)部分）。语句完成后，对该Statement对象的所有下一步操作函数调用都将抛出错误。
+
+## Statement#run([param, ...], [callback])
+
+绑定参数并执行语句。这个函数返回Statement对象以允许函数链式调用。
+
+如果你传入绑定参数，它们将在执行之前绑定到语句中。注意，哪怕你只指定一个绑定参数，也会重置所有绑定和行光标。
+
+回调函数的处理逻辑和`Database#run`方法的基本一样，区别是这个函数执行后语句不会完成，这意味着你可以多次运行它。
+
+## Statement#get([param, ...], [callback])
+
+绑定参数，执行语句并返回结果的第一行数据。这个函数返回Statement对象以允许函数链式调用。这个函数的参数和`Statement#run`方法类似，个别区别如下：
+
+回调函数的样子是`function(err, row) {}`。如果结果集合是空的，第二个回调函数参数`row`是`undefined`，否则`row`是一个包含了第一行数据的对象。和`Statement#run`类似，这个函数执行后语句不会完成。
+
+使用这个方法可以锁定数据库，因为数据库正在等待对`Statement#get`的进一步调用，以检索后续行。要通知数据库你已经完成检索，你应该完成（`Statement#finalize`）或重置（`Statement#reset`）这个语句。
+
+## Statement#all([param, ...], [callback])
+
+绑定参数，执行语句并返回结果的所有数据。这个函数返回Statement对象以允许函数链式调用。这个函数的参数和`Statement#run`方法类似，个别区别如下：
+
+回调函数的样子是`function(err, rows) {}`。如果结果集合是空的，第二个回调函数参数`rows`是一个空的数组，否则`rows`将为每一行结果提供一个对象，该对象包含了该行的值。和`Statement#run`类似，这个函数执行后语句不会完成。
+
+## Statement#each([param, ...], [callback], [complete])
+
+绑定参数，执行语句并为每一行结果调用一次回调函数。这个函数返回Statement对象以允许函数链式调用。这个函数的参数和`Statement#run`方法类似，个别区别如下：
+
+回调函数的样子是`function(err, row) {}`。如果查询结果成功，但是结果为空，回调函数`callback`永远不会被调用。其他情况下，`callback`回调函数会为每一行结果数据调用一次，调用顺序与结果集中的行顺序完全对应。
+
+所有`callback`回调函数调用完成后，如果传入了`complete`回调函数，`complete`回调函数会被调用。`complete`回调函数的第一个参数是一个错误对象，第二个参数是接收的结果数据的总行数。如果你只传入了一个回调函数，那么这个回调函数会被视为`callback`回调函数；如果你传入了两个，那么第一个回调函数是行回调`callback`，另外一个是完成回调`complete`。
+
+和`Statement#run`方法类似，这个函数执行后语句不会完成。
+
+如果你知道一个查询语句只返回一个非常小的数据量，你可以使用`Statement#all`一次性接收所有数据。
+
+这个函数目前无法终止执行。
 

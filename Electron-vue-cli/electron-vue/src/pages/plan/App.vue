@@ -6,7 +6,6 @@
 
 <script>
 const {
-    ipcRenderer,
     remote
 } = window.require('electron');
 
