@@ -19,7 +19,7 @@
                         <div class="phi-default-room-header">
                             <div class="phi-default-room-header-title">房型</div>
                             <div class="phi-default-room-header-add" @click="planListItemHotelAddRoomButtonClickEvent"></div>
-                            <div class="phi-default-room-header-addrooms" v-if="isShowAddRoom">
+                            <div class="phi-default-room-header-addrooms" v-if="planListItem.isShowAddRoom">
                                 <template v-if="planListItem.hotal.defaultHotel.rooms && planListItem.hotal.defaultHotel.rooms.length > 0">
                                     <!-- <div class="" v-for=""></div> -->
                                 </template>

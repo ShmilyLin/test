@@ -209,12 +209,8 @@ const {
     ipcRenderer,
     remote
 } = window.require('electron');
-const path = window.require('path');
 import Listener from '../../../utils/Listener.js';
-
 import { Trim } from '@/utils/String.js';
-
-// console.log(path.join(remote.app.getPath('userData'), 'data/resource.db'));
 
 export default {
     name: 'CreateHotelCard',

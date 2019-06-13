@@ -14,6 +14,7 @@ const {
 } = require('electron');
 // const path = require('path');
 // const os = require('os');
+const fs = require('fs');
 
 // require("./Main/database.js");
 
@@ -44,6 +45,10 @@ let RenderListener = {};
 // 在 macOS 中, 如果从通知中心中启动，那么 launchInfo 中的 userInfo 包含用来打开应用程序的 NSUserNotification 信息。 你可以通过调用 app.isReady() 方法来检查此事件是否已触发。
 function appOnReady () {
     // console.log(process.argv);
+
+    if (!fs.existsSync('./data')) {
+      fs.mkdirSync('./data');
+    }
 
     // 设置应用名字
     // app.setName("旅行计划");
