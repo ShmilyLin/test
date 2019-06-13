@@ -705,16 +705,23 @@ export default {
 
             console.log("createAHotelCardButtonClickEvent hotelSave", hotelSave);
 
-            this.$HotelCardDB.Transaction((transaction) => {
-                transaction.Insert(hotelSave);
-            }, () => {
-                
+            this.$CardDB.Transaction((transaction) => {
+                console.log("【Create Hotel Card】 transaction", transaction);
+                transaction.HOTELCARD.Insert(hotelSave);
+            }, (error) => {
+                if (error) {
+                    console.log("【Create Hotel Card】 transaction fail", error);
+                }else {
+                    Listener.done(Listener.Keys.HotelCardDBModified);
+                    var currentWindow = remote.getCurrentWindow();
+                    currentWindow.close();
+                }
             })
             // HotelCardDB.insert(hotelSave, (err, newDoc) => {
             //     console.log("插入一条住宿卡回调", err, newDoc);
-            //     Listener.done(Listener.Keys.HotelCardDBModified);
-            //     // var currentWindow = remote.getCurrentWindow();
-            //     // currentWindow.close();
+                // Listener.done(Listener.Keys.HotelCardDBModified);
+                // var currentWindow = remote.getCurrentWindow();
+                // currentWindow.close();
             // })
         }
 	}

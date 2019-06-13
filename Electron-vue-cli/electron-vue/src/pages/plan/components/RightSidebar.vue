@@ -137,7 +137,7 @@
 					</div>
 					<div class="rs-content-hotel-list">
 						<HotelCard v-for="(hotelCardItem, hotelCardIndex) in hotelCardList" 
-							:key="'hotel_card_item_' + hotelCardItem._id" 
+							:key="'hotel_card_item_' + hotelCardItem.id" 
 							:cardInfo="hotelCardItem" 
 							:cardIndex="hotelCardIndex"
 							@mousedown.stop.native='sectionRightHotelItemMousedownEvent($event, hotelCardIndex)'></HotelCard>
@@ -232,7 +232,15 @@ export default {
 	created: function () {
 		console.log("Listener", Listener);
 		Listener.on(Listener.Keys.HotelCardDBModified, this.getHotelCardDBData);
-		this.getHotelCardDBData();
+		if (this.$CardDB.HOTELCARD) {
+			this.getHotelCardDBData();
+		}else {
+			this.$CardDB.Once("HOTELCARD_ready", () => {
+				console.log("HotelCard_ready");
+				this.getHotelCardDBData();
+			});
+		}
+		
 	},
 	mounted: function () {
 		this.watchRightInfoEvent();
@@ -286,21 +294,40 @@ export default {
 		},
 
 		getHotelCardDBData: function () {
+			this.$CardDB.HOTELCARD.Find()
+				.done()
+				.then((res) => {
+					console.log("获取住宿卡列表成功", res);
+					for (var i = 0; i < res.length; i++) {
+						res[i].isShowRooms = false;
+						if (res[i].rooms) {
+							for (var j = 0; j < res[i].rooms.length; j++) {
+								res[i].rooms[j].isShow = false;
+							}
+						}
+					}
+					
+					this.hotelCardList = res;
+				}).catch((error) => {
+					console.log("获取住宿卡列表失败", error);
+				});
+			
+			// this.$CardDB.HotelCard.Find()
 			// HotelCardDB.find({}, (err, docs) => {
 			// 	console.log("HotelCardDB find all", err, docs);
 			// 	if (err) {
 
 			// 	}else {
-			// 		for (var i = 0; i < docs.length; i++) {
-			// 			docs[i].isShowRooms = false;
-			// 			if (docs[i].rooms) {
-			// 				for (var j = 0; j < docs[i].rooms.length; j++) {
-			// 					docs[i].rooms[j].isShow = false;
-			// 				}
-			// 			}
-			// 		}
+					// for (var i = 0; i < docs.length; i++) {
+					// 	docs[i].isShowRooms = false;
+					// 	if (docs[i].rooms) {
+					// 		for (var j = 0; j < docs[i].rooms.length; j++) {
+					// 			docs[i].rooms[j].isShow = false;
+					// 		}
+					// 	}
+					// }
 					
-			// 		this.hotelCardList = docs;
+					// this.hotelCardList = docs;
 			// 	}
 			// })
 		},
