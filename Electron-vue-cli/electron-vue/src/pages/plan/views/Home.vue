@@ -14,7 +14,6 @@
 					<DayItem v-for="(dayItem, dayIndex) in dayList" 
                         :key="dayItem.timestamp" 
 						:ref="'section-canvas-day-' + dayIndex"
-						:dayItem="dayItem"
 						:dayIndex="dayIndex"></DayItem>
 					<div class="home-section-canvas-day">
 						<div class=""></div>
@@ -24,7 +23,6 @@
 			<transition name="section-right">
 				<RightSidebar v-if="isAutoShowRight ? rightInfo : true" 
 					:planInfo="planInfo" 
-					:rightInfo="rightInfo" 
 					@plan-info-change="rightSidebarPlanInfoChangeEvent"></RightSidebar>
 			</transition>
 		</div>
@@ -54,7 +52,7 @@ const {
     ipcRenderer,
     remote
 } = window.require('electron');
-
+import Global from '../utils/Global';
 import Listener from '../../../utils/Listener.js';
 
 import TopMenu from '@/pages/plan/components/TopMenu.vue';
@@ -64,6 +62,7 @@ import RightSidebar from '@/pages/plan/components/RightSidebar.vue';
 import Footer from '@/pages/plan/components/Footer.vue';
 
 import DayModel from '../models/DayModel.js';
+
 
 export default {
 	name: 'home',
@@ -96,14 +95,6 @@ export default {
                 endDate: 0, // 结束日期
                 endDateShow: "" // 
             },
-			rightInfo: null, // 右边栏信息
-
-			dayList: [], // 
-			currentSelected: { // 当前选中的项
-                dayIndex: -1,
-                planIndex: -1,
-                planListItemIndex: -1,
-			},
 
 			isTouchedACard: false,
             movingCard: {
@@ -119,6 +110,12 @@ export default {
 	computed: {
 		isAutoShowRight: function () { // 是否自动显示右边栏
 			return this.$store.state.autoShowRightSidebar;
+		},
+		dayList: function () {
+			return this.$store.state.dayList;
+		},
+		rightInfo: function () {
+			return this.$store.state.rightInfo;
 		}
 	},
 	created: function () {
@@ -136,7 +133,7 @@ export default {
             tempPlan.createAListItem(0)
             console.log(tempModel);
 
-            this.dayList.push(tempModel);
+			this.$store.commit(Global.Store.MutationsKeys.AddDayListItem, tempModel);
 		}
 		
 		this.registerListener();
@@ -150,8 +147,12 @@ export default {
 		},
 
 		homeClickEvent: function () {
-			this.cancelSelectedItem(-1, -1, -1);
-            this.rightInfo = null;
+			this.$store.commit(Global.Store.MutationsKeys.CancelSelectedDayListItem, {
+                dayIndex: -1,
+                planIndex: -1,
+                planListItemIndex: -1
+            })
+			this.$store.commit(Global.Store.MutationsKeys.SetRightInfo, null);
 		},
 		/**
 		 * 顶部工具栏显示状态改变
@@ -191,42 +192,6 @@ export default {
 			if ('desc' in params) {
 				this.planInfo.desc = params.desc;
 			}
-		},
-
-		/**
-         * 取消选中状态
-         */
-        cancelSelectedItem: function (tempNewDayIndex, tempNewPlanIndex, tempNewPlanListItemIndex) {
-            var tempDayIndex = this.currentSelected.dayIndex;
-            var tempPlanIndex = this.currentSelected.planIndex;
-            var tempPlanListItemIndex = this.currentSelected.planListItemIndex;
-
-            if (tempDayIndex >= 0 && this.dayList[tempDayIndex]) {
-                var tempDayItem = this.dayList[tempDayIndex];
-                if (tempNewDayIndex != tempDayIndex) {
-                    tempDayItem.isSelected = false;
-                }
-                
-                if (tempPlanIndex >= 0 && tempDayItem.plans[tempPlanIndex]) {
-                    var tempPlanItem = tempDayItem.plans[tempPlanIndex];
-                    if (tempNewPlanIndex != tempPlanIndex || tempNewDayIndex != tempDayIndex) {
-                        tempPlanItem.isSelected = false;
-                    }
-                    
-                    if (tempPlanListItemIndex >= 0 && tempPlanItem.list[tempPlanListItemIndex]) {
-                        if (tempNewPlanListItemIndex != tempPlanListItemIndex || tempNewPlanIndex != tempPlanIndex || tempNewDayIndex != tempDayIndex) {
-                            var tempPlanListItem = tempPlanItem.list[tempPlanListItemIndex];
-                            tempPlanListItem.isEditor = false;
-                        }
-                    }
-                }
-
-                this.$set(this.dayList, tempDayIndex, tempDayItem);
-            }
-
-            this.currentSelected.dayIndex = tempNewDayIndex;
-            this.currentSelected.planIndex = tempNewPlanIndex;
-            this.currentSelected.planListItemIndex = tempNewPlanListItemIndex;
 		},
 		
 		/**
@@ -285,9 +250,21 @@ export default {
                                                                 if (event.x >= tempDefaultHotelDomRect.left && event.x <= (tempDefaultHotelDomRect.left + tempDefaultHotelDomRect.width) && event.y >= tempDefaultHotelDomRect.top && event.y <= (tempDefaultHotelDomRect.top + tempDefaultHotelDomRect.height)) {
                                                                     var tempMovingData = JSON.parse(JSON.stringify(this.movingCard.data));
                                                                     console.log("tempMovingData", tempMovingData);
-                                                                    tempMovingData.isShowAddRoom = false;
-                                                                    tempPlanListItem.hotal.defaultHotel = tempMovingData;
-                                                                    this.$set(this.dayList, i, tempDayItem);
+																	tempMovingData.isShowAddRoom = false;
+																	if (tempMovingData.rooms) {
+																		for (var roomIndex = 0; roomIndex < tempMovingData.rooms.length; roomIndex++) {
+																			tempMovingData.rooms[roomIndex].mark = "";
+																			tempMovingData.rooms[roomIndex].isShowMark = false;
+																			tempMovingData.rooms[roomIndex].count = 1;
+																			tempMovingData.rooms[roomIndex].isShowTotal = false;
+																		}
+																	}
+																	
+																	tempPlanListItem.hotal.defaultHotel = tempMovingData;
+																	this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+																		index: i,
+																		item: tempDayItem
+																	});
                                                                     tempFind = true;
                                                                 }
                                                             // }

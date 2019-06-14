@@ -9,6 +9,7 @@ import store from './store';
 import DatabaseManager from '../../libs/SQLite3/index.js';
 
 Vue.config.productionTip = false;
+Vue.config.devtools = process.env.NODE_ENV === 'development';
 
 // console.log(path.join(remote.app.getPath('userData'), 'data/card.db'));
 const CardDB = new DatabaseManager('data/card.db');

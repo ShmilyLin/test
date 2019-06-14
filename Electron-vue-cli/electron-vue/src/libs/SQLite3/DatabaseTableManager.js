@@ -280,22 +280,16 @@ class DatabaseTableManager {
             },
             where: function (params) {
                 console.log("where", params);
-                for (var tempKey in params) {
+                if (typeof params === 'string') {
 
+                }else if (typeof params === 'object') {
+                    for (var tempKey in params) {
+
+                    }
                 }
-                // this._where += 
-            },
-            and: function () {
-
             },
             or: function () {
-
-            },
-            like: function () {
-
-            },
-            glob: function () {
-
+                
             },
             offset: function (theOffset) {
                 this._offset = parseInt(theOffset);

@@ -12,8 +12,8 @@ const {
     webContents,
     ipcMain
 } = require('electron');
-// const path = require('path');
-// const os = require('os');
+const path = require('path');
+const os = require('os');
 const fs = require('fs');
 
 // require("./Main/database.js");
@@ -52,6 +52,9 @@ function appOnReady () {
 
     // 设置应用名字
     // app.setName("旅行计划");
+
+    // Vue DevTools nhdogjmejiglipccpnnnanhbledajbpd
+    BrowserWindow.addDevToolsExtension(path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.1.0_0'))
 
     mainWindow = new BrowserWindow({
         width: 1000,

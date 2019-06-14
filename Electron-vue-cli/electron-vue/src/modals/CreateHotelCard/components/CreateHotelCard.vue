@@ -445,7 +445,7 @@ export default {
                 roomUnit: "间",
                 originalPrice: "",
                 price: "",
-                priceUnit: "人民币",
+                priceUnit: "¥",
                 numberOfRooms: 0,
                 numberOfPeopleAvailable: {
                     adult: 1,
@@ -635,7 +635,7 @@ export default {
                         if (tempRoomItem.priceUnit && typeof tempRoomItem.priceUnit === 'string' && tempRoomItem.priceUnit.length > 0) {
                             roomSave.priceUnit = tempRoomItem.priceUnit;
                         }else {
-                            roomSave.priceUnit = "人民币";
+                            roomSave.priceUnit = "¥";
                         }
 
                         roomSave.originalPrice = "";
@@ -923,7 +923,7 @@ export default {
     .chc-section-roomsItem-list-item-header-delete {
         width: 20px;
         height: 20px;
-        background-image: url(../assets/circle_delete.png);
+        background-image: url(../../../assets/circle_delete.png);
         background-repeat: no-repeat;
         background-size: 100% 100%;
         cursor: pointer;

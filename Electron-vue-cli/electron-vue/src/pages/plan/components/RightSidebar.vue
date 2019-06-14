@@ -192,9 +192,6 @@ export default {
 		planInfo: {
 			type: Object,
 		},
-		rightInfo: {
-			type: Object,
-		}
 	},
 	data() {
 		return {
@@ -220,7 +217,10 @@ export default {
 	computed: {
 		isAutoShowRight: function () {
 			return this.$store.state.autoShowRightSidebar;
-		},           
+		},
+		rightInfo: function () {
+			return this.$store.state.rightInfo;
+		}
 	},
 	watch: {
 		'planInfo': 'watchPlanInfoEvent',

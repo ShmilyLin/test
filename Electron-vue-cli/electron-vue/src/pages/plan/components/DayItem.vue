@@ -103,7 +103,9 @@
                         </template>
                         <!-- 住宿 -->
                         <template v-else-if="planListItem.type === 2">
-                            <PlanHotelItem :planListItem="planListItem" 
+                            <PlanHotelItem 
+                                :dayIndex="dayIndex" 
+                                :planIndex="planIndex" 
                                 :planListIndex="planListIndex" 
                                 :ref="'day-plan-list-item-hotel-' + planIndex + '-' + planListIndex" 
                                 @show-add-room="planListItemHotelShowAddRoom(planIndex, planListIndex)"></PlanHotelItem>
@@ -171,6 +173,7 @@
 </template>
 
 <script>
+import Global from '../utils/Global.js';
 import { Trim } from '../../../utils/String';
 
 import PlanHotelItem from './PlanHotelItem.vue';
@@ -181,10 +184,6 @@ export default {
         PlanHotelItem
     },
     props: {
-        dayItem: {
-            type: Object,
-            required: true,
-        },
         dayIndex: {
             type: Number,
             default: -1
@@ -193,6 +192,11 @@ export default {
     data() {
         return {
             
+        }
+    },
+    computed: {
+        dayItem: function () {
+            return this.$store.state.dayList[this.dayIndex];
         }
     },
     mounted: function () {
@@ -205,98 +209,134 @@ export default {
          * 点击自己
          */
         dayItemSelectedEvent: function () {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             tempDayItem.isSelected = true;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
-            this.$parent.cancelSelectedItem(this.dayIndex, -1, -1);
-            this.$parent.rightInfo = null;
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            });
+            this.$store.commit(Global.Store.MutationsKeys.CancelSelectedDayListItem, {
+                dayIndex: this.dayIndex,
+                planIndex: -1,
+                planListItemIndex: -1
+            })
+            this.$store.commit(Global.Store.MutationsKeys.SetRightInfo, null);
         },
 		/**
          * 标题的聚焦事件
          */
         dayItemTitleFocusEvent: function () {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             tempDayItem.inputTitle = true;
 
-            for (var i = 0; i < this.$parent.dayList.length; i++) {
+            var tempDayList = this.$store.state.dayList;
+            for (var i = 0; i < tempDayList.length; i++) {
                 if (i != this.dayIndex) {
-                    var tempForDayItem = this.$parent.dayList[i];
+                    var tempForDayItem = tempDayList[i];
                     if (tempForDayItem.isSelected) {
                         tempForDayItem.isSelected = false;
-                        this.$parent.$set(this.$parent.dayList, i, tempForDayItem);
+                        this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                            index: i,
+                            item: tempForDayItem
+                        });
                     }
                 }
             }
 
             tempDayItem.isSelected = true;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            });
         },
 
         /**
          * 标题的失焦事件
          */
         dayItemTitleBlurEvent: function (event) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             tempDayItem.inputTitle = false;
             tempDayItem.title = Trim(event.target.innerText);
             event.target.innerText = tempDayItem.title;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            });
         },
 
         /**
          * 副标题的聚焦事件
          */
         dayItemSubtitleFocusEvent: function () {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             tempDayItem.inputSubtitle = true;
 
-            for (var i = 0; i < this.$parent.dayList.length; i++) {
+            var tempDayList = this.$store.state.dayList;
+            for (var i = 0; i < tempDayList.length; i++) {
                 if (i != this.dayIndex) {
-                    var tempForDayItem = this.$parent.dayList[i];
+                    var tempForDayItem = tempDayList[i];
                     if (tempForDayItem.isSelected) {
                         tempForDayItem.isSelected = false;
-                        this.$parent.$set(this.$parent.dayList, i, tempForDayItem);
+                        this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                            index: i,
+                            item: tempForDayItem
+                        })
                     }
                 }
             }
 
             tempDayItem.isSelected = true;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            })
         },
 
         /**
          * 副标题的失焦事件
          */
         dayItemSubtitleBlurEvent: function (event) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             tempDayItem.inputSubtitle = false;
             tempDayItem.subtitle = Trim(event.target.innerText);
             event.target.innerText = tempDayItem.subtitle;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            })
         },
 
         /**
          * 说明的聚焦事件
          */
         dayItemDescItemFocusEvent: function (dayDescIndex) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             tempDayItem.descList[dayDescIndex].inputDesc = true;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            })
         },
 
         /**
          * 说明的失焦事件
          */
         dayItemDescItemBlurEvent: function ($event, dayDescIndex) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             var tempContent = event.target.innerText;
             if (!tempContent || tempContent.length <= 0) {
                 tempDayItem.descList.splice(dayDescIndex, 1);
-                this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+                this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                    index: this.dayIndex,
+                    item: tempDayItem
+                })
             }else {
                 tempDayItem.descList[dayDescIndex].content = tempContent;
                 tempDayItem.descList[dayDescIndex].inputDesc = false;
-                this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+                this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                    index: this.dayIndex,
+                    item: tempDayItem
+                })
 
                 event.target.blur();
             }
@@ -306,18 +346,25 @@ export default {
          * 新建说明的聚焦事件
          */
         dayItemDescContentFocusEvent: function () {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             tempDayItem.inputDesc = true;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            })
         },
 
         /**
          * 新建说明的失焦事件
          */
         dayItemDescContentBlurEvent: function ($event) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             tempDayItem.inputDesc = false;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            })
+
             var tempContent = event.target.innerText;
             if (tempContent && tempContent.length > 0) {
                 var tempIndex = tempDayItem.descList.length;
@@ -327,7 +374,10 @@ export default {
                     timestamp: (new Date()).getTime(),
                 })
 
-                this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+                this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                    index: this.dayIndex,
+                    item: tempDayItem
+                })
 
                 event.target.innerText = "";
 
@@ -338,7 +388,7 @@ export default {
         },
 
         dayItemDescContentEnterEvent: function ($event) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             var tempContent = event.target.innerText;
             if (tempContent && tempContent.length > 0) {
                 var tempIndex = tempDayItem.descList.length;
@@ -348,7 +398,10 @@ export default {
                     timestamp: (new Date()).getTime(),
                 })
 
-                this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+                this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                    index: this.dayIndex,
+                    item: tempDayItem
+                })
 
                 event.target.innerText = "";
 
@@ -362,7 +415,7 @@ export default {
          * 点击一个计划项
          */
         dayPlanListItemClickEvent: function (event, planIndex, planListIndex) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             var tempPlanItem = tempDayItem.plans[planIndex];
             var tempPlanListItem = tempPlanItem.list[planListIndex];
 
@@ -370,15 +423,23 @@ export default {
                 tempDayItem.isSelected = true;
                 tempPlanItem.isSelected = true;
                 tempPlanListItem.isEditor = true;
-                this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
-                this.$parent.cancelSelectedItem(this.dayIndex, planIndex, planListIndex);
-                this.$parent.rightInfo = {
+                this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                    index: this.dayIndex,
+                    item: tempDayItem
+                })
+
+                this.$store.commit(Global.Store.MutationsKeys.CancelSelectedDayListItem, {
+                    dayIndex: this.dayIndex,
+                    planIndex: planIndex,
+                    planListItemIndex: planListIndex
+                })
+                this.$store.commit(Global.Store.MutationsKeys.SetRightInfo, {
                     type: 2,
                     isShowFilter: false,
                     isSearching: false,
                     isInputSearch: false,
                     searchContent: "",
-                }
+                });
                 event.stopPropagation();
             }
         },
@@ -387,98 +448,107 @@ export default {
          * 计划 - 项-起点 - 输入框聚焦事件
          */
         planListItemPointNameFocusEvent(planIndex, planListIndex) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             tempDayItem.isSelected = true;
             var tempPlanItem = tempDayItem.plans[planIndex];
             tempPlanItem.isSelected = true;
             var tempPlanListItem = tempPlanItem.list[planListIndex];
             tempPlanListItem.isEditor = true;
             tempPlanListItem.inputPointName = true;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            })
 
-            this.$parent.cancelSelectedItem(this.dayIndex, planIndex, planListIndex);
-            this.$parent.rightInfo = null;
-        },
-
-        /**
-         * 天 - 计划 - 项-住宿 - 显示添加房间
-         */
-        planListItemHotelShowAddRoom(planIndex, planListIndex) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
-            tempDayItem.isSelected = true;
-            var tempPlanItem = tempDayItem.plans[planIndex];
-            tempPlanItem.isSelected = true;
-            var tempPlanListItem = tempPlanItem.list[planListIndex];
-            tempPlanListItem.isEditor = true;
-            tempPlanListItem.isShowAddRoom = !tempPlanListItem.isShowAddRoom;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
-
-            this.$parent.cancelSelectedItem(this.dayIndex, planIndex, planListIndex);
+            this.$store.commit(Global.Store.MutationsKeys.CancelSelectedDayListItem, {
+                dayIndex: this.dayIndex,
+                planIndex: planIndex,
+                planListItemIndex: planListIndex
+            })
+            
+            this.$store.commit(Global.Store.MutationsKeys.SetRightInfo, null);
         },
 
         /**
          * 天 - 计划 - 项-文字 - 输入框聚焦事件
          */
         dayPlanListItemTextFocusEvent: function (planIndex, planListIndex) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             tempDayItem.isSelected = true;
             var tempPlanItem = tempDayItem.plans[planIndex];
             tempPlanItem.isSelected = true;
             var tempPlanListItem = tempPlanItem.list[planListIndex];
             tempPlanListItem.isEditor = true;
             tempPlanListItem.inputContent = true;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            })
 
-            this.$parent.cancelSelectedItem(this.dayIndex, planIndex, planListIndex);
+            this.$store.commit(Global.Store.MutationsKeys.CancelSelectedDayListItem, {
+                dayIndex: this.dayIndex,
+                planIndex: planIndex,
+                planListItemIndex: planListIndex
+            })
         },
         
         /**
          * 天 - 计划 - 项-文字 - 输入框失焦事件
          */
         dayPlanListItemTextBlurEvent: function (event, planIndex, planListIndex) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             var tempPlanItem = tempDayItem.plans[planIndex];
             var tempPlanListItem = tempPlanItem.list[planListIndex];
             tempPlanListItem.inputContent = false;
             tempPlanListItem.content = event.target.innerText;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            })
         },
 
         /**
          * 创建一个新的计划项
          */ 
         createAPlanListItem: function (planIndex, type) {
-            var tempDayItem = this.$parent.dayList[this.dayIndex];
+            var tempDayItem = this.dayItem;
             tempDayItem.isSelected = true;
             var tempPlanItem = tempDayItem.plans[planIndex];
             tempPlanItem.isSelected = true;
             var tempPlanListIndex = tempPlanItem.list.length;
             var tempPlanListItem = tempPlanItem.createAListItem(type);
             tempPlanListItem.isEditor = true;
-            this.$parent.$set(this.$parent.dayList, this.dayIndex, tempDayItem);
+            this.$store.commit(Global.Store.MutationsKeys.ModifiedDayListItem, {
+                index: this.dayIndex,
+                item: tempDayItem
+            })
 
-            this.$parent.cancelSelectedItem(this.dayIndex, planIndex, tempPlanListIndex);
+            this.$store.commit(Global.Store.MutationsKeys.CancelSelectedDayListItem, {
+                dayIndex: this.dayIndex,
+                planIndex: planIndex,
+                planListItemIndex: tempPlanListIndex
+            })
             
             console.log(tempPlanListItem);
 
             switch (type) {
                 case 0:
-                    this.$parent.rightInfo = null;
+                    this.$store.commit(Global.Store.MutationsKeys.SetRightInfo, null);
                     break;
                 case 1:
-                    this.$parent.rightInfo = {
+                    this.$store.commit(Global.Store.MutationsKeys.SetRightInfo, {
                         type: 1,
                         
-                    }
+                    });
                     break;
                 case 2:
-                    this.$parent.rightInfo = {
+                    this.$store.commit(Global.Store.MutationsKeys.SetRightInfo, {
                         type: 2,
                         isShowFilter: false,
                         isSearching: false,
                         isInputSearch: false,
                         searchContent: "",
-                    }
+                    });
                     break;
                 case 5:
                     setTimeout(() => {
