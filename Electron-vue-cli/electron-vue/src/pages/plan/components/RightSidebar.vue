@@ -294,6 +294,18 @@ export default {
 		},
 
 		getHotelCardDBData: function () {
+			// this.$CardDB.HOTELCARD.Find().where((manager) => {
+			// 	console.log("manager", manager);
+			// 	manager.name.between(1, 3);
+			// 	manager.and();
+			// 	manager.id.equal('123');
+			// 	manager.or();
+			// 	manager.address.city.in(["234", "345", "阿克琉斯大码镂空"]);
+			// 	manager.type.like("sd");
+			// })
+
+
+
 			this.$CardDB.HOTELCARD.Find()
 				.done()
 				.then((res) => {

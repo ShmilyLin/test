@@ -1,5 +1,107 @@
 const { GetObjectColumnSQLString } = require('./util');
 
+class DatabaseTableQueryWhereManager {
+    constructor(columnName, columsType, SQLManager) {
+        this.columnName = columnName;
+        this.columsType = columsType;
+
+        this.SQLManager = SQLManager;
+    }
+
+    like(queryString) {
+        this.SQLManager(`${this.columnName} LIKE '${queryString}'`);
+    }
+
+    glob(queryString) {
+        this.SQLManager(`${this.columnName} GLOB '${queryString}'`);
+    }
+
+    in(queryArray) {
+        if (queryArray.length > 0) {
+            var tempSQLString = "";
+            var tempSQLParams = [];
+            for (var i = 0; i < queryArray.length; i++) {
+                if (i > 0) {
+                    tempSQLString += ",";
+                }
+
+                tempSQLString += "?";
+                tempSQLParams.push(queryArray[i]);
+            }
+
+            this.SQLManager(`${this.columnName} IN (${tempSQLString})`, tempSQLParams);
+        }
+    }
+
+    notIn(queryArray) {
+        if (queryArray.length > 0) {
+            var tempSQLString = "";
+            var tempSQLParams = [];
+            for (var i = 0; i < queryArray.length; i++) {
+                if (i > 0) {
+                    tempSQLString += ",";
+                }
+
+                tempSQLString += "?";
+                tempSQLParams.push(queryArray[i]);
+            }
+
+            this.SQLManager(`${this.columnName} NOT IN (${tempSQLString})`, tempSQLParams);
+        }
+    }
+
+    between() {
+        if (arguments.length === 2) {
+            this.SQLManager(`${this.columnName} BETWEEN ${arguments[0]} AND ${arguments[1]}`);
+        }
+    }
+
+    notBetween() {
+        if (arguments.length === 2) {
+            this.SQLManager(`${this.columnName} NOT BETWEEN ${arguments[0]} AND ${arguments[1]}`);
+        }
+    }
+
+    isNull() {
+        this.SQLManager(`${this.columnName} IS NULL`);
+        
+    }
+
+    isNotNull() {
+        this.SQLManager(`${this.columnName} IS NOT NULL`);
+    }
+
+    // 大于
+    greater(value) {
+        this.SQLManager(`${this.columnName} > ?`, [value]);
+    }
+
+    // 大于等于
+    greaterOrEqual(value) {
+        this.SQLManager(`${this.columnName} >= ?`, [value]);
+    }
+
+    // 小于
+    less(value) {
+        this.SQLManager(`${this.columnName} < ?`, [value]);
+    }
+
+    // 小于等于
+    lessOrEqual(value) {
+        this.SQLManager(`${this.columnName} <= ?`, [value]);
+    }
+
+    // 等于
+    equal(value) {
+        this.SQLManager(`${this.columnName} == ?`, [value]);
+    }
+
+    // 不等于
+    notEqual(value) {
+        this.SQLManager(`${this.columnName} != ?`, [value]);
+    }
+}
+
 class DatabaseTableManager {
     constructor(filename, tablename, columns) {
         this.filename = filename;
@@ -126,6 +228,7 @@ class DatabaseTableManager {
     _exec(params) {
         return new Promise((resolve, reject) => {
             var tempSQLString = "SELECT ";
+            var tempSQLParams = [];
             if (params._distinct) {
                 tempSQLString += "DISTINCT";
             }
@@ -148,6 +251,10 @@ class DatabaseTableManager {
             tempSQLString += (" " + params._SQLList);
             if (params._where && params._where.length > 0) {
                 tempSQLString += params._where;
+
+                if (params._where_params && params._where_params.length > 0) {
+                    tempSQLParams = tempSQLParams.concat(params._where_params);
+                }
             }
 
             if (params._limit >= 0) {
@@ -195,7 +302,7 @@ class DatabaseTableManager {
             }
 
             console.log(this.filename + " " + this.tablename + " Find tempSQLString", tempSQLString);
-            this.database.all(tempSQLString, [], (error, rows) => {
+            this.database.all(tempSQLString, tempSQLParams, (error, rows) => {
                 if (error) {
                     console.log(this.filename + " " + this.tablename + " Find fail", error);
                     reject();
@@ -260,6 +367,7 @@ class DatabaseTableManager {
             _columns: "",
             _distinct: false,
             _where: "",
+            _where_params: [],
             _limit: -1,
             _offset: -1,
             _groupby: [],
@@ -270,6 +378,8 @@ class DatabaseTableManager {
                 if (column && column.length > 0) {
                     if (this._colums.length > 0) {
                         this._colums += (", " + column);
+                    }else {
+                        this._colums += column;
                     }
                 }
             },
@@ -278,18 +388,72 @@ class DatabaseTableManager {
                     this._distinct = status;
                 }
             },
-            where: function (params) {
-                console.log("where", params);
-                if (typeof params === 'string') {
+            where: function (callback) {
+                if (callback) {
+                    var tempSQLs = [];
+                    var tempSQLParams = [];
+                    var tempSQLManager = function (sqlstring, sqlparams) {
+                        if (sqlstring && sqlstring.length > 0) {
+                            tempSQLs.push(sqlstring);
+                            if (sqlparams && sqlparams.length > 0) {
+                                tempSQLParams = tempSQLParams.concat(sqlparams)
+                            }
+                        }
+                    }
+                    var tempActions = {};
+                    var tempColumns = that.columns;
+                    for (var tempKey in tempColumns) {
+                        if (tempColumns[tempKey].Type === Object) {
+                            tempActions[tempKey] = {};
+                            for (var tempSubKey in tempColumns[tempKey].Sub) {
+                                tempActions[tempKey][tempSubKey] = new DatabaseTableQueryWhereManager('_' + tempKey + '_' + tempSubKey, tempColumns[tempKey].Sub[tempSubKey].Type, tempSQLManager);
+                            }
+                        }else if (tempColumns[tempKey].Type !== Array) {
+                            tempActions[tempKey] = new DatabaseTableQueryWhereManager(tempKey, tempColumns[tempKey].Type, tempSQLManager);
+                        }
+                    }
 
-                }else if (typeof params === 'object') {
-                    for (var tempKey in params) {
+                    tempActions.exec = function () {
 
                     }
+
+                    tempActions.and = function () {
+                        tempSQLs.push("AND");
+                    }
+
+                    tempActions.or = function () {
+                        tempSQLs.push("OR");
+                    }
+
+                    callback(tempActions);
+                    console.log("where", tempSQLs, tempSQLParams);
+
+                    var tempSQLQuery = "";
+                    var isAnd = true;
+                    for (var i = 0; i < tempSQLs.length; i++) {
+                        var tempSQLQueryItem = tempSQLs[i];
+                        if (tempSQLQueryItem === "AND") {
+                            isAnd = true;
+                        }else if (tempSQLQueryItem === "OR") {
+                            isAnd = false;
+                        }else {
+                            if (tempSQLQuery.length > 0) {
+                                if (isAnd) {
+                                    tempSQLQuery += " AND ";
+                                }else {
+                                    tempSQLQuery += " OR ";
+                                    isAnd = true;
+                                }
+                            }
+
+                            tempSQLQuery += tempSQLQueryItem;
+                        }
+                    }
+
+                    console.log("tempSQLQuery", tempSQLQuery);
+                    this._where = tempSQLQuery;
+                    this._where_params = tempSQLParams;
                 }
-            },
-            or: function () {
-                
             },
             offset: function (theOffset) {
                 this._offset = parseInt(theOffset);
