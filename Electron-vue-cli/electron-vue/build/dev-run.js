@@ -1,11 +1,11 @@
 'use strict'
 
 const chalk = require('chalk');
-const path = require('path');
-var readline = require('readline');
+// const path = require('path');
+// var readline = require('readline');
 const { spawn } = require('child_process');
-const electron = require('electron');
-const VueCliService = require('@vue/cli-service');
+// const electron = require('electron');
+// const VueCliService = require('@vue/cli-service');
 // const WebpackDevServer = require('webpack-dev-server');
 
 let electronProcess = null;

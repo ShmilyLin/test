@@ -52,7 +52,6 @@
     "resolve": "1.10.0",
     "sass-loader": "7.1.0",
     "semver": "6.0.0",
-    "sqlite3": "^4.0.9",
     "style-loader": "0.23.1",
     "terser-webpack-plugin": "1.2.3",
     "ts-pnp": "1.1.2",
@@ -63,6 +62,7 @@
     "workbox-webpack-plugin": "4.2.0"
   },
   "scripts": {
+    "dev": "node scripts/dev.js",
     "electron": "electron .",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
