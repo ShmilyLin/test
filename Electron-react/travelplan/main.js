@@ -54,8 +54,8 @@ function appOnReady () {
   // app.setName("旅行计划");
 
   // Vue DevTools nhdogjmejiglipccpnnnanhbledajbpd
-  BrowserWindow.addDevToolsExtension(path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/nhdogjmejiglipccpnnnanhbledajbpd/5.1.0_0'))
-
+  // React DevTools nlipoenfbbikpbjkfpfillcgkoblgpmj
+  
   mainWindow = new BrowserWindow({
       width: 1000,
       height: 700,
@@ -84,13 +84,16 @@ function appOnReady () {
   })
 
   if (global.needOpenFile) {
-  // TODO: 需要打开文件
+    // TODO: 需要打开文件
   }else {
-    // if (process.env.runtype === 'dev') {
+    if (process.env.runtype === 'dev') {
       mainWindow.loadURL('http://localhost:3000/welcome.html');
-    // }else {
-    //   mainWindow.loadFile('dist/welcome.html');
-    // }
+      mainWindow.webContents.openDevTools({
+        mode: "detach",
+      })
+    }else {
+      mainWindow.loadFile('build/welcome.html');
+    }
   }
 
   const menu = Menu.buildFromTemplate(getMenuOption());
