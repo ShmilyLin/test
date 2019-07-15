@@ -4,10 +4,10 @@ import './index.css';
 import App from './App';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-// import Global from '../../global';
-import rootReducer from './reducers';
+import GlobalReducer from './store/reducer';
+import Global from './store/state';
 
-const store = createStore(rootReducer);
+const store = createStore(GlobalReducer, Global);
 
 ReactDOM.render(
     <Provider store={store}>
@@ -15,3 +15,9 @@ ReactDOM.render(
     </Provider>, 
     document.getElementById('root')
 );
+
+declare global {
+    interface Window {
+        require: (name: string) => any;
+    }
+}

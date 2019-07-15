@@ -1,0 +1,124 @@
+.add-tab-menu {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background-color: rgba($color: #000000, $alpha: 0.65);
+
+    .add-tab-menu-view {
+        width: 300px;
+        padding-top: 44px;
+        height: calc(100% - 44px);
+        background-color: rgb(51, 51, 51);
+        transform: translateX(-300px);
+
+        .add-tab-menu-view-header {
+            width: 100%;
+
+            .add-tab-menu-view-header-item {
+                padding: 10px 24px;
+                width: calc(100% - 48px);
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: rgb(80, 80, 80);
+
+                    .add-tab-menu-view-header-item-title {
+                        color: white;
+                    }
+
+                    .add-tab-menu-view-header-item-icon {
+                        display: block;
+                    }
+                }
+
+                .add-tab-menu-view-header-item-title {
+                    font-size: 18px;
+                    font-weight: 500;
+                    color: rgb(173, 173, 173);
+                    line-height: 1;
+                }
+
+                .add-tab-menu-view-header-item-icon {
+                    width: 18px;
+                    height: 18px;
+                    background-image: url(../../../../assets/detail_right_white.svg);
+                    background-repeat: no-repeat;
+                    background-size: 100% 100%;
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .add-tab-menu-view-showing {
+        animation: add-tab-menu-view-showing-animation 0.5s;
+    }
+
+    .add-tab-menu-view-show {
+        transform: translateX(0);
+    }
+
+    .add-tab-menu-view-hiding {
+        animation: add-tab-menu-view-hiding-animation 0.5s;
+    }
+
+    @keyframes add-tab-menu-view-showing-animation {
+        from {
+            transform: translateX(-300px);
+        }
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes add-tab-menu-view-hiding-animation {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-300px);
+        }
+    }
+}
+
+.add-tab-menu-show {
+    display: block;
+}
+
+.add-tab-menu-showing {
+    display: block;
+    animation: add-tab-menu-show-animation 0.5s;
+}
+
+.add-tab-menu-hiding {
+    display: block;
+    animation: add-tab-menu-hide-animation 0.5s;
+}
+
+@keyframes add-tab-menu-show-animation {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes add-tab-menu-hide-animation {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
