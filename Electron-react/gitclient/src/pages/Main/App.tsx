@@ -2,10 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 // import logo from '../../assets/logo.svg';
-import './App.css';
+import './App.scss';
 import Navigation from './components/Navigation/Navigation';
 // import { GlobalInterface } from './store/state';
 import AddTabMenu from './components/AddTabMenu/AddTabMenu';
+import Content from './components/Content/Content';
+import Footer from './components/Footer/Footer';
 
 
 interface AppProps {
@@ -45,6 +47,8 @@ class App extends React.Component<AppProps> {
     return (
       <div className="App">
         <Navigation />
+        <Content />
+        <Footer />
         <AddTabMenu />
       </div>
     );

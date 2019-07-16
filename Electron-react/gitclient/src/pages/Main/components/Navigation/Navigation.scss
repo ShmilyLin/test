@@ -33,16 +33,114 @@
     
     .navigation-list {
         -webkit-app-region: no-drag;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        overflow: hidden;
+
+        .navigation-list-line {
+            background-color: rgb(173, 173, 173);
+            width: 1px;
+            height: 60%;
+            flex-shrink: 0;
+        }
+
+        .navigation-list-line-hide {
+            background-color: transparent;
+        }
 
         .navigation-list-item {
-            
+            height: 100%;
+            padding: 0 12px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            flex-shrink: 0;
 
-            .navigation-list-item-title {
+            &:hover {
 
+                .navigation-list-item-info {
+
+                    .navigation-list-item-info-icon-repo {
+                        background-image: url(../../../../assets/repositories_white.svg);
+                    }
+
+                    .navigation-list-item-info-icon-github {
+                        background-image: url(../../../../assets/github_white.svg);
+                    }
+
+                    .navigation-list-item-info-title {
+                        color: white;
+                    }
+                }
+
+                .navigation-list-item-close {
+                    opacity: 1;
+                }
+            }
+
+            .navigation-list-item-info {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .navigation-list-item-info-icon-repo {
+                    flex-shrink: 0;
+                    width: 12px;
+                    height: 12px;
+                    background-image: url(../../../../assets/repositories_ADADAD.svg);
+                    background-repeat: no-repeat;
+                    background-size: 100% 100%;
+                    margin-right: 4px;
+                }
+                
+                .navigation-list-item-info-icon-github {
+                    flex-shrink: 0;
+                    width: 18px;
+                    height: 18px;
+                    background-image: url(../../../../assets/github_ADADAD.svg);
+                    background-repeat: no-repeat;
+                    background-size: 100% 100%;
+                    margin-right: 5px;
+                }
+
+                .navigation-list-item-info-title {
+                    font-size: 14px;
+                    color: rgb(173, 173, 173);
+                    line-height: 18px;
+                }
             }
 
             .navigation-list-item-close {
+                opacity: 0;
+                width: 14px;
+                height: 14px;
+                background-image: url(../.././../../assets/close_white.svg);
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+                margin-left: 10px;
+                transition: opacity 0.2s;
+            }
+        }
 
+        .navigation-list-item-show {
+            background-color: rgb(30, 30, 30);
+
+            .navigation-list-item-info {
+
+                .navigation-list-item-info-icon-repo {
+                    background-image: url(../../../../assets/repositories_white.svg);
+                }
+
+                .navigation-list-item-info-icon-github {
+                    background-image: url(../../../../assets/github_white.svg);
+                }
+
+                .navigation-list-item-info-title {
+                    color: white;
+                }
             }
         }
     }

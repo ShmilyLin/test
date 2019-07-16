@@ -2,6 +2,7 @@ import { Subject, Subscription } from 'rxjs';
 
 export const ListenerKeys = {
     ShowAddTabMenu: 'ShowAddTabMenu',
+    AddATab: 'AddATab',
 }
 
 class ListenerManager {

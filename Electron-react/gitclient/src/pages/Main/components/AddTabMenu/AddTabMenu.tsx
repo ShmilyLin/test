@@ -1,12 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { GlobalInterface } from '../../store/state';
 import { AnyAction } from 'redux';
-import AddTabMenuActions from '../../store/AddTabMenu/actions';
-import './AddTabMenu.scss';
-import Listener, { ListenerKeys } from '../../utils/Listener';
 import { Subscription } from 'rxjs';
+
+// Utils
+import Listener, { ListenerKeys } from '../../utils/Listener';
+
+// Store
+import { GlobalInterface } from '../../store/state';
+import TabsActions from '../../store/Tabs/actions';
+import AddTabMenuActions from '../../store/AddTabMenu/actions';
 import { RepositoryItem } from '../../store/Repositories/state';
+
+// Models
+import TabItem, { TabItemType } from '../../models/TabItem';
+
+// CSS
+import './AddTabMenu.scss';
 
 interface AddTabMenuProps {
     state: {
@@ -41,6 +51,7 @@ class AddTabMenu extends React.Component<AddTabMenuProps, AddTabMenuState> {
         };
 
         this.backgroundViewAnimationEnd = this.backgroundViewAnimationEnd.bind(this);
+        this.browserGitHubButtonClick = this.browserGitHubButtonClick.bind(this);
 
         this.ShowListener = Listener.on(ListenerKeys.ShowAddTabMenu, this.ShowAddtabMenuEvent.bind(this));
     }
@@ -77,12 +88,18 @@ class AddTabMenu extends React.Component<AddTabMenuProps, AddTabMenuState> {
         }
     }
 
-    public backgroundViewClickEvent(event: any) {
-        console.log(event);
+    public backgroundViewClickEvent() {
         this.setState({
             needShow: false,
             needHide: true,
         });
+    }
+
+    public browserGitHubButtonClick() {
+        let newTabItem = new TabItem(TabItemType.GitHub, 'GitHub');
+        this.props.dispatch(TabsActions.AddTabItem(newTabItem));
+        Listener.done(ListenerKeys.AddATab, newTabItem);
+        this.backgroundViewClickEvent();
     }
 
     public render() {
@@ -120,10 +137,10 @@ class AddTabMenu extends React.Component<AddTabMenuProps, AddTabMenuState> {
         return (
             <div className={backgroundViewClass} 
                 onAnimationEnd={this.backgroundViewAnimationEnd} 
-                onClick={(e) => this.backgroundViewClickEvent(e)}>
+                onClick={(e) => this.backgroundViewClickEvent()}>
                 <div className={contentViewClass} onClick={(e) => e.stopPropagation()}>
                     <div className="add-tab-menu-view-header">
-                        <div className="add-tab-menu-view-header-item">
+                        <div className="add-tab-menu-view-header-item" onClick={this.browserGitHubButtonClick}>
                             <div className="add-tab-menu-view-header-item-title">浏览GitHub</div>
                             <div className="add-tab-menu-view-header-item-icon"></div>
                         </div>
