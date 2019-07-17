@@ -1,7 +1,7 @@
 class GitHubItem {
-    constructor() {
+    // constructor() {
 
-    }
+    // }
 }
 
 export default GitHubItem;

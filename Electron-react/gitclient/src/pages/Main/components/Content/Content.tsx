@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 
 // Components
-import GitHubView from '../GitHubView/GitHubView';
+import GitHubView from '../GitHub/GitHubView/GitHubView';
 import Welcome from '../Welcome/Welcome';
 
 // State
@@ -14,6 +14,7 @@ import TabItem, { TabItemType } from '../../models/TabItem';
 
 // CSS
 import './Content.scss';
+
 
 interface ContentProps {
     state: {
@@ -48,10 +49,11 @@ class Content extends React.Component<ContentProps> {
                     if (tabItem.type === TabItemType.Repository) {
 
                     } else if (tabItem.type === TabItemType.GitHub) {
-                        return <GitHubView tabItem={tabItem} tabIndex={tabIndex} />;
+                        console.log(tabIndex, tabItem.createTime);
+                        return <GitHubView tabItem={tabItem} tabIndex={tabIndex} key={'github_' + tabItem.createTime}/>;
                     }
 
-                    return <Welcome />;
+                    return <Welcome key={'welcome_' + tabItem.createTime}/>;
                 })}
             </div>
         );

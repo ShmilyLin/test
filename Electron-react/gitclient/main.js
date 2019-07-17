@@ -66,6 +66,7 @@ function appOnReady () {
       devTools: true, //  是否开启 DevTools
       nodeIntegration: true,
       textAreasAreResizable: false, // 禁止TextArea元素调整大小
+      webSecurity: false, // 允许跨域
     },
     frame: false, // 无边框
     titleBarStyle: 'hiddenInset', // macOS, 左上角仍然有标准的窗口控制按钮，其中控制按钮到窗口边框的距离更大。

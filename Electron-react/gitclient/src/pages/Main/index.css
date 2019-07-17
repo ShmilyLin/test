@@ -18,3 +18,8 @@ html, body, div, ul, li {
   user-select: none;
 }
 
+input {
+  border: none;
+  outline-style: none;
+}
+

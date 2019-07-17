@@ -25,7 +25,7 @@ const Tabs: Reducer = (state: TabsInterface, action: any): TabsInterface => {
                 tempOpenList.push(action.item);
                 tempCurrentShowIndex = 0;
             } else {
-                tempOpenList.splice(tempCurrentShowIndex, 0, action.item);
+                tempOpenList.splice(tempCurrentShowIndex + 1, 0, action.item);
                 tempCurrentShowIndex++;
             }
 

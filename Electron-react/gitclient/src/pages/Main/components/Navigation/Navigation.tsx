@@ -91,6 +91,11 @@ class Navigation extends React.Component<NavigationProps> {
     // }
 
     let tempMenu = Menu.buildFromTemplate([{
+      label: index + '',
+      click: () => {
+        
+      },
+    }, {
       label: '关闭这个标签页',
       click: () => {
         this.openListTabItemDeleteClick(index);

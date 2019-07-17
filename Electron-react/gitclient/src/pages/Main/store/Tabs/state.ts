@@ -1,4 +1,4 @@
-import { RepositoryItem } from '../Repositories/state';
+// import { RepositoryItem } from '../Repositories/state';
 import TabItem from '../../models/TabItem';
 
 export interface TabsInterface {

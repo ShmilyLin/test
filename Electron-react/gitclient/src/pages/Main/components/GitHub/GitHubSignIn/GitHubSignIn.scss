@@ -1,0 +1,226 @@
+.ghsi {
+    width: 100%;
+    height: calc(100% - 40px);
+    background-color: rgb(51, 51, 51);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    .ghsi-content {
+        width: 40%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        // align-items: center;
+        justify-content: center;
+
+        .ghsi-content-header {
+            padding: 5px 0;
+            width: 100%;
+            height: 30px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgb(173, 173, 173);
+            width: fit-content;
+            margin-bottom: 5px;
+
+            .ghsi-content-header-list {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                height: 100%;
+                max-width: calc(100% - 35px);
+
+                .ghsi-content-header-list-item {
+                    font-size: 16px;
+                    line-height: 30px;
+                    color: rgb(173, 173, 173);
+                    padding: 0 5px;
+                    cursor: pointer;
+                    flex-shrink: 0;
+
+                    &:hover {
+                        color: white;
+                    }
+                }
+
+                .ghsi-content-header-list-item-selected {
+                    color: white;
+                }
+
+                .ghsi-content-header-list-line {
+                    width: 1px;
+                    height: 15px;
+                    background-color: rgb(173, 173, 173);
+                }
+            }
+
+            .ghsi-timeline-header-refresh {
+                width: 20px;
+                height: 20px;
+                border-radius: 4px;
+                background-image: url(../../../../../assets/refresh_ADADAD.svg);
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+                cursor: pointer;
+
+                &:hover {
+                    background-image: url(../../../../../assets/refresh_white.svg);
+                }
+            }
+        }
+
+        .ghsi-content-loading {
+            width: 100%;
+            height: calc(80% - 40px);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ghsi-content-timeline {
+            width: 100%;
+            height: calc(80% - 40px);
+            min-height: 400px;
+            overflow: hidden;
+
+            .ghsi-content-timeline-item {
+                width: 100%;
+
+                .ghsi-content-timeline-item-view {
+                    width: calc(100% - 20px);
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    padding: 10px 10px;
+                    padding-bottom: 0;
+
+                    .ghsi-content-timeline-item-view-avatar {
+                        width: 30px;
+                        height: 30px;
+                        background-repeat: no-repeat;
+                        background-size: 100% 100%;
+                        border-radius: 2px;
+                    }
+
+                    .ghsi-content-timeline-item-view-content {
+                        width: calc(100% - 40px);
+                        padding-bottom: 10px;
+                        border-bottom: 1px solid rgb(173, 173, 173);
+
+                        .ghsi-content-timeline-item-view-content-name {
+                            font-size: 14px;
+                            color: rgb(173, 173, 173);
+                            line-height: 1.5;
+                            width: fit-content;
+                            text-align: left;
+                            cursor: pointer;
+
+                            &:hover {
+                                color: white;
+                            }
+                        }
+
+                        .ghsi-content-timeline-item-view-content-title {
+                            font-size: 16px;
+                            font-weight: 500;
+                            color: rgb(200, 200, 200);
+                            line-height: 1.3;
+                            width: fit-content;
+                            text-align: left;
+                            cursor: pointer;
+                        }
+
+                        .ghsi-content-timeline-item-view-content-time {
+                            font-size: 12px;
+                            color: rgb(173, 173, 173);
+                            line-height: 1.5;
+                            width: fit-content;
+                            text-align: left;
+                            margin-top: 5px;
+                        }
+                    }
+                }
+            }
+
+            .ghsi-content-timeline-loading {
+                width: 100%;
+                height: 40px;
+            }
+        }
+    }
+    
+    .ghsi-line {
+        width: 1px;
+        height: 60%;
+        background-color: rgb(173, 173, 173);
+        margin: 0 70px;
+    }
+    
+    .ghsi-signin {
+        width: 30%;
+        max-width: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+
+        .ghsi-signin-header {
+            font-size: 26px;
+            color: white;
+            line-height: 1;
+            margin-bottom: 30px;
+        }
+
+        .ghsi-signin-item {
+            width: 100%;
+            margin-bottom: 20px;
+
+            .ghsi-signin-item-title {
+                font-size: 18px;
+                color: rgb(173, 173, 173);
+                line-height: 1;
+                margin-bottom: 10px;
+                text-align: left;
+            }
+
+            .ghsi-signin-item-input {
+                width: calc(100% - 2px - 32px);
+                border: 1px solid rgb(200, 200, 200);
+                border-radius: 4px;
+                height: 40px;
+                background-color: rgb(100, 100, 100);
+                padding: 0 16px;
+                
+                input {
+                    width: 100%;
+                    height: 100%;
+                    background-color: transparent;
+                    font-size: 14px;
+                    line-height: 1;
+                }
+            }
+        }
+
+        .ghsi-signin-button {
+            width: 100%;
+            height: 40px;
+            border-radius: 4px;
+            text-align: center;
+            line-height: 40px;
+            background-color: rgb(173, 173, 173);
+            color: black;
+            margin-top: 20px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: white;
+            }
+        }
+    }
+}

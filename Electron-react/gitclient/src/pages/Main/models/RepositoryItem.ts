@@ -1,7 +1,7 @@
 class RepositoryItem {
-    constructor() {
+    // constructor() {
 
-    }
+    // }
 }
 
 export default RepositoryItem;
