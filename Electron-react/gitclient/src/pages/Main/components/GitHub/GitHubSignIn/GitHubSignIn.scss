@@ -24,7 +24,6 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgb(173, 173, 173);
-            width: fit-content;
             margin-bottom: 5px;
 
             .ghsi-content-header-list {
@@ -58,17 +57,39 @@
                 }
             }
 
-            .ghsi-timeline-header-refresh {
-                width: 20px;
-                height: 20px;
-                border-radius: 4px;
-                background-image: url(../../../../../assets/refresh_ADADAD.svg);
-                background-repeat: no-repeat;
-                background-size: 100% 100%;
-                cursor: pointer;
+            .ghsi-content-header-actions {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
 
-                &:hover {
-                    background-image: url(../../../../../assets/refresh_white.svg);
+                .ghsi-content-header-actions-scrolltop {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 4px;
+                    background-image: url(../../../../../assets/top_ADADAD.svg);
+                    background-repeat: no-repeat;
+                    background-size: 150% 150%;
+                    background-position: center;
+                    cursor: pointer;
+                    margin-right: 8px;
+    
+                    &:hover {
+                        background-image: url(../../../../../assets/top_white.svg);
+                    }
+                }
+
+                .ghsi-content-header-actions-refresh {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 4px;
+                    background-image: url(../../../../../assets/refresh_ADADAD.svg);
+                    background-repeat: no-repeat;
+                    background-size: 100% 100%;
+                    cursor: pointer;
+    
+                    &:hover {
+                        background-image: url(../../../../../assets/refresh_white.svg);
+                    }
                 }
             }
         }
@@ -153,6 +174,180 @@
                 height: 40px;
             }
         }
+
+        .ghsi-content-stars {
+            width: 100%;
+            height: calc(80% - 40px);
+            min-height: 400px;
+            overflow: hidden;
+
+            .ghsi-content-stars-item {
+                width: 100%;
+                padding: 10px 0;
+                border-bottom: 1px solid rgb(173, 173, 173);
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+
+                .ghsi-content-stars-item-index {
+                    width: 50px;
+                    padding: 5px 0;
+                    font-size: 26px;
+                    font-weight: 500;
+                    line-height: 1;
+                    color: rgb(173, 173, 173);
+                }
+
+                .ghsi-content-stars-item-view {
+                    width: calc(100% - 55px);
+
+                    .ghsi-content-stars-item-view-name {
+                        color: rgb(200, 200, 200);
+                        font-size: 20px;
+                        line-height: 1.5;
+                        cursor: pointer;
+                        width: fit-content;
+    
+                        &:hover {
+                            color: white;
+                        }
+                    }
+    
+                    .ghsi-content-stars-item-view-desc {
+                        color: rgb(173, 173, 173);
+                        font-size: 14px;
+                        line-height: 1.2;
+                    }
+    
+                    .ghsi-content-stars-item-view-language {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        padding: 12px 0;
+                        cursor: pointer;
+                        width: fit-content;
+    
+                        .ghsi-content-stars-item-view-language-icon {
+                            width: 16px;
+                            height: 16px;
+                            margin-right: 5px;
+                            background-image: url(../../../../../assets/language_ADADAD.svg);
+                            background-repeat: no-repeat;
+                            background-size: 100% 100%;
+                        }
+    
+                        .ghsi-content-stars-item-view-language-text {
+                            font-size: 14px;
+                            color: rgb(173, 173, 173);
+                            line-height: 16px;
+                        }
+    
+                        &:hover {
+                            .ghsi-content-stars-item-view-language-icon {
+                                background-image: url(../../../../../assets/language_white.svg);
+                            }
+    
+                            .ghsi-content-stars-item-view-language-text {
+                                color: white;
+                            }
+                        }
+                    }
+    
+                    .ghsi-content-stars-item-view-info {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+    
+                        .ghsi-content-stars-item-view-info-item {
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            margin-right: 20px;
+    
+                            .ghsi-content-stars-item-view-info-item-icon {
+                                width: 14px;
+                                height: 14px;
+                                background-repeat: no-repeat;
+                                background-size: 100% 100%;
+                                margin-right: 5px;
+                            }
+    
+                            .ghsi-content-stars-item-view-info-item-icon-watchers {
+                                background-image: url(../../../../../assets/watch_ADADAD.svg);
+                            }
+    
+                            .ghsi-content-stars-item-view-info-item-icon-stars {
+                                background-image: url(../../../../../assets/star_ADADAD.svg);
+                            }
+    
+                            .ghsi-content-stars-item-view-info-item-icon-forks {
+                                background-image: url(../../../../../assets/fork_ADADAD.svg);
+                            }
+    
+                            .ghsi-content-stars-item-view-info-item-count {
+                                font-size: 12px;
+                                color: rgb(173, 173, 173);
+                                line-height: 14px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .ghsi-content-topics {
+            width: 100%;
+            height: calc(80% - 40px);
+            min-height: 400px;
+            overflow: hidden;
+
+            .ghsi-content-topics-item {
+                width: 100%;
+                padding: 15px 0;
+                border-bottom: 1px solid rgb(173, 173, 173);
+
+                .ghsi-content-topics-item-name {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: row;
+                    cursor: pointer;
+
+                    .ghsi-content-topics-item-name-front {
+                        width: 16px;
+                        font-size: 26px;
+                        font-weight: 500;
+                        color: rgb(173, 173, 173);
+                        line-height: 1;
+                        margin-right: 4px;
+                    }
+
+                    .ghsi-content-topics-item-name-text {
+                        max-width: calc(100% - 16px - 4px);
+                        font-size: 20px;
+                        font-weight: 500;
+                        color: rgb(173, 173, 173);
+                        line-height: 1;
+                        line-height: 26px;
+                    }
+
+                    &:hover {
+                        .ghsi-content-topics-item-name-front {
+                            color: white;
+                        }
+                        .ghsi-content-topics-item-name-text {
+                            color: white;
+                        }
+                    }
+                }
+
+                .ghsi-content-topics-item-desc {
+                    margin-top: 5px;
+                    font-size: 14px;
+                    color: rgb(173, 173, 173);
+                    line-height: 1.2;
+                }
+            }
+        }
     }
     
     .ghsi-line {
@@ -182,11 +377,56 @@
             margin-bottom: 20px;
 
             .ghsi-signin-item-title {
-                font-size: 18px;
-                color: rgb(173, 173, 173);
-                line-height: 1;
+                display: flex;
+                flex-direction: row;
                 margin-bottom: 10px;
-                text-align: left;
+
+                .ghsi-signin-item-title-text {
+                    font-size: 18px;
+                    color: rgb(173, 173, 173);
+                    line-height: 1;
+                }
+
+                .ghsi-signin-item-title-help {
+                    width: 16px;
+                    height: 16px;
+                    background-image: url(../../../../../assets/help_ADADAD.svg);
+                    background-repeat: no-repeat;
+                    background-size: 100% 100%;
+                    cursor: pointer;
+                    margin-left: 5px;
+
+                    &:hover {
+                        background-image: url(../../../../../assets/help_white.svg);
+                    }
+                }
+
+                .ghsi-signin-item-title-tips {
+                    position: absolute;
+                    z-index: 10;
+                    top: 16px;
+
+                    .ghsi-signin-item-title-tips-triangle {
+                        border-left: 4px solid transparent;
+                        border-right: 4px solid transparent;
+                        border-bottom: 6px solid rgb(30, 30, 30);
+                        width: 0;
+                        margin-left: 60px;
+                    }
+
+                    .ghsi-signin-item-title-tips-text {
+                        padding: 10px 20px;
+                        background-color: rgb(30, 30, 30);
+                        border-radius: 4px;
+
+                        p {
+                            color: white;
+                            font-size: 12px;
+                            line-height: 1.5;
+                            margin: 2px 0;
+                        }
+                    }
+                }
             }
 
             .ghsi-signin-item-input {
@@ -205,6 +445,10 @@
                     line-height: 1;
                 }
             }
+
+            .ghsi-signin-item-input-focus {
+                background-color: white;
+            }
         }
 
         .ghsi-signin-button {
@@ -215,11 +459,33 @@
             line-height: 40px;
             background-color: rgb(173, 173, 173);
             color: black;
-            margin-top: 20px;
             cursor: pointer;
 
             &:hover {
                 background-color: white;
+            }
+        }
+
+        .ghsi-signin-or {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+
+            .ghsi-signin-or-line {
+                height: 1px;
+                background-color: rgb(173, 173, 173);
+                width: calc(50% - 30px);
+            }
+
+            .ghsi-signin-or-text {
+                width: 60px;
+                font-size: 12px;
+                color: rgb(173, 173, 173);
+                line-height: 1;
+                text-align: center;
             }
         }
     }

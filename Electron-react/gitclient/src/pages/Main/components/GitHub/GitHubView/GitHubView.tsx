@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 // import axios from 'axios';
 
+import GitHubRouteList from '../../../data/GitHubRouteList';
 // State
 import { GlobalInterface } from '../../../store/state';
 
@@ -53,6 +54,17 @@ class GitHubView extends React.Component<GitHubViewProps> {
     }
 
     public render() {
+        let ContentList = [];
+        for (let i = 0; i < this.props.tabItem.github!.routeList.length; i++) {
+            let tempRouteItem = this.props.tabItem.github!.routeList[i];
+
+            switch (tempRouteItem.name) {
+                case GitHubRouteList.SignIn:
+                    ContentList.push(<GitHubSignIn key={tempRouteItem.createTime} $route={tempRouteItem} isLast={i === this.props.tabItem.github!.routeList.length - 1}/>);
+                    break;
+            }
+            
+        }
         return (
             <div className="ghv" style={{
                 display: this.props.tabIndex === this.props.state.Tabs.currentShowIndex ? 'block' : 'none',
@@ -74,13 +86,14 @@ class GitHubView extends React.Component<GitHubViewProps> {
                         </div>
                     </div>
                 </div>
-                {(() => {
+                {/* {(() => {
                     if (this.props.state.User.github.loggedin) {
                         return <div className="ghv-content"></div>
                     } else {
                         return <GitHubSignIn />;
                     }
-                })()}
+                })()} */}
+                {ContentList}
             </div>
         );
     }

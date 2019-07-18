@@ -4,11 +4,11 @@ export const SettingsActionsKeys = {
     // AddTabItem: 'AddTabItem',
 }
 
-const TabsActions = {
+const SettingsActions = {
     // AddTabItem: (item: TabItem) => ({
     //     type: SettingsActionsKeys.AddTabItem,
     //     item,
     // }),
 }
 
-export default TabsActions;
+export default SettingsActions;

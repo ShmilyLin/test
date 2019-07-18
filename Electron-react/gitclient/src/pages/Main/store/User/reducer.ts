@@ -7,6 +7,10 @@ const User: Reducer = (state: UserInterface, action: any): UserInterface => {
         state = {
             github: {
                 loggedin: false,
+
+                token: undefined,
+
+                info: undefined,
             }
         };
     }

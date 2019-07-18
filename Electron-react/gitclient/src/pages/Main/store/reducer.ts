@@ -4,6 +4,7 @@ import Tabs from './Tabs/reducer';
 import Repositories from './Repositories/reducer';
 import User from './User/reducer';
 import Settings from './Settings/reducer';
+import Common from './Common/reducer';
 
 export default combineReducers({
     AddTabMenu,
@@ -11,4 +12,5 @@ export default combineReducers({
     Repositories,
     User,
     Settings,
+    Common,
 });

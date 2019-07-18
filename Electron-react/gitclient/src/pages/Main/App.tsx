@@ -1,48 +1,57 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
-// import logo from '../../assets/logo.svg';
+import Listener, { ListenerKeys } from './utils/Listener';
+
+// SCSS
 import './App.scss';
+
+// Store
+import { GlobalInterface } from './store/state';
+import { CommonInterface } from './store/Common/state';
+import CommonActions from './store/Common/actions';
+
+// Components
 import Navigation from './components/Navigation/Navigation';
-// import { GlobalInterface } from './store/state';
 import AddTabMenu from './components/AddTabMenu/AddTabMenu';
 import Content from './components/Content/Content';
 import Footer from './components/Footer/Footer';
+import Modal from '../../components/Modal/Modal';
 
 
 interface AppProps {
-  // state: GlobalInterface;
+  state: {
+    Common: CommonInterface,
+  };
   dispatch: (action: AnyAction) => void;
 }
-
-// const App: React.FC<AppProps> = (props) => {
-//   console.log('App', props);
-
-//   return (
-//     <div className="App">
-//       <Navigation />
-//       <AddTabMenu />
-//     </div>
-//   );
-// }
-
-// const mapStateToProps = (state: GlobalInterface) => ({
-//   state
-// });
 
 class App extends React.Component<AppProps> {
   constructor(props: AppProps) {
     super(props);
 
-    this.state = {
+    console.log('App', props);
 
+    document.onclick = (e) => {
+      Listener.done(ListenerKeys.DocumentClick, e);
+    };
+
+    this.modalOnHideEvent = this.modalOnHideEvent.bind(this);
+  }
+
+  public modalOnHideEvent(res: {
+    confirm: boolean;
+    cancel: boolean;
+  }) {
+    if (this.props.state.Common.modal.success) {
+      this.props.state.Common.modal.success(res);
     }
 
-    console.log('App', props);
+    this.props.dispatch(CommonActions.HideModal());
   }
 
   public render() {
-    console.log('【App】 render');
+    console.log('【App】 render', this.props.state);
 
     return (
       <div className="App">
@@ -50,9 +59,22 @@ class App extends React.Component<AppProps> {
         <Content />
         <Footer />
         <AddTabMenu />
+        {this.props.state.Common.modal.show &&
+          <Modal title={this.props.state.Common.modal.title} 
+            content={this.props.state.Common.modal.content} 
+            showCancel={this.props.state.Common.modal.showCancel} 
+            cancelText={this.props.state.Common.modal.cancelText} 
+            confirmText={this.props.state.Common.modal.confirmText} onHide={this.modalOnHideEvent}/>
+        }
       </div>
     );
   }
 }
 
-export default connect()(App);
+const mapStateToProps = (state: GlobalInterface) => ({
+  state: {
+    Common: state.Common,
+  }
+});
+
+export default connect(mapStateToProps)(App);

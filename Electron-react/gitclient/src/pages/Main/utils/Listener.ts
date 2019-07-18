@@ -1,6 +1,7 @@
 import { Subject, Subscription } from 'rxjs';
 
 export const ListenerKeys = {
+    DocumentClick: 'DocumentClick',
     ShowAddTabMenu: 'ShowAddTabMenu',
     AddATab: 'AddATab',
 }
