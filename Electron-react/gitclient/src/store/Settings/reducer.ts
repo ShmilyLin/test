@@ -5,7 +5,12 @@ import { Reducer } from 'redux';
 const Settings: Reducer = (state: SettingsInterface, action: any): SettingsInterface => {
     if (!state) {
         state = {
-            
+            common: {
+
+            },
+            github: {
+                history: false,
+            },
         };
     }
 

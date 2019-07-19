@@ -372,83 +372,8 @@
             margin-bottom: 30px;
         }
 
-        .ghsi-signin-item {
+        .ghsi-signin-view {
             width: 100%;
-            margin-bottom: 20px;
-
-            .ghsi-signin-item-title {
-                display: flex;
-                flex-direction: row;
-                margin-bottom: 10px;
-
-                .ghsi-signin-item-title-text {
-                    font-size: 18px;
-                    color: rgb(173, 173, 173);
-                    line-height: 1;
-                }
-
-                .ghsi-signin-item-title-help {
-                    width: 16px;
-                    height: 16px;
-                    background-image: url(../../../../../assets/help_ADADAD.svg);
-                    background-repeat: no-repeat;
-                    background-size: 100% 100%;
-                    cursor: pointer;
-                    margin-left: 5px;
-
-                    &:hover {
-                        background-image: url(../../../../../assets/help_white.svg);
-                    }
-                }
-
-                .ghsi-signin-item-title-tips {
-                    position: absolute;
-                    z-index: 10;
-                    top: 16px;
-
-                    .ghsi-signin-item-title-tips-triangle {
-                        border-left: 4px solid transparent;
-                        border-right: 4px solid transparent;
-                        border-bottom: 6px solid rgb(30, 30, 30);
-                        width: 0;
-                        margin-left: 60px;
-                    }
-
-                    .ghsi-signin-item-title-tips-text {
-                        padding: 10px 20px;
-                        background-color: rgb(30, 30, 30);
-                        border-radius: 4px;
-
-                        p {
-                            color: white;
-                            font-size: 12px;
-                            line-height: 1.5;
-                            margin: 2px 0;
-                        }
-                    }
-                }
-            }
-
-            .ghsi-signin-item-input {
-                width: calc(100% - 2px - 32px);
-                border: 1px solid rgb(200, 200, 200);
-                border-radius: 4px;
-                height: 40px;
-                background-color: rgb(100, 100, 100);
-                padding: 0 16px;
-                
-                input {
-                    width: 100%;
-                    height: 100%;
-                    background-color: transparent;
-                    font-size: 14px;
-                    line-height: 1;
-                }
-            }
-
-            .ghsi-signin-item-input-focus {
-                background-color: white;
-            }
         }
 
         .ghsi-signin-button {

@@ -7,6 +7,9 @@ const Apps = [{
     // filename: "welcome",
     path: "pages/Main",
     // template: "",
+}, {
+    name: "Settings",
+    path: 'pages/Settings',
 }]
 
 function GetApps(webpackEnv) {

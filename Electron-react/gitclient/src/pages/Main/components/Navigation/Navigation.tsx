@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { GlobalInterface } from '../../store/state';
 import TabItem, { TabItemType } from '../../models/TabItem';
-import Listener, { ListenerKeys } from '../../utils/Listener';
+import Listener, { ListenerKeys } from '../../../../utils/Listener';
 // import AddTabMenuActions from '../../store/AddTabMenu/actions';
 import './Navigation.scss';
 import TabsActions from '../../store/Tabs/actions';

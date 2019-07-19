@@ -1,0 +1,25 @@
+* {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+html {
+  background-color: black;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+}
+
+html, body, div, ul, li {
+  line-height: 0;
+  user-select: none;
+}
+
+input {
+  border: none;
+  outline-style: none;
+}
+

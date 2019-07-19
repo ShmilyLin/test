@@ -1,4 +1,15 @@
-
+export interface CommonModalInterface {
+    show: boolean;
+    title: string;
+    content: string|undefined;
+    showCancel: boolean;
+    cancelText: string;
+    confirmText: string;
+    success: ((res: {
+        confirm: boolean;
+        cancel: boolean;
+    }) => void)|undefined;
+}
 
 export interface CommonInterface {
     loading: {
@@ -6,18 +17,7 @@ export interface CommonInterface {
         text: string|undefined;
     };
 
-    modal: {
-        show: boolean;
-        title: string;
-        content: string|undefined;
-        showCancel: boolean;
-        cancelText: string;
-        confirmText: string;
-        success: ((res: {
-            confirm: boolean;
-            cancel: boolean;
-        }) => void)|undefined;
-    }
+    modal: CommonModalInterface;
 };
 
 const CommonState: CommonInterface = {

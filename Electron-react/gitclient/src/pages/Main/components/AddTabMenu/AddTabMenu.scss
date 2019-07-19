@@ -9,7 +9,7 @@
     background-color: rgba($color: #000000, $alpha: 0.45);
 
     .add-tab-menu-view {
-        width: 300px;
+        // width: 300px;
         padding-top: 44px;
         height: calc(100% - 44px);
         background-color: rgb(51, 51, 51);
@@ -55,6 +55,45 @@
                     display: none;
                 }
             }
+        }
+
+        .add-tab-menu-view-content {
+            width: 100%;
+
+            .add-tab-menu-view-content-header {
+                padding: 10px 0;
+                display: flex;
+                flex-direction: row;
+                overflow: hidden;
+
+                .add-tab-menu-view-content-header-item {
+                    padding: 0 10px;
+                    height: 30px;
+                    text-align: center;
+                    font-size: 16px;
+                    color: rgb(173, 173, 173);
+                    line-height: 30px;
+                    cursor: pointer;
+                    flex-shrink: 0;
+
+                    &:hover {
+                        color: white;
+                    }
+                }
+
+                .add-tab-menu-view-content-header-item-selected {
+                    color: white;
+                }
+            }
+        }
+
+        .add-tab-menu-view-line {
+            width: 4px;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            right: -2px;
+            cursor: ew-resize; 
         }
     }
 

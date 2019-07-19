@@ -2,8 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import axios from 'axios';
-import { Subscription } from 'rxjs';
-import Listener, { ListenerKeys } from '../../../utils/Listener';
+
+// Components
+import GitHubSignInContent from '../../../../../components/GitHubSignInContent/GitHubSignInContent';
 
 // Models
 import GitHubTimelineItem from '../../../models/GitHubTimelineItem';
@@ -12,7 +13,7 @@ import GitHubTopicsItem from '../../../models/GitHubTopicsItem';
 
 // CSS
 import './GitHubSignIn.scss';
-import CommonActions from '../../../store/Common/actions';
+import CommonActions from '../../../../../store/Common/actions';
 import GitHubRouteItem from '../../../models/GitHubRouteItem';
 
 
@@ -52,15 +53,12 @@ interface GitHubSignInState {
 
     tokenInputValue: string;
     tokenInputOnFocus: boolean;
-    tokenInputShowHelpView: boolean;
 }
 
 class GitHubSignIn extends React.Component<GitHubSignInProps, GitHubSignInState> {
     public timelineScrollTop: number = 0;
     public starsScrollTop: number = 0;
     public topicsScrollTop: number = 0;
-
-    public documentClickListener: Subscription|null = null;
 
     constructor(props: GitHubSignInProps) {
         super(props);
@@ -90,10 +88,8 @@ class GitHubSignIn extends React.Component<GitHubSignInProps, GitHubSignInState>
 
             tokenInputValue: '',
             tokenInputOnFocus: false,
-            tokenInputShowHelpView: false,
         };
 
-        this.documentClickEvent = this.documentClickEvent.bind(this);
         this.timelineButtonClick = this.timelineButtonClick.bind(this);
         this.startsButtonClick = this.startsButtonClick.bind(this);
         this.topicsButtonClick = this.topicsButtonClick.bind(this);
@@ -102,30 +98,13 @@ class GitHubSignIn extends React.Component<GitHubSignInProps, GitHubSignInState>
         this.topicsMouseWheelEvent = this.topicsMouseWheelEvent.bind(this);
         this.scrollToTopButtonClick = this.scrollToTopButtonClick.bind(this);
         this.refreshButtonClick = this.refreshButtonClick.bind(this);
-        this.tokenInputViewHelpButtonClick = this.tokenInputViewHelpButtonClick.bind(this);
-        this.tokenInputViewFocusEvent = this.tokenInputViewFocusEvent.bind(this);
-        this.tokenInputViewBlurEvent = this.tokenInputViewBlurEvent.bind(this);
         this.tokenInputViewOnChangeEvent = this.tokenInputViewOnChangeEvent.bind(this);
         this.signInButtonClick = this.signInButtonClick.bind(this);
+        this.OAuthButtonClick = this.OAuthButtonClick.bind(this);
     }
 
     public componentDidMount() {
         this.loadTimelineData();
-        this.documentClickListener = Listener.on(ListenerKeys.DocumentClick, this.documentClickEvent);
-    }
-
-    public componentWillUnmount() {
-        if (this.documentClickListener) {
-            this.documentClickListener.unsubscribe();
-        }
-    }
-
-    public documentClickEvent() {
-        if (this.state.tokenInputShowHelpView) {
-            this.setState({
-                tokenInputShowHelpView: false,
-            })
-        }
     }
 
     public timelineButtonClick() {
@@ -462,6 +441,10 @@ class GitHubSignIn extends React.Component<GitHubSignInProps, GitHubSignInState>
                 (this.refs['ghsi-content-topics'] as any).scrollTo(0, 0);
                 break;
         }
+
+        this.setState({
+            isShowScrollToTop: false,
+        })
     }
     
     public refreshButtonClick() {
@@ -476,30 +459,6 @@ class GitHubSignIn extends React.Component<GitHubSignInProps, GitHubSignInState>
                 this.loadTopicsData();
                 break;
         }
-    }
-
-    // 点击Token的帮助按钮
-    public tokenInputViewHelpButtonClick(event: any) {
-        let tempShow = !this.state.tokenInputShowHelpView;
-        this.setState({
-            tokenInputShowHelpView: tempShow,
-        });
-
-        event.stopPropagation();
-    }
-
-    // Token输入框聚焦
-    public tokenInputViewFocusEvent() {
-        this.setState({
-            tokenInputOnFocus: true,
-        });
-    }
-    
-    // Token输入框失焦
-    public tokenInputViewBlurEvent() {
-        this.setState({
-            tokenInputOnFocus: false,
-        });
     }
     
     // 输入框输入文字
@@ -519,6 +478,11 @@ class GitHubSignIn extends React.Component<GitHubSignInProps, GitHubSignInState>
                 content: 'Token请在GitHub > User > Settings > Developer settings > Personal access tokens中设置。'
             }));
         }
+    }
+
+    // OAuth登录
+    public OAuthButtonClick() {
+
     }
 
     public render() {
@@ -661,37 +625,12 @@ class GitHubSignIn extends React.Component<GitHubSignInProps, GitHubSignInState>
                 <div className="ghsi-line"></div>
                 <div className="ghsi-signin">
                     <div className="ghsi-signin-header">登录GitHub</div>
-                    <div className="ghsi-signin-item">
-                        <div className="ghsi-signin-item-title">
-                            <div className="ghsi-signin-item-title-text">Token</div>
-                            <div className="ghsi-signin-item-title-help" onClick={(e) => this.tokenInputViewHelpButtonClick(e)}></div>
-                            {this.state.tokenInputShowHelpView &&
-                                <div className="ghsi-signin-item-title-tips">
-                                    <div className="ghsi-signin-item-title-tips-triangle"></div>
-                                    <div className="ghsi-signin-item-title-tips-text">
-                                        <p>· 建议使用Token认证方式登录。</p>
-                                        <p>· Token仅用于GitHub API校验，不会被上传服务器。</p>
-                                        <p>· Token请在GitHub > User > Settings > Developer settings > Personal access tokens中设置。</p>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                        <div className={"ghsi-signin-item-input" + (this.state.tokenInputOnFocus ? ' ghsi-signin-item-input-focus' : '')}>
-                            <input type="text" 
-                                placeholder="请输入Token" 
-                                value={this.state.tokenInputValue} 
-                                onFocus={this.tokenInputViewFocusEvent} 
-                                onBlur={this.tokenInputViewBlurEvent} 
-                                onChange={this.tokenInputViewOnChangeEvent}/>
-                        </div>
+                    <div className="ghsi-signin-view">
+                        <GitHubSignInContent 
+                            onTokenInputChange={this.tokenInputViewOnChangeEvent} 
+                            onTokenSignInButtonClick={this.signInButtonClick}
+                            onOAuthButtonClick={this.OAuthButtonClick} />
                     </div>
-                    <div className="ghsi-signin-button" onClick={this.signInButtonClick}>登录</div>
-                    <div className="ghsi-signin-or">
-                        <div className="ghsi-signin-or-line"></div>
-                        <div className="ghsi-signin-or-text">或者</div>
-                        <div className="ghsi-signin-or-line"></div>
-                    </div>
-                    <div className="ghsi-signin-button">OAuth 登录</div>
                 </div>
             </div>
         );
