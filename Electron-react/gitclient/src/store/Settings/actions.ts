@@ -1,14 +1,23 @@
 
 
 export const SettingsActionsKeys = {
-    // AddTabItem: 'AddTabItem',
+    Common: {
+        AddTabMenuWidthChange: 'Common_AddTabMenuWidthChange',
+    },
+    GitHub: {
+        HistoryModeChange: 'GitHub_HistoryModeChange',
+    }
 }
 
 const SettingsActions = {
-    // AddTabItem: (item: TabItem) => ({
-    //     type: SettingsActionsKeys.AddTabItem,
-    //     item,
-    // }),
+    HistoryModeChange: (history: boolean) => ({
+        type: SettingsActionsKeys.GitHub.HistoryModeChange,
+        history,
+    }),
+    AddTabMenuWidthChange: (width: number) => ({
+        type: SettingsActionsKeys.Common.AddTabMenuWidthChange,
+        width,
+    }),
 }
 
 export default SettingsActions;

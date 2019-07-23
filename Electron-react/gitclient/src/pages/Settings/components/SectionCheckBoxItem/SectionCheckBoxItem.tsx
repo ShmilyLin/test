@@ -8,7 +8,7 @@ import './SectionCheckBoxItem.scss';
 interface SectionCheckBoxItemProps {
     checked: boolean;
     title: string;
-    desc: string;
+    desc?: string;
     onCheckChange: (checked: boolean) => void;
     dispatch: (action: AnyAction) => void;
 }
@@ -31,7 +31,9 @@ class SectionCheckBoxItem extends React.Component<SectionCheckBoxItemProps> {
                 <div className={'scbi-check' + (this.props.checked ? ' scbi-checked' : '')} onClick={this.checkBoxClick}></div>
                 <div className="scbi-content">
                     <div className="scbi-content-title" onClick={this.checkBoxClick}>{this.props.title}</div>
-                    <div className="scbi-content-desc">{this.props.desc}</div>
+                    {this.props.desc && 
+                        <div className="scbi-content-desc">{this.props.desc}</div>
+                    }
                 </div>
             </div>
         );

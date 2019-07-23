@@ -1,12 +1,12 @@
 export const UserActionsKeys = {
-    // AddTabItem: 'AddTabItem',
+    SaveToken: 'SaveToken',
 }
 
 const UserActions = {
-    // AddTabItem: (item: TabItem) => ({
-    //     type: TabsActionsKeys.AddTabItem,
-    //     item,
-    // }),
+    SaveToken: (token: string) => ({
+        type: UserActionsKeys.SaveToken,
+        token,
+    }),
 }
 
 export default UserActions;

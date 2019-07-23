@@ -5,6 +5,8 @@ import { AnyAction } from 'redux';
 // Store
 import { GlobalInterface } from '../../store/state';
 import { UserInterface } from '../../../../store/User/state';
+import { SettingsInterface } from '../../../../store/Settings/state';
+import SettingsActions from '../../../../store/Settings/actions';
 
 // Components
 import GitHubSignInContent from '../../../../components/GitHubSignInContent/GitHubSignInContent';
@@ -17,7 +19,8 @@ import CommonActions from '../../../../store/Common/actions';
 interface GitHubProps {
     show: boolean;
     state: {
-        User: UserInterface
+        Settings: SettingsInterface;
+        User: UserInterface;
     }
     dispatch: (action: AnyAction) => void;
 }
@@ -107,13 +110,14 @@ class GitHub extends React.Component<GitHubProps, GitHubState> {
             confirmText: '确认修改',
             success: (res) => {
                 if (res.confirm) {
-                    let tempBrowser = this.state.browser;
-                    this.setState({
-                        browser: {
-                            ...tempBrowser,
-                            history: checked,
-                        }
-                    });
+                    // let tempBrowser = this.state.browser;
+                    // this.setState({
+                    //     browser: {
+                    //         ...tempBrowser,
+                    //         history: checked,
+                    //     }
+                    // });
+                    this.props.dispatch(SettingsActions.HistoryModeChange(checked));
                 }
             }
         }));
@@ -148,7 +152,7 @@ class GitHub extends React.Component<GitHubProps, GitHubState> {
                         opacity: this.state.browser.show ? 1 : 0,
                     }}>
                         <SectionCheckBoxItem 
-                            checked={this.state.browser.history} 
+                            checked={this.props.state.Settings.github.history} 
                             title='记录浏览历史（支持回退）' 
                             desc={"记录浏览历史会占用内存和计算资源，当一个标签页下浏览历史过多时可能会导致卡顿和加载缓慢，严重时可能会导致闪退和卡死。\n*注意：设置时会重置所有打开的GitHub页面"} 
                             onCheckChange={this.browserHistoryCheckChangeEvent} />
@@ -188,8 +192,9 @@ class GitHub extends React.Component<GitHubProps, GitHubState> {
 
 const mapStateToProps = (state: GlobalInterface) => ({
     state: {
-      User: state.User
+        Settings: state.Settings,
+        User: state.User
     }
-  });
+});
 
 export default connect(mapStateToProps)(GitHub);

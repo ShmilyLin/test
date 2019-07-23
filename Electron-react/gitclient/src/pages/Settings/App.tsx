@@ -5,6 +5,7 @@ import Listener, { ListenerKeys } from '../../utils/Listener';
 
 // Components
 import Common from './components/Common/Common';
+import Git from './components/Git/Git';
 import GitHub from './components/GitHub/GitHub';
 
 // SCSS
@@ -65,13 +66,19 @@ class App extends React.Component<AppProps, AppState> {
           </div>
           <div className={"app-tabs-item" + (this.state.tabsIndex === 1 ? ' app-tabs-item-selected' : '')} 
             onClick={() => this.tabsItemClick(1)}>
+            <div className="app-tabs-item-icon app-tabs-item-icon-git"></div>
+            <div className="app-tabs-item-text">Git</div>
+          </div>
+          <div className={"app-tabs-item" + (this.state.tabsIndex === 2 ? ' app-tabs-item-selected' : '')} 
+            onClick={() => this.tabsItemClick(2)}>
             <div className="app-tabs-item-icon app-tabs-item-icon-github"></div>
             <div className="app-tabs-item-text">GitHub</div>
           </div>
         </div>
         <div className="app-content">
           <Common show={this.state.tabsIndex === 0} />
-          <GitHub show={this.state.tabsIndex === 1} />
+          <Git show={this.state.tabsIndex === 1} />
+          <GitHub show={this.state.tabsIndex === 2} />
         </div>
         <Modal />
       </div>

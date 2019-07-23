@@ -1,17 +1,17 @@
-.common {
+.git {
     width: 100%;
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
 
-    .common-section {
+    .git-section {
         margin: 10px 20px;
         // padding: 0 20px;
         width: calc(100% - 40px);
         border-top: 1px solid rgb(51, 51, 51);
         border-bottom: 1px solid rgb(51, 51, 51);
 
-        .common-section-header {
+        .git-section-header {
             padding: 10px 10px;
             width: calc(100% - 20px);
             display: flex;
@@ -19,7 +19,7 @@
             align-items: center;
             cursor: pointer;
 
-            .common-section-header-icon {
+            .git-section-header-icon {
                 width: 16px;
                 height: 16px;
                 background-image: url(../../../../assets/drop_down_ADADAD.svg);
@@ -27,7 +27,7 @@
                 background-size: 100% 100%;
             }
 
-            .common-section-header-title {
+            .git-section-header-title {
                 font-size: 16px;
                 color: rgb(173, 173, 173);
                 line-height: 1;
@@ -37,34 +37,34 @@
             &:hover {
                 background-color: rgb(51, 51, 51);
 
-                .common-section-header-icon {
+                .git-section-header-icon {
                     background-image: url(../../../../assets/drop_down_white.svg);
                 }
 
-                .common-section-header-title {
+                .git-section-header-title {
                     color: white;
                 }
             }
         }
 
-        .common-section-header-hide {
+        .git-section-header-hide {
 
-            .common-section-header-icon {
+            .git-section-header-icon {
                 transform: rotate(-90deg);
             }
 
-            .common-section-header-title {
+            .git-section-header-title {
                 
             }
         }
 
-        .common-section-content {
+        .git-section-content {
             width: calc(100% - 30px);
             margin-left: 30px;
             transition: height 0.5s, opacity 0.5s;
             overflow: hidden;
 
-            .common-section-content-ui-account {
+            .git-section-content-ui-account {
                 margin-top: 10px;
                 margin-left: 30px;
                 width: calc(100% - 30px - 20px);
@@ -72,35 +72,35 @@
                 background-color: rgb(51, 51, 51);
                 border-radius: 4px;
 
-                .common-section-content-ui-account-desc {
+                .git-section-content-ui-account-desc {
                     font-size: 12px;
                     color: rgb(173, 173, 173);
                     line-height: 1;
                 }
 
-                .common-section-content-ui-account-item {
+                .git-section-content-ui-account-item {
                     width: 100%;
                     display: flex;
                     flex-direction: row;
                     align-items: center;
+                    justify-content: space-between;
                     margin-top: 10px;
 
-                    .common-section-content-ui-account-item-title {
-                        width: 100px;
+                    .git-section-content-ui-account-item-title {
+                        width: 70px;
                         font-size: 14px;
                         color: rgb(173, 173, 173);
                         line-height: 1;
                         text-align: right;
                     }
 
-                    .common-section-content-ui-account-item-input {
-                        width: 60px;
-                        height: 22px;
+                    .git-section-content-ui-account-item-input {
+                        width: calc(100% - 80px - 20px);
+                        height: 30px;
                         border: 1px solid rgb(173, 173, 173);
                         border-radius: 4px;
                         background-color: rgb(200, 200, 200);
                         padding: 0 10px;
-                        margin-left: 10px;
 
                         input {
                             background-color: transparent;
@@ -111,29 +111,22 @@
                             line-height: 1;
                         }
                     }
-
-                    .common-section-content-ui-account-item-unit {
-                        font-size: 14px;
-                        color: rgb(173, 173, 173);
-                        line-height: 1;
-                        margin-left: 5px;
-                    }
                 }
             }
             
-            .common-section-content-ui-account-disable {
+            .git-section-content-ui-account-disable {
 
-                .common-section-content-ui-account-desc {
+                .git-section-content-ui-account-desc {
 
                 }
 
-                .common-section-content-ui-account-item {
+                .git-section-content-ui-account-item {
 
-                    .common-section-content-ui-account-item-title {
+                    .git-section-content-ui-account-item-title {
 
                     }
 
-                    .common-section-content-ui-account-item-input {
+                    .git-section-content-ui-account-item-input {
 
                         input {
                             color: rgb(173, 173, 173);

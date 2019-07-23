@@ -17,12 +17,18 @@ import TabItem, { TabItemType } from '../../models/TabItem';
 
 // CSS
 import './AddTabMenu.scss';
+import SettingsActions from '../../../../store/Settings/actions';
 
 interface AddTabMenuProps {
     state: {
+        Settings: {
+            common: {
+                addTabMenuWidth: number,
+            };
+        };
         Repositories: {
             repositoriesList: RepositoryItem[];
-        }
+        };
     };
     dispatch: (action: AnyAction) => void;
 }
@@ -38,13 +44,13 @@ interface AddTabMenuState {
     needShow: boolean;
     needHide: boolean;
 
+    moveLeftView: boolean;
     leftViewWidth: number;
     subSelectedIndex: number;
 }
 
 
 class AddTabMenu extends React.Component<AddTabMenuProps, AddTabMenuState> {
-    public moveLeftView: boolean = false;
 
     constructor(props: AddTabMenuProps) {
         super(props);
@@ -54,6 +60,7 @@ class AddTabMenu extends React.Component<AddTabMenuProps, AddTabMenuState> {
             needShow: false,
             needHide: false,
 
+            moveLeftView: false,
             leftViewWidth: 300,
             subSelectedIndex: 0,
         };
@@ -127,11 +134,13 @@ class AddTabMenu extends React.Component<AddTabMenuProps, AddTabMenuState> {
     }
 
     public moveLineMouseDownEvent(event: any) {
-        this.moveLeftView = true;
+        this.setState({
+            moveLeftView: true,
+        })
     }
 
     public moveLineMouseMoveEvent(event: any) {
-        if (this.moveLeftView) {
+        if (this.state.moveLeftView) {
             let tempWidth = event.nativeEvent.x;
             if (tempWidth < 300) {
                 tempWidth = 300;
@@ -146,7 +155,7 @@ class AddTabMenu extends React.Component<AddTabMenuProps, AddTabMenuState> {
     }
 
     public moveLineMouseUpEvent(event: any) {
-        if (this.moveLeftView) {
+        if (this.state.moveLeftView) {
             let tempWidth = event.nativeEvent.x;
             if (tempWidth < 300) {
                 tempWidth = 300;
@@ -154,12 +163,16 @@ class AddTabMenu extends React.Component<AddTabMenuProps, AddTabMenuState> {
                 tempWidth = document.body.clientWidth - 20;
             }
 
+            this.props.dispatch(SettingsActions.AddTabMenuWidthChange(tempWidth));
+
             this.setState({
                 leftViewWidth: tempWidth,
-            })
+            });
         }
 
-        this.moveLeftView = false;
+        this.setState({
+            moveLeftView: false,
+        });
         event.stopPropagation();
     }
 
@@ -204,7 +217,7 @@ class AddTabMenu extends React.Component<AddTabMenuProps, AddTabMenuState> {
                 onMouseLeave={this.moveLineMouseUpEvent}>
                 <div className={contentViewClass} 
                     style={{
-                        width: this.state.leftViewWidth + 'px',
+                        width: (this.state.moveLeftView ? this.state.leftViewWidth : this.props.state.Settings.common.addTabMenuWidth) + 'px',
                     }} 
                     onClick={(e) => e.stopPropagation()}>
                     <div className="add-tab-menu-view-header">
@@ -242,6 +255,11 @@ class AddTabMenu extends React.Component<AddTabMenuProps, AddTabMenuState> {
 
 const mapStateToProps = (state: GlobalInterface) => ({
     state: {
+        Settings: {
+            common: {
+                addTabMenuWidth: state.Settings.common.addTabMenuWidth,
+            }
+        },
         Repositories: {
             repositoriesList: state.Repositories.repositoriesList,
         }

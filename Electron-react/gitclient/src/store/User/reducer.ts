@@ -1,4 +1,4 @@
-// import { UserActionsKeys } from './actions';
+import { UserActionsKeys } from './actions';
 import { UserInterface } from './state';
 import { Reducer } from 'redux';
 
@@ -16,8 +16,9 @@ const User: Reducer = (state: UserInterface, action: any): UserInterface => {
     }
 
     switch (action.type) {
-        // case UserActionsKeys.AddTabItem: 
+        case UserActionsKeys.SaveToken: 
             
+            return state;
         default:
             return state;
     }

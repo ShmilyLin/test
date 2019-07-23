@@ -1,3 +1,5 @@
+import FileManager from "../../utils/FileManager";
+
 export interface UserGitHubInfoSelf {
     login?: string; // 名字
     id?: number;
@@ -60,11 +62,9 @@ const UserState: UserInterface = {
     github: {
         loggedin: false,
 
-        token: undefined,
+        token: FileManager.getTokenSync(),
 
-        info: {
-
-        }
+        info: undefined,
     }
 }
 
